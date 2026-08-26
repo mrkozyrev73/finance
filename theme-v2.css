@@ -486,6 +486,48 @@ button:active{transform:scale(.98)}
 .stats-view .breakdown-head p{font-size:10px!important;font-weight:440!important}
 .stats-view .donut-legend-row b{font-size:13px!important;font-weight:520!important}
 .stats-view .donut-legend-row small{font-size:10px!important;font-weight:500!important}
+
+/* v13 — readable microcopy without visual heaviness */
+.kicker{font-size:10px!important;font-weight:650!important;letter-spacing:.16em!important}
+.summary p,.heading p,.stats-head>p:last-child,.info-head:after{font-size:12px!important;line-height:1.4!important}
+.plan-note,.meta{font-size:11.5px!important;line-height:1.35!important}
+.nav button{font-size:11.5px!important;font-weight:540!important}
+.status-filter button,.period-switch button,.owner-switch button{font-size:11.5px!important;font-weight:520!important}
+.search-box input,.stats-controls select,.year-select{font-size:12px!important;font-weight:480!important}
+.row .copy small{font-size:11px!important;line-height:1.35!important}
+.owner-chip{height:19px!important;font-size:9.5px!important;font-weight:620!important}
+.sync-pill{font-size:10.5px!important;font-weight:600!important}
+.stats-summary i{font-size:11.5px!important;font-weight:460!important}
+.category-card-head{font-size:12.5px!important}
+.category-card small{font-size:11px!important;line-height:1.35!important}
+.month-column b{font-size:9.5px!important;font-weight:540!important}
+.tool-grid button,.sheet-link{font-size:11px!important;font-weight:560!important}
+.info-card>p,.finance-main>p{font-size:11.5px!important;line-height:1.45!important}
+.finance-main .finance-field,.finance-main .early-inline>span{font-size:11px!important;font-weight:540!important;line-height:1.4!important}
+.finance-main .early-inline>span b{font-size:12px!important;font-weight:620!important}
+.finance-main .early-add input{font-size:11.5px!important}
+.finance-main .early-row{font-size:11px!important}
+.finance-main .early-row strong{font-size:12px!important;font-weight:620!important}
+.finance-section-title{font-size:10px!important;font-weight:680!important;letter-spacing:.12em!important}
+.finance-main .finance-section.single .finance-field:after{font-size:10px!important;font-weight:480!important}
+label,.seg-label,.utility-body label{font-size:12px!important;font-weight:600!important}
+.hint,.sync-status,.privacy,.backup-note{font-size:11px!important;line-height:1.45!important}
+.utility-actions button,.confirm-actions button,.danger-action,.archive-credit{font-size:11.5px!important;font-weight:600!important}
+.activity-row,.trash-row,.template-row,.archived-row{font-size:11.5px!important;line-height:1.4!important}
+.trash-row button,.template-row button,.archived-row button{font-size:11px!important;font-weight:600!important}
+.settings-group h3{font-size:10px!important;font-weight:620!important;letter-spacing:.13em!important}
+.settings-row b{font-size:12.5px!important;font-weight:600!important}
+.settings-row small{font-size:11px!important;font-weight:440!important;line-height:1.35!important}
+.settings-status small,.settings-privacy{font-size:10.5px!important;line-height:1.4!important}
+.breakdown-head small{font-size:10px!important;font-weight:580!important}
+.breakdown-head p{max-width:145px!important;font-size:11px!important;line-height:1.4!important}
+.donut-legend-row b{font-size:13px!important;font-weight:600!important}
+.donut-legend-row small{font-size:10.5px!important;font-weight:500!important}
+.donut-legend-row strong{font-size:12px!important;font-weight:630!important}
+.stats-breakdown-empty{font-size:11.5px!important}
+.category-sheet-list b{font-size:12.5px!important;font-weight:600!important}
+.category-sheet-list small{font-size:11px!important;line-height:1.35!important}
+.category-sheet-list strong{font-size:12px!important;font-weight:630!important}
 .stats-view .donut-legend-row strong{font-size:12px!important;font-weight:580!important}
 .category-sheet-amount{font-size:24px!important;font-weight:600!important;letter-spacing:-.03em}
 .category-sheet-list b{font-size:12px!important;font-weight:540!important}

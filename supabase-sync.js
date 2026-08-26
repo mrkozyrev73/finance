@@ -49,7 +49,15 @@
     client=window.supabase.createClient(cfg.url,cfg.key,{auth:{persistSession:true,autoRefreshToken:true,detectSessionInUrl:true}});
     const result=await client.auth.getSession();session=result.data.session;
     client.auth.onAuthStateChange((_event,next)=>{session=next;if(next)connect().catch(showError);else{householdId='';setSyncState('error','Войти')}});
-    if(!session){setSyncState('error','Войти');return false}
+    if(!session){
+      setSyncState('error','Войти');
+      const onboardingKey='income-supabase-onboarding-shown-v1';
+      if(location.protocol==='https:'&&!localStorage.getItem(onboardingKey)){
+        localStorage.setItem(onboardingKey,'1');
+        setTimeout(openSupabaseSettings,320);
+      }
+      return false;
+    }
     await connect();return true;
   }
 

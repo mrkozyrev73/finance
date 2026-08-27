@@ -1027,3 +1027,28 @@ input:focus,select:focus,textarea:focus,.amountbox:focus-within{
 .scrim .sheet{max-height:calc(var(--vvh,100dvh) - 8px);overflow-y:auto;overscroll-behavior:contain;-webkit-overflow-scrolling:touch}
 .scrim #form{padding-bottom:max(12px,env(safe-area-inset-bottom))}
 .scrim #form .save{position:sticky;z-index:4;bottom:0;box-shadow:0 -10px 24px rgba(247,249,246,.96)}
+
+/* keyboard-aware sheet: anchor above the on-screen keyboard */
+.scrim{z-index:40;top:var(--vvo,0px);bottom:auto;height:var(--vvh,100dvh)}
+
+/* --- popups: smoother open/close + status not-a-button (cowork) --- */
+.scrim,.utility-scrim{backdrop-filter:none!important;-webkit-backdrop-filter:none!important;transition:opacity 240ms var(--ease-out,cubic-bezier(.23,1,.32,1)),visibility 0s linear 300ms!important}
+.scrim.open,.utility-scrim.open{transition:opacity 200ms var(--ease-out,cubic-bezier(.23,1,.32,1)),visibility 0s!important}
+.sheet,.utility-sheet{opacity:1!important;transform:translate3d(0,100%,0);will-change:transform;backface-visibility:hidden;-webkit-backface-visibility:hidden;transition:transform 240ms var(--ease-out,cubic-bezier(.23,1,.32,1))!important}
+.scrim.open .sheet,.utility-scrim.open .utility-sheet{transform:translate3d(0,0,0);transition:transform 320ms var(--ease-drawer,cubic-bezier(.32,.72,0,1))!important}
+.settings-status{background:transparent!important;color:#18201a!important;padding:2px 2px 15px!important;border-radius:0!important;margin-bottom:6px!important}
+.settings-status small{color:#7c867e!important}
+
+/* custom chevron for add-form selects (was native / foreign) */
+#form select{-webkit-appearance:none;appearance:none;padding-right:40px;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23929b94' stroke-width='1.8' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 15px center;background-size:18px}
+
+/* --- nav: match top dark element + content width; safe field borderless (cowork) --- */
+.nav{width:min(calc(100% - 40px),420px)!important;background:linear-gradient(145deg,#1b211c 0%,#111612 100%)!important;border:1px solid rgba(255,255,255,.08)!important}
+#safeAmount{border:0!important;background:transparent!important;box-shadow:none!important}
+
+/* --- money value + small ₽ (like main), safe filled box no border (cowork) --- */
+.money-wrap{display:inline-flex;align-items:baseline;gap:5px;width:100%}
+.money-wrap>.money-input{flex:1 1 auto;min-width:0;width:auto!important;text-align:left!important}
+.money-wrap>.cur{flex:0 0 auto;font-size:15px;font-weight:600;opacity:.5;pointer-events:none}
+.money-wrap:has(.safe-metric-input),.money-wrap:has(#safeAmount){background:rgba(255,255,255,.5);border:0;border-radius:14px;padding:13px 16px}
+.safe-metric-input,#safeAmount{border:0!important;background:transparent!important;box-shadow:none!important;padding:0!important}

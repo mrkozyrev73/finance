@@ -1,7 +1,9 @@
 /* Google Sheets sync through private Apps Script URL with token. */
 (() => {
   const URL_KEY='income-google-sync-url';
-  let syncUrl=localStorage.getItem(URL_KEY)||'';
+  const LAST_ERROR_KEY='income-google-sync-last-error';
+  const DEFAULT_SYNC_URL='https://script.google.com/macros/s/AKfycbzBXlkqbd2v7ZkJdWMVgx6-l3GjvAyNeBk8NSXDL3D7EWo25s18RZ-m1hTa0TuPhotb/exec?token=ba276cd4-fd9c-44cf-8446-13685ebacc47669ea6f4ae1e4b5fa03ee2a72916c680';
+  let syncUrl=localStorage.getItem(URL_KEY)||DEFAULT_SYNC_URL;
   let pushTimer=null;
 
   const stamp=value=>{
@@ -45,12 +47,12 @@
     setSyncState('','Сохранение');
     const response=await fetch(syncUrl,{
       method:'POST',
-      headers:{'Content-Type':'text/plain;charset=utf-8'},
       body:JSON.stringify(localPayload())
     });
     const data=await response.json();
     if(data?.ok===false)throw new Error(data.error||'Google sync error');
     if(data?.payload)applyGooglePayload(data.payload);
+    localStorage.removeItem(LAST_ERROR_KEY);
     setSyncState('ok','Google');
   }
 
@@ -71,12 +73,13 @@
         await writeGoogle();
       }else{
         applyGooglePayload(remote);
+        localStorage.removeItem(LAST_ERROR_KEY);
         setSyncState('ok','Google');
       }
       return;
     }
     if((local.items||[]).length||Object.keys(local.history||{}).length)await writeGoogle();
-    else setSyncState('ok','Google');
+    else{localStorage.removeItem(LAST_ERROR_KEY);setSyncState('ok','Google')}
   }
 
   function scheduleGoogleSync(){
@@ -88,6 +91,7 @@
 
   function showGoogleError(error){
     console.error(error);
+    localStorage.setItem(LAST_ERROR_KEY,error?.message||'Ошибка Google');
     setSyncState('error',navigator.onLine?'Ошибка Google':'Офлайн');
     toast('Google Таблица не синхронизировалась');
   }
@@ -101,16 +105,16 @@
         <button class="utility-secondary" id="syncGoogleNow">Синхронизировать сейчас</button>
         <button class="utility-secondary" id="clearGoogleSync">Отключить</button>
       </div>
-      <p class="sync-status" id="googleSyncStatus"></p>`);
+      <p class="sync-status" id="googleSyncStatus">${escapeHtml(localStorage.getItem(LAST_ERROR_KEY)||'')}</p>`);
     $('saveGoogleSync').onclick=async()=>{
       const value=$('googleSyncUrl').value.trim();
       if(!value){$('googleSyncStatus').textContent='Вставьте адрес Apps Script с token.';return}
       syncUrl=value;
       localStorage.setItem(URL_KEY,value);
       $('googleSyncStatus').textContent='Подключаем…';
-      try{await connectGoogle();closeUtility();toast('Google Таблица подключена')}catch(error){$('googleSyncStatus').textContent=error.message||'Не удалось подключить Google'}
+      try{await connectGoogle();closeUtility();toast('Google Таблица подключена')}catch(error){localStorage.setItem(LAST_ERROR_KEY,error.message||'Не удалось подключить Google');$('googleSyncStatus').textContent=error.message||'Не удалось подключить Google'}
     };
-    $('syncGoogleNow').onclick=()=>writeGoogle().then(()=>toast('Данные отправлены в Google')).catch(error=>$('googleSyncStatus').textContent=error.message||'Ошибка Google');
+    $('syncGoogleNow').onclick=()=>writeGoogle().then(()=>{localStorage.removeItem(LAST_ERROR_KEY);toast('Данные отправлены в Google')}).catch(error=>{localStorage.setItem(LAST_ERROR_KEY,error.message||'Ошибка Google');$('googleSyncStatus').textContent=error.message||'Ошибка Google'});
     $('clearGoogleSync').onclick=()=>{syncUrl='';localStorage.removeItem(URL_KEY);setSyncState('error','Google');closeUtility();toast('Google отключён')};
   }
 

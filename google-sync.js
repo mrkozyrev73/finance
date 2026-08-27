@@ -20,7 +20,12 @@
 
   function applyGooglePayload(payload){
     if(!payload||!Array.isArray(payload.items))return;
-    applyCloud(payload);
+    applyCloud({
+      ...payload,
+      finance:payload.finance||{},
+      deletedItems:payload.deletedItems||[],
+      activity:payload.activity||[]
+    });
     if(payload.history){
       Object.keys(history).forEach(key=>delete history[key]);
       Object.assign(history,payload.history);
@@ -37,7 +42,8 @@
   async function readGoogle(){
     if(!syncUrl)return null;
     const response=await fetch(syncUrl,{method:'GET',cache:'no-store'});
-    const data=await response.json();
+    const text=await response.text();
+    const data=JSON.parse(text);
     if(data?.ok===false)throw new Error(data.error||'Google sync error');
     return data;
   }
@@ -49,7 +55,9 @@
       method:'POST',
       body:JSON.stringify(localPayload())
     });
-    const data=await response.json();
+    const text=await response.text();
+    if(text.trim().startsWith('<'))throw new Error('Google вернул страницу вместо ответа. Проверьте развертывание Apps Script.');
+    const data=JSON.parse(text);
     if(data?.ok===false)throw new Error(data.error||'Google sync error');
     if(data?.payload)applyGooglePayload(data.payload);
     localStorage.removeItem(LAST_ERROR_KEY);
@@ -60,26 +68,14 @@
     if(!syncUrl){setSyncState('error','Google');return}
     setSyncState('','Загрузка');
     const remote=await readGoogle();
-    const local=localPayload();
-    const hasRemote=Array.isArray(remote?.items)&&remote.items.length;
-    const localModified=Math.max(
-      stamp(local.financeUpdatedAt),
-      stamp(local.categoriesUpdatedAt),
-      ...(local.items||[]).map(item=>stamp(item.updatedAt)),
-      ...(local.deletedItems||[]).map(item=>stamp(item.updatedAt))
-    );
+    const hasRemote=Array.isArray(remote?.items);
     if(hasRemote){
-      if(localModified>stamp(remote.updatedAt)){
-        await writeGoogle();
-      }else{
-        applyGooglePayload(remote);
-        localStorage.removeItem(LAST_ERROR_KEY);
-        setSyncState('ok','Google');
-      }
+      applyGooglePayload(remote);
+      localStorage.removeItem(LAST_ERROR_KEY);
+      setSyncState('ok','Google');
       return;
     }
-    if((local.items||[]).length||Object.keys(local.history||{}).length)await writeGoogle();
-    else{localStorage.removeItem(LAST_ERROR_KEY);setSyncState('ok','Google')}
+    throw new Error('Google не вернул данные таблицы');
   }
 
   function scheduleGoogleSync(){
@@ -102,7 +98,7 @@
       <label>Адрес синхронизации<input id="googleSyncUrl" type="url" value="${escapeHtml(syncUrl)}" placeholder="https://script.google.com/macros/s/.../exec?token=..."></label>
       <div class="utility-actions">
         <button class="utility-primary" id="saveGoogleSync">Сохранить</button>
-        <button class="utility-secondary" id="syncGoogleNow">Синхронизировать сейчас</button>
+        <button class="utility-secondary" id="syncGoogleNow">Загрузить из Google</button>
         <button class="utility-secondary" id="clearGoogleSync">Отключить</button>
       </div>
       <p class="sync-status" id="googleSyncStatus">${escapeHtml(localStorage.getItem(LAST_ERROR_KEY)||'')}</p>`);
@@ -112,9 +108,9 @@
       syncUrl=value;
       localStorage.setItem(URL_KEY,value);
       $('googleSyncStatus').textContent='Подключаем…';
-      try{await connectGoogle();closeUtility();toast('Google Таблица подключена')}catch(error){localStorage.setItem(LAST_ERROR_KEY,error.message||'Не удалось подключить Google');$('googleSyncStatus').textContent=error.message||'Не удалось подключить Google'}
+      try{await connectGoogle();closeUtility()}catch(error){localStorage.setItem(LAST_ERROR_KEY,error.message||'Не удалось подключить Google');$('googleSyncStatus').textContent=error.message||'Не удалось подключить Google'}
     };
-    $('syncGoogleNow').onclick=()=>writeGoogle().then(()=>{localStorage.removeItem(LAST_ERROR_KEY);toast('Данные отправлены в Google')}).catch(error=>{localStorage.setItem(LAST_ERROR_KEY,error.message||'Ошибка Google');$('googleSyncStatus').textContent=error.message||'Ошибка Google'});
+    $('syncGoogleNow').onclick=()=>connectGoogle().then(()=>{$('googleSyncStatus').textContent='Загружено из Google'}).catch(error=>{localStorage.setItem(LAST_ERROR_KEY,error.message||'Ошибка Google');$('googleSyncStatus').textContent=error.message||'Ошибка Google'});
     $('clearGoogleSync').onclick=()=>{syncUrl='';localStorage.removeItem(URL_KEY);setSyncState('error','Google');closeUtility();toast('Google отключён')};
   }
 

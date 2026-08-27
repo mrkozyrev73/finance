@@ -7,7 +7,7 @@
   <meta name="apple-mobile-web-app-capable" content="yes">
   <link rel="manifest" href="manifest.webmanifest">
   <link rel="apple-touch-icon" href="icon-192.png">
-  <link rel="stylesheet" href="app.css?v=2">
+  <link rel="stylesheet" href="app.css?v=8">
   <title>Мои доходы</title>
 </head>
 <body>
@@ -40,13 +40,15 @@
 <div class="toast" id="toast"><svg class="ui-icon toast-check" viewBox="0 0 24 24"><path d="m5 12 4 4 10-10"/></svg><b id="toastText"></b><button class="undo" id="undo" hidden>Вернуть</button></div>
 <script>
   const emptyYear=()=>Array(12).fill(0);
-  let history=JSON.parse(localStorage.getItem('income-history-v1')||'null')||{2026:emptyYear(),2025:emptyYear(),2024:emptyYear(),2023:emptyYear(),2022:emptyYear()};
-  let historyTotals=JSON.parse(localStorage.getItem('income-history-totals-v1')||'null')||{};
+  const remoteFirst=true;
+  let history=remoteFirst?{2026:emptyYear(),2025:emptyYear(),2024:emptyYear(),2023:emptyYear(),2022:emptyYear()}:(JSON.parse(localStorage.getItem('income-history-v1')||'null')||{2026:emptyYear(),2025:emptyYear(),2024:emptyYear(),2023:emptyYear(),2022:emptyYear()});
+  let historyTotals=remoteFirst?{}:(JSON.parse(localStorage.getItem('income-history-totals-v1')||'null')||{});
   const key='income-tracker-v3',tz='Europe/Samara',monthNames=['Январь','Февраль','Март','Апрель','Май','Июнь','Июль','Август','Сентябрь','Октябрь','Ноябрь','Декабрь'],monthInNames=['январе','феврале','марте','апреле','мае','июне','июле','августе','сентябре','октябре','ноябре','декабре'];
   const samaraParts=()=>Object.fromEntries(new Intl.DateTimeFormat('en-CA',{timeZone:tz,year:'numeric',month:'2-digit',day:'2-digit'}).formatToParts().filter(x=>x.type!=='literal').map(x=>[x.type,x.value]));
   const today=()=>{const p=samaraParts();return `${p.year}-${p.month}-${p.day}`},currentRealMonth=()=>today().slice(0,7);
-  const old=JSON.parse(localStorage.getItem('income-tracker-v2')||'null');let items=JSON.parse(localStorage.getItem(key)||'null')||(Array.isArray(old)?old:[]);items=items.filter(item=>item.amount>0).map(item=>({...item,category:item.category==='Продажа на Авито'?'Продажа Авито':item.category,month:item.month||currentRealMonth()}));localStorage.setItem(key,JSON.stringify(items));let currentMonth=currentRealMonth(),currentView='home',followsCalendar=true,activeFilter='all',newStatus='waiting',editingId=null,selectedStatsCategory=null,statsPeriod='month',selectedYear=Number(currentMonth.slice(0,4));const $=id=>document.getElementById(id),rub=n=>new Intl.NumberFormat('ru-RU').format(n||0)+' ₽',monthItems=()=>items.filter(x=>x.month===currentMonth),monthLabel=()=>monthNames[Number(currentMonth.slice(5))-1],monthInLabel=()=>monthInNames[Number(currentMonth.slice(5))-1];
-  const financeKey='income-finance-info-v1';let finance=JSON.parse(localStorage.getItem(financeKey)||'null')||{safe:0,mortgageDebt:0,mortgageEarlyPayments:[],credits:[],notes:''};if(finance.mortgageEarly==null){finance.mortgageEarly=(finance.baseEarly||0)+(finance.payments||[]).filter(x=>x.credit==='Ипотека').reduce((s,x)=>s+x.amount,0);finance.sberEarly=(finance.payments||[]).filter(x=>x.credit==='Кредит Сбер').reduce((s,x)=>s+x.amount,0)}if(!finance.mortgageEarlyPayments){finance.mortgageEarlyPayments=finance.mortgageEarly?[{id:Date.now()-1,amount:finance.mortgageEarly,date:'',label:'Ранее внесено'}]:[];finance.sberEarlyPayments=finance.sberEarly?[{id:Date.now()-2,amount:finance.sberEarly,date:'',label:'Ранее внесено'}]:[];delete finance.baseEarly;delete finance.payments;delete finance.mortgageEarly;delete finance.sberEarly;localStorage.setItem(financeKey,JSON.stringify(finance))}const moneyText=n=>new Intl.NumberFormat('ru-RU').format(Number(n)||0)+' ₽',earlySum=type=>(finance[type]||[]).reduce((s,x)=>s+x.amount,0);document.querySelector('.info-head').insertAdjacentHTML('afterend','<section class="info-summary"><span>Общий долг</span><strong id="infoDebtTotal">0 ₽</strong><div><span>В сейфе <b id="infoSafeTotal">0 ₽</b></span><span>Досрочно <b id="infoEarlyTotal">0 ₽</b></span></div></section>');
+  const old=remoteFirst?null:JSON.parse(localStorage.getItem('income-tracker-v2')||'null');let items=remoteFirst?[]:(JSON.parse(localStorage.getItem(key)||'null')||(Array.isArray(old)?old:[]));items=items.filter(item=>item.amount>0).map(item=>({...item,category:item.category==='Продажа на Авито'?'Продажа Авито':item.category,month:item.month||currentRealMonth()}));if(!remoteFirst)localStorage.setItem(key,JSON.stringify(items));let currentMonth=currentRealMonth(),currentView='home',followsCalendar=true,activeFilter='all',newStatus='waiting',editingId=null,selectedStatsCategory=null,statsPeriod='month',selectedYear=Number(currentMonth.slice(0,4));const $=id=>document.getElementById(id),rub=n=>new Intl.NumberFormat('ru-RU').format(n||0)+' ₽',monthItems=()=>items.filter(x=>x.month===currentMonth),monthLabel=()=>monthNames[Number(currentMonth.slice(5))-1],monthInLabel=()=>monthInNames[Number(currentMonth.slice(5))-1];
+  const emptyFinance=()=>({safe:0,mortgageDebt:0,mortgageEarlyPayments:[],sberDebt:0,sberEarlyPayments:[],credits:[],loans:[],notes:''});
+  const financeKey='income-finance-info-v1';let finance=remoteFirst?emptyFinance():(JSON.parse(localStorage.getItem(financeKey)||'null')||emptyFinance());if(finance.mortgageEarly==null){finance.mortgageEarly=(finance.baseEarly||0)+(finance.payments||[]).filter(x=>x.credit==='Ипотека').reduce((s,x)=>s+x.amount,0);finance.sberEarly=(finance.payments||[]).filter(x=>x.credit==='Кредит Сбер').reduce((s,x)=>s+x.amount,0)}if(!finance.mortgageEarlyPayments){finance.mortgageEarlyPayments=finance.mortgageEarly?[{id:Date.now()-1,amount:finance.mortgageEarly,date:'',label:'Ранее внесено'}]:[];finance.sberEarlyPayments=finance.sberEarly?[{id:Date.now()-2,amount:finance.sberEarly,date:'',label:'Ранее внесено'}]:[];delete finance.baseEarly;delete finance.payments;delete finance.mortgageEarly;delete finance.sberEarly;if(!remoteFirst)localStorage.setItem(financeKey,JSON.stringify(finance))}const moneyText=n=>new Intl.NumberFormat('ru-RU').format(Number(n)||0)+' ₽',earlySum=type=>(finance[type]||[]).reduce((s,x)=>s+x.amount,0);document.querySelector('.info-head').insertAdjacentHTML('afterend','<section class="info-summary"><span>Общий долг</span><strong id="infoDebtTotal">0 ₽</strong><div><span>В сейфе <b id="infoSafeTotal">0 ₽</b></span><span>Досрочно <b id="infoEarlyTotal">0 ₽</b></span></div></section>');
   let lastDeleted=null,lastMoved=null,nativeDragged=null;
   function persist(){localStorage.setItem(key,JSON.stringify(items))} function toast(text,canUndo=false){$('toastText').textContent=text;$('undo').hidden=!canUndo;$('toast').classList.add('show');clearTimeout(toast.t);toast.t=setTimeout(()=>{$('toast').classList.remove('show');$('undo').hidden=true;lastDeleted=null;lastMoved=null},canUndo?3500:1700)}
   function render(){const all=monthItems(),visible=activeFilter==='all'?all:all.filter(x=>x.status===activeFilter),total=all.reduce((s,x)=>s+x.amount,0),receivedItems=all.filter(x=>x.status==='received'),received=receivedItems.reduce((s,x)=>s+x.amount,0),remaining=total-received,year=currentMonth.slice(0,4);$('monthTitle').innerHTML=`${monthLabel()} <span>${year}</span>`;$('monthPicker').value=currentMonth;$('received').innerHTML=new Intl.NumberFormat('ru-RU').format(received)+' <small>₽</small>';$('remaining').textContent=rub(remaining);$('total').textContent=rub(total);$('progress').style.width=(total?received/total*100:0)+'%';document.querySelector('.plan-note span:last-child').childNodes[0].textContent=`Ожидается в ${monthInLabel()} `;const count=all.filter(x=>x.status==='waiting').length;$('allCount').textContent=all.length;$('filterWaitingCount').textContent=count;$('filterReceivedCount').textContent=receivedItems.length;$('waitingCount').textContent=count?count+' '+(count===1?'доход ожидается':'доходов ожидаются'):'Всё получено';$('carryWaiting').textContent=`Перенести ожидаемые (${count}) в следующий месяц`;$('carryWaiting').classList.toggle('show',count>0&&currentMonth<currentRealMonth());document.querySelectorAll('[data-filter]').forEach(b=>b.classList.toggle('active',b.dataset.filter===activeFilter));$('list').innerHTML=visible.length?visible.map(x=>`<div class="row ${x.status==='received'?'done':''}" data-id="${x.id}"><button class="row-main" aria-label="Изменить статус: ${escapeHtml(x.name)}"><span class="check">${x.status==='received'?'✓':''}</span><span class="copy"><b>${escapeHtml(x.name)}</b><small><i class="status-dot"></i>${escapeHtml(x.category)} · ${x.status==='received'?'получен':'ожидается'}</small></span><strong>${rub(x.amount)}</strong></button><button class="edit-row" aria-label="Редактировать: ${escapeHtml(x.name)}">✎</button><button class="delete-row" aria-label="Удалить: ${escapeHtml(x.name)}"><i class="trash-icon"></i></button></div>`).join(''):`<div class="empty">${all.length?'В этой выборке пока ничего нет.':'В этом месяце доходов пока нет.<br>Добавьте первый доход кнопкой выше.'}</div>`;document.querySelectorAll('.row-main').forEach(button=>{button.onclick=()=>{if(button.dataset.dragged){delete button.dataset.dragged;return}toggle(Number(button.closest('.row').dataset.id))};setupTouchDrag(button)});document.querySelectorAll('.row').forEach(setupNativeDrag);document.querySelectorAll('.edit-row').forEach(button=>button.onclick=()=>openEdit(Number(button.closest('.row').dataset.id)));document.querySelectorAll('.delete-row').forEach(button=>button.onclick=()=>removeIncome(Number(button.closest('.row').dataset.id)));renderStats()}
@@ -151,12 +153,12 @@
   const buildPayload=()=>({version:5,updatedAt:nowIso(),items,deletedItems,finance,financeUpdatedAt,categories,categoriesUpdatedAt,activity});
   const setSyncState=(state,text)=>{
     const pill=document.getElementById('syncPill');if(!pill)return;
-    pill.className='sync-pill '+state;pill.textContent=text;
+    const title='Синхронизация: '+text;pill.className='sync-pill '+state;pill.dataset.label=text;pill.setAttribute('aria-label',title);pill.title=title;
   };
   const applyCloud=data=>{
     if(!Array.isArray(data.items))return;
     items=data.items.map((item,index)=>({...item,owner:item.owner||'Антон',order:item.order??index,updatedAt:item.updatedAt||data.updatedAt||nowIso()}));
-    deletedItems=data.deletedItems||deletedItems;finance=data.finance||finance;categories=data.categories||categories;activity=data.activity||activity;
+    deletedItems=data.deletedItems||[];finance={...emptyFinance(),...(data.finance||{})};categories=data.categories||categories;activity=data.activity||[];
     financeUpdatedAt=data.financeUpdatedAt||financeUpdatedAt;categoriesUpdatedAt=data.categoriesUpdatedAt||categoriesUpdatedAt;
     localStorage.setItem('income-tracker-v3',JSON.stringify(items));localStorage.setItem(financeKey,JSON.stringify(finance));
     localStorage.setItem('income-categories-v1',JSON.stringify(categories));localStorage.setItem('income-deleted-items-v1',JSON.stringify(deletedItems));
@@ -326,6 +328,202 @@
     render();
   }
 </script>
-<script src="google-sync.js?v=2"></script>
+<script>
+  /* v44 — universal loans system for the Finance section. */
+  const loanTypes={mortgage:'Ипотека',consumer:'Потребительский',auto:'Автокредит',installment:'Рассрочка',other:'Другой'};
+  const loanId=()=>String(Date.now()+Math.random()).replace('.','');
+  const isoMonth=date=>(date||today()).slice(0,7);
+  const parseMoney=value=>Number(String(value||'').replace(/\D/g,''))||0;
+  const parseRate=value=>Number(String(value||'').replace(',','.'))||0;
+  const loanTransactionsSum=loan=>(loan.transactions||[]).filter(x=>x.type==='prepayment').reduce((sum,x)=>sum+Number(x.amount||0),0);
+  function pluralCredit(count){const last=count%10,last2=count%100;if(last===1&&last2!==11)return'активный кредит';if(last>=2&&last<=4&&(last2<12||last2>14))return'активных кредита';return'активных кредитов'}
+  function addMonths(dateString,count){
+    const base=new Date((dateString||today())+'T12:00:00'),day=base.getDate();
+    const target=new Date(base.getFullYear(),base.getMonth()+count+1,0,12);
+    target.setDate(Math.min(day,target.getDate()));
+    return `${target.getFullYear()}-${String(target.getMonth()+1).padStart(2,'0')}-${String(target.getDate()).padStart(2,'0')}`;
+  }
+  function monthsBetween(from,to){
+    if(!from||!to)return 0;
+    const a=new Date(from+'T12:00:00'),b=new Date(to+'T12:00:00');
+    return Math.max(1,(b.getFullYear()-a.getFullYear())*12+b.getMonth()-a.getMonth()+(b.getDate()>=a.getDate()?1:0));
+  }
+  function normalizePaymentRows(rows){
+    return (rows||[]).map(row=>({id:String(row.id||loanId()),type:'prepayment',amount:Number(row.amount)||0,date:row.date||today(),note:row.label||null})).filter(row=>row.amount>0);
+  }
+  function migrateLoans(){
+    finance.loans=Array.isArray(finance.loans)?finance.loans:[];
+    if(localStorage.getItem('finance-loans-migrated-v1')&&finance.loans.length)return;
+    const loans=[];
+    if(Number(finance.mortgageDebt)>0||(finance.mortgageEarlyPayments||[]).length){
+      loans.push({id:'mortgage-'+loanId(),name:'Ипотека',type:'mortgage',initialAmount:null,currentBalance:Number(finance.mortgageDebt)||0,annualRate:0,monthlyPayment:0,startDate:null,nextPaymentDate:today(),originalEndDate:null,paymentType:'annuity',status:'active',createdAt:nowIso(),updatedAt:financeUpdatedAt||nowIso(),transactions:normalizePaymentRows(finance.mortgageEarlyPayments)});
+    }
+    (finance.credits||[]).forEach((credit,index)=>{
+      if(Number(credit.debt)>0||(credit.earlyPayments||[]).length){
+        loans.push({id:String(credit.id||('credit-'+index+'-'+loanId())),name:credit.name||'Кредит',type:'consumer',initialAmount:null,currentBalance:Number(credit.debt)||0,annualRate:Number(credit.annualRate)||0,monthlyPayment:Number(credit.monthlyPayment)||0,startDate:null,nextPaymentDate:credit.nextPaymentDate||today(),originalEndDate:null,paymentType:'annuity',status:credit.archived?'archived':'active',createdAt:nowIso(),updatedAt:financeUpdatedAt||nowIso(),transactions:normalizePaymentRows(credit.earlyPayments)});
+      }
+    });
+    finance.loans=loans;
+    localStorage.setItem('finance-loans-migrated-v1','1');
+    persistFinance();
+  }
+  function amortize({balance,annualRate,monthlyPayment,startDate,maxMonths=600}){
+    balance=Number(balance)||0;annualRate=Number(annualRate)||0;monthlyPayment=Number(monthlyPayment)||0;
+    if(balance<=0)return{months:0,totalInterest:0,endDate:startDate||today(),schedule:[],error:''};
+    const monthlyRate=annualRate/100/12;
+    if(monthlyPayment<=0)return{error:'Укажите ежемесячный платёж.'};
+    if(monthlyRate>0&&monthlyPayment<=balance*monthlyRate)return{error:'При таком платеже кредит не погашается. Проверьте сумму платежа или процентную ставку.'};
+    const schedule=[];let totalInterest=0,date=startDate||today();
+    for(let month=1;month<=maxMonths&&balance>0.5;month++){
+      const interest=monthlyRate?balance*monthlyRate:0;
+      const pay=Math.min(monthlyPayment,balance+interest);
+      const principal=Math.max(0,pay-interest);
+      balance=Math.max(0,balance-principal);
+      totalInterest+=interest;
+      schedule.push({month,balance:Math.round(balance),interest:Math.round(interest),date});
+      date=addMonths(date,1);
+    }
+    if(balance>0.5)return{error:'Слишком длинный срок расчёта. Проверьте параметры кредита.'};
+    return{months:schedule.length,totalInterest:Math.round(totalInterest),endDate:schedule.at(-1)?.date||date,schedule,error:''};
+  }
+  function annuityPayment(balance,annualRate,months){
+    balance=Number(balance)||0;months=Math.max(1,Number(months)||1);
+    const rate=(Number(annualRate)||0)/100/12;
+    if(rate===0)return Math.ceil(balance/months);
+    const pow=Math.pow(1+rate,months);
+    return Math.ceil(balance*rate*pow/(pow-1));
+  }
+  function prepaymentScenarios(loan,amount){
+    const base=amortize({balance:loan.currentBalance,annualRate:loan.annualRate,monthlyPayment:loan.monthlyPayment,startDate:loan.nextPaymentDate});
+    if(base.error)return{base,error:base.error};
+    const prepay=Math.min(Math.max(0,amount),loan.currentBalance);
+    if(prepay>=loan.currentBalance)return{base,closed:true,prepay};
+    const shortened=amortize({balance:loan.currentBalance-prepay,annualRate:loan.annualRate,monthlyPayment:loan.monthlyPayment,startDate:loan.nextPaymentDate});
+    const newPayment=annuityPayment(loan.currentBalance-prepay,loan.annualRate,base.months);
+    const lowered=amortize({balance:loan.currentBalance-prepay,annualRate:loan.annualRate,monthlyPayment:newPayment,startDate:loan.nextPaymentDate,maxMonths:base.months+2});
+    return{base,shortened,lowered,newPayment,prepay,error:shortened.error||lowered.error||''};
+  }
+  function loanProgress(loan){
+    if(!loan.initialAmount||loan.initialAmount<=0||loan.currentBalance>loan.initialAmount)return null;
+    return Math.max(0,Math.min(100,Math.round((loan.initialAmount-loan.currentBalance)/loan.initialAmount*100)));
+  }
+  function niceDate(value, format={day:'numeric',month:'long'}){
+    if(!value)return 'Не указано';
+    return new Date(value+'T12:00:00').toLocaleDateString('ru-RU',format);
+  }
+  function loanMeta(loan){
+    const parts=[];
+    parts.push(Number(loan.annualRate)>0?`${String(loan.annualRate).replace('.',',')}%`:'ставка не указана');
+    parts.push(Number(loan.monthlyPayment)>0?`${moneyText(loan.monthlyPayment)} / мес.`:'платёж не указан');
+    parts.push(loan.nextPaymentDate?niceDate(loan.nextPaymentDate):'дата не указана');
+    return parts.join(' · ');
+  }
+  function operationRows(loan){
+    const rows=(loan.transactions||[]).slice().reverse().slice(0,5);
+    return rows.length?rows.map(row=>`<div class="loan-operation"><span><b>${row.note?escapeHtml(row.note):(row.type==='prepayment'?'Досрочное погашение':'Платёж по кредиту')}</b><small>${niceDate(row.date||today(),{day:'numeric',month:'long',year:'numeric'})}</small></span><strong>${row.type==='prepayment'?'+':''}${moneyText(row.amount)}</strong></div>`).join(''):'<p class="loan-empty-note">Операций пока нет.</p>';
+  }
+  function loanCard(loan){
+    const progress=loanProgress(loan),prepaid=loanTransactionsSum(loan);
+    return `<section class="loan-card" data-loan="${loan.id}"><button class="loan-open"><span class="loan-card-top"><b>${escapeHtml(loan.name)}</b><small>${escapeHtml(loanTypes[loan.type]||'Кредит')}</small></span><strong>${moneyText(loan.currentBalance)}</strong><small class="loan-caption">осталось</small><p>${escapeHtml(loanMeta(loan))}</p>${progress==null?'':`<div class="loan-progress"><i style="width:${progress}%"></i></div><small class="loan-progress-text">${progress}% выплачено</small>`}<em>Досрочно: ${moneyText(prepaid)}</em></button><div class="loan-actions"><button data-loan-prepay="${loan.id}">Досрочно</button><button data-loan-calc="${loan.id}">Калькулятор</button><button data-loan-menu="${loan.id}">⋯</button></div></section>`;
+  }
+  function renderLoansFinance(){
+    migrateLoans();
+    document.querySelector('.info-head .kicker').textContent='ФИНАНСЫ';
+    document.querySelector('.info-head h2').textContent='Финансы';
+    const card=document.querySelector('.finance-main')||document.querySelector('.info-card');
+    if(!card)return;
+    card.classList.add('finance-main','loans-main');
+    const active=finance.loans.filter(loan=>loan.status!=='archived'),archived=finance.loans.filter(loan=>loan.status==='archived');
+    const debt=active.reduce((sum,loan)=>sum+Number(loan.currentBalance||0),0),prepaid=active.reduce((sum,loan)=>sum+loanTransactionsSum(loan),0);
+    card.innerHTML=`<h3>Финансы</h3><p>Сейф, кредиты и досрочные платежи</p><div class="finance-section single loan-safe"><small class="finance-metric-label">Сейф</small><label class="safe-edit"><input class="money-input safe-metric-input" id="safeAmount" inputmode="numeric" value="${moneyText(finance.safe)}"></label></div><section class="loans-block"><h4>Кредиты</h4><div class="loans-list">${active.length?active.map(loanCard).join(''):`<div class="loans-empty"><b>Кредитов пока нет</b><span>Добавьте ипотеку, кредит или рассрочку — приложение будет считать остаток, досрочные платежи и экономию.</span></div>`}</div><button class="add-credit loan-add" id="addLoan"><svg class="ui-icon small" viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></svg>Добавить кредит</button>${archived.length?`<details class="archived-credits loan-archive"><summary>Архив · ${archived.length}</summary>${archived.map(loan=>`<div class="archived-row"><span>${escapeHtml(loan.name)} · ${moneyText(loan.currentBalance)}</span><button data-loan-restore="${loan.id}">Вернуть</button><button data-loan-delete="${loan.id}">Удалить</button></div>`).join('')}</details>`:''}</section>`;
+    const safe=$('safeAmount');safe.onfocus=()=>safe.value=finance.safe||'';safe.oninput=e=>{e.target.value=e.target.value.replace(/\D/g,'');finance.safe=Number(e.target.value);persistFinance()};safe.onblur=()=>safe.value=moneyText(finance.safe);
+    $('addLoan').onclick=()=>openLoanForm();
+    document.querySelectorAll('[data-loan] .loan-open').forEach(button=>button.onclick=()=>openLoanDetail(button.closest('[data-loan]').dataset.loan));
+    document.querySelectorAll('[data-loan-prepay]').forEach(button=>button.onclick=()=>openLoanPrepayment(button.dataset.loanPrepay));
+    document.querySelectorAll('[data-loan-calc]').forEach(button=>button.onclick=()=>openLoanCalculator(button.dataset.loanCalc));
+    document.querySelectorAll('[data-loan-menu]').forEach(button=>button.onclick=event=>{event.stopPropagation();openLoanMenu(button.dataset.loanMenu)});
+    document.querySelectorAll('[data-loan-restore]').forEach(button=>button.onclick=()=>{const loan=findLoan(button.dataset.loanRestore);loan.status='active';loan.updatedAt=nowIso();persistFinance();renderInfo();toast('Кредит восстановлен')});
+    document.querySelectorAll('[data-loan-delete]').forEach(button=>button.onclick=()=>deleteLoan(button.dataset.loanDelete));
+  }
+  function findLoan(id){return finance.loans.find(loan=>String(loan.id)===String(id))}
+  function loanFormValues(loan={}){
+    return `<div class="loan-form"><label>Название<input id="loanName" value="${escapeHtml(loan.name||'')}" placeholder="Например, ипотека"></label><label>Тип<span class="select-wrap"><select id="loanType">${Object.entries(loanTypes).map(([key,label])=>`<option value="${key}" ${loan.type===key?'selected':''}>${label}</option>`).join('')}</select></span></label><label>Остаток долга<input id="loanBalance" inputmode="numeric" value="${loan.currentBalance||''}" placeholder="0"></label><label>Процентная ставка<input id="loanRate" inputmode="decimal" value="${loan.annualRate||''}" placeholder="Введите ставку"></label><label>Ежемесячный платёж<input id="loanPayment" inputmode="numeric" value="${loan.monthlyPayment||''}" placeholder="0"></label><label>Ближайший платёж<input id="loanNextDate" class="thin-date" type="date" value="${loan.nextPaymentDate||''}"></label><label>Первоначальная сумма<input id="loanInitial" inputmode="numeric" value="${loan.initialAmount||''}" placeholder="Необязательно"></label><label>Дата начала<input id="loanStart" class="thin-date" type="date" value="${loan.startDate||''}"></label><label>Плановое закрытие<input id="loanEnd" class="thin-date" type="date" value="${loan.originalEndDate||''}"></label><div class="utility-actions"><button class="utility-primary" id="saveLoan">Сохранить</button></div><p class="sync-status" id="loanFormStatus"></p></div>`;
+  }
+  function openLoanForm(id){
+    const loan=id?findLoan(id):null;
+    openUtility(loan?'Редактировать кредит':'Новый кредит',loanFormValues(loan||{}));
+    ['loanBalance','loanPayment','loanInitial'].forEach(id=>$(id).oninput=e=>e.target.value=e.target.value.replace(/\D/g,''));
+    $('saveLoan').onclick=()=>{
+      const name=$('loanName').value.trim(),balance=parseMoney($('loanBalance').value),payment=parseMoney($('loanPayment').value),rate=parseRate($('loanRate').value);
+      if(!name||balance<=0||payment<0||rate<0){$('loanFormStatus').textContent='Проверьте название, остаток, ставку и платёж.';return}
+      const stamp=nowIso(),payload={name,type:$('loanType').value,currentBalance:balance,annualRate:rate,monthlyPayment:payment,nextPaymentDate:$('loanNextDate').value||today(),initialAmount:parseMoney($('loanInitial').value)||null,startDate:$('loanStart').value||null,originalEndDate:$('loanEnd').value||null,paymentType:'annuity',updatedAt:stamp};
+      if(loan)Object.assign(loan,payload);else finance.loans.push({id:loanId(),status:'active',createdAt:stamp,transactions:[],...payload});
+      persistFinance();closeUtility();renderInfo();toast(loan?'Кредит сохранён':'Кредит добавлен');
+    };
+  }
+  function openLoanMenu(id){
+    const loan=findLoan(id);if(!loan)return;
+    openUtility(loan.name,`<div class="utility-actions"><button class="utility-secondary" id="editLoan">Редактировать</button><button class="utility-secondary" id="archiveLoan">${loan.status==='archived'?'Вернуть в активные':'В архив'}</button><button class="confirm-delete" id="deleteLoan">Удалить</button></div>`);
+    $('editLoan').onclick=()=>openLoanForm(id);
+    $('archiveLoan').onclick=()=>{loan.status=loan.status==='archived'?'active':'archived';loan.updatedAt=nowIso();persistFinance();closeUtility();renderInfo();toast(loan.status==='archived'?'Кредит в архиве':'Кредит восстановлен')};
+    $('deleteLoan').onclick=()=>deleteLoan(id);
+  }
+  async function deleteLoan(id){
+    const loan=findLoan(id);if(!loan||!await askConfirm('Удалить кредит?','Будут удалены параметры кредита и история его платежей.'))return;
+    finance.loans=finance.loans.filter(item=>item.id!==id);persistFinance();closeUtility();renderInfo();toast('Кредит удалён');
+  }
+  function openLoanDetail(id){
+    const loan=findLoan(id);if(!loan)return;
+    const progress=loanProgress(loan),paid=loan.initialAmount?Math.max(0,loan.initialAmount-loan.currentBalance):0,prepaid=loanTransactionsSum(loan);
+    openUtility(loan.name,`<div class="loan-detail-hero"><small>${escapeHtml(loanTypes[loan.type]||'Кредит')}</small><strong>${moneyText(loan.currentBalance)}</strong><span>остаток долга</span>${progress==null?'':`<div class="loan-progress"><i style="width:${progress}%"></i></div><em>${progress}% выплачено</em>`}</div><div class="loan-facts"><span>Ежемесячный платёж<b>${Number(loan.monthlyPayment)>0?moneyText(loan.monthlyPayment):'Не указан'}</b></span><span>Ставка<b>${Number(loan.annualRate)>0?String(loan.annualRate).replace('.',',')+'%':'Не указана'}</b></span><span>Ближайший платёж<b>${niceDate(loan.nextPaymentDate)}</b></span><span>Плановая дата<b>${niceDate(loan.originalEndDate,{month:'long',year:'numeric'})}</b></span><span>Первоначально<b>${loan.initialAmount?moneyText(loan.initialAmount):'Не указано'}</b></span><span>Уже выплачено<b>${moneyText(paid)}</b></span><span>Досрочно внесено<b>${moneyText(prepaid)}</b></span></div><div class="utility-actions"><button class="utility-primary" id="detailPrepay">Досрочно</button><button class="utility-secondary" id="detailCalc">Калькулятор</button></div><h3 class="loan-subtitle">Последние операции</h3><div>${operationRows(loan)}</div>`);
+    $('detailPrepay').onclick=()=>openLoanPrepayment(id);
+    $('detailCalc').onclick=()=>openLoanCalculator(id);
+  }
+  function scenarioCard(title,result,base,extra=''){
+    if(result?.error)return`<section class="loan-scenario"><h4>${title}</h4><p>${escapeHtml(result.error)}</p></section>`;
+    return`<section class="loan-scenario"><h4>${title}</h4>${extra}<span>Дата закрытия<b>${niceDate(result.endDate,{month:'long',year:'numeric'})}</b></span><span>Экономия на процентах<b>${moneyText(Math.max(0,base.totalInterest-result.totalInterest))}</b></span></section>`;
+  }
+  function renderLoanCalc(id){
+    const loan=findLoan(id),amount=parseMoney($('prepayAmount')?.value),out=$('loanCalcResult');if(!loan||!out)return;
+    if(amount<=0){out.innerHTML='<p class="sync-status">Введите сумму — покажу два варианта экономии.</p>';return}
+    const data=prepaymentScenarios(loan,amount);
+    if(data.error){out.innerHTML=`<p class="loan-error">${escapeHtml(data.error)}</p>`;return}
+    if(data.closed){out.innerHTML=`<p class="loan-good">Этой суммы хватит, чтобы закрыть кредит полностью: ${moneyText(loan.currentBalance)}</p>`;return}
+    out.innerHTML=`<div class="loan-scenarios simple">${scenarioCard('Сократить срок',data.shortened,data.base,`<span>Быстрее на<b>${Math.max(0,data.base.months-data.shortened.months)} мес.</b></span>`)}${scenarioCard('Уменьшить платёж',data.lowered,data.base,`<span>Новый платёж<b>${moneyText(data.newPayment)}</b></span>`)}</div><p class="sync-status">Расчёт ориентировочный: банк может считать чуть иначе из-за даты списания и правил начисления процентов.</p>`;
+  }
+  function openLoanCalculator(id){
+    const loan=findLoan(id);if(!loan)return;
+    openUtility('Калькулятор экономии',`<p class="sync-status">${escapeHtml(loan.name)} · остаток ${moneyText(loan.currentBalance)}</p><label>Сумма досрочного платежа<div class="amountbox"><input id="prepayAmount" inputmode="numeric" placeholder="0"><b>₽</b></div></label><div id="loanCalcResult"></div>`);
+    $('prepayAmount').oninput=e=>{e.target.value=e.target.value.replace(/\D/g,'');renderLoanCalc(loan.id)};
+    renderLoanCalc(id);
+  }
+  function renderPrepayPreview(id){
+    const loan=findLoan(id),amount=parseMoney($('prepayAmount')?.value),mode=document.querySelector('[data-prepay-mode].active')?.dataset.prepayMode||'term',out=$('prepayPreview');if(!loan||!out)return;
+    if(amount<=0){out.textContent='Введите сумму платежа.';return}
+    const data=prepaymentScenarios(loan,amount);
+    if(data.error){out.textContent=data.error;return}
+    if(data.closed){out.textContent='Кредит будет закрыт полностью.';return}
+    out.textContent=mode==='term'?`Экономия на процентах: ${moneyText(Math.max(0,data.base.totalInterest-data.shortened.totalInterest))}`:`Новый платёж: ${moneyText(data.newPayment)}. Экономия: ${moneyText(Math.max(0,data.base.totalInterest-data.lowered.totalInterest))}`;
+  }
+  function openLoanPrepayment(id){
+    const loan=findLoan(id);if(!loan)return;
+    openUtility('Досрочный платёж',`<p class="sync-status">${escapeHtml(loan.name)} · остаток ${moneyText(loan.currentBalance)}</p><label>Сумма<div class="amountbox"><input id="prepayAmount" inputmode="numeric" placeholder="0"><b>₽</b></div></label><div class="prepay-choice"><button class="active" data-prepay-mode="term">Сократить срок</button><button data-prepay-mode="payment">Уменьшить платёж</button></div><p class="prepay-preview" id="prepayPreview">Введите сумму платежа.</p><div class="utility-actions"><button class="utility-primary" id="recordPrepayment">Записать платёж</button></div>`);
+    $('prepayAmount').oninput=e=>{e.target.value=e.target.value.replace(/\D/g,'');renderPrepayPreview(id)};
+    document.querySelectorAll('[data-prepay-mode]').forEach(button=>button.onclick=()=>{document.querySelectorAll('[data-prepay-mode]').forEach(x=>x.classList.remove('active'));button.classList.add('active');renderPrepayPreview(id)});
+    $('recordPrepayment').onclick=async()=>{const amount=Math.min(parseMoney($('prepayAmount').value),loan.currentBalance),mode=document.querySelector('[data-prepay-mode].active')?.dataset.prepayMode||'term';if(amount<=0)return;if(!await askConfirm('Записать досрочный платёж?',`${moneyText(amount)} будет вычтено из остатка кредита.`))return;const data=prepaymentScenarios(loan,amount);loan.transactions||=[];loan.transactions.push({id:loanId(),type:'prepayment',amount,date:today(),note:mode==='term'?'Сокращение срока':'Уменьшение платежа',strategy:mode});loan.currentBalance=Math.max(0,loan.currentBalance-amount);if(mode==='payment'&&data.newPayment)loan.monthlyPayment=data.newPayment;if(loan.currentBalance===0)loan.status='archived';loan.updatedAt=nowIso();persistFinance();closeUtility();renderInfo();toast('Досрочный платёж записан')};
+  }
+  function chartLines(base,shortened,lowered){
+    const max=Math.max(base.schedule[0]?.balance||1,1),points=schedule=>schedule.filter((_,i)=>i%Math.max(1,Math.ceil(schedule.length/18))===0).map((p,i,arr)=>`${arr.length===1?0:i/(arr.length-1)*100},${100-p.balance/max*100}`).join(' ');
+    return`<svg viewBox="0 0 100 100" preserveAspectRatio="none"><polyline points="${points(base.schedule)}"/><polyline class="green" points="${points(shortened.schedule)}"/><polyline class="soft" points="${points(lowered.schedule)}"/></svg><span>остаток долга</span>`;
+  }
+  function openLoanSchedule(id){
+    const loan=findLoan(id),base=amortize({balance:loan.currentBalance,annualRate:loan.annualRate,monthlyPayment:loan.monthlyPayment,startDate:loan.nextPaymentDate});if(!loan)return;
+    openUtility('График платежей',base.error?`<p class="loan-error">${escapeHtml(base.error)}</p>`:`<p class="sync-status">${escapeHtml(loan.name)} · ${base.months} мес.</p><div class="loan-schedule">${base.schedule.slice(0,36).map(row=>`<div><span>${new Date(row.date+'T12:00:00').toLocaleDateString('ru-RU',{month:'short',year:'2-digit'})}</span><b>${moneyText(row.balance)}</b></div>`).join('')}</div>`);
+  }
+  migrateLoans();
+  renderInfo=renderLoansFinance;
+  if(currentView==='info')renderInfo();
+</script>
+<script src="google-sync.js?v=5"></script>
 </body>
 </html>

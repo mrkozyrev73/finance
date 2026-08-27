@@ -7,7 +7,7 @@
   <meta name="apple-mobile-web-app-capable" content="yes">
   <link rel="manifest" href="manifest.webmanifest">
   <link rel="apple-touch-icon" href="icon-192.png">
-  <link rel="stylesheet" href="app.css?v=10">
+  <link rel="stylesheet" href="app.css?v=13">
   <title>Мои доходы</title>
 </head>
 <body>
@@ -105,7 +105,7 @@
   const searchMarkup=`<div class="search-box" id="searchBox"><svg class="ui-icon" viewBox="0 0 24 24"><circle cx="11" cy="11" r="6"/><path d="m16 16 4 4"/></svg><input id="incomeSearch" type="search" placeholder="Найти доход" aria-label="Поиск доходов"><button class="search-clear" id="searchClear" aria-label="Очистить поиск">×</button></div>`;
   $('homeView').insertAdjacentHTML('beforebegin',searchMarkup);$('form').querySelector('.hint').insertAdjacentHTML('afterend','<label class="recurring-field"><span>Повторять каждый месяц</span><input id="recurring" type="checkbox"></label>');document.querySelector('.stats-summary').insertAdjacentHTML('afterend','<div class="stats-compare" id="statsCompare"></div>');
   document.body.insertAdjacentHTML('beforeend',`<div class="utility-scrim" id="utilityScrim"><section class="utility-sheet"><div class="grab"></div><div class="utility-head"><h2 id="utilityTitle"></h2><button class="utility-close" id="utilityClose" aria-label="Закрыть">×</button></div><div class="utility-body" id="utilityBody"></div></section></div>`);
-  const closeUtility=()=>$('utilityScrim').classList.remove('open');function openUtility(title,html){$('utilityTitle').textContent=title;$('utilityBody').innerHTML=html;$('utilityScrim').classList.add('open')}$('utilityClose').onclick=closeUtility;$('utilityScrim').onclick=e=>{if(e.target===$('utilityScrim'))closeUtility()};
+  let utilityLocked=false;const closeUtility=()=>{utilityLocked=false;$('utilityScrim').classList.remove('open','locked')};function openUtility(title,html,options={}){utilityLocked=Boolean(options.lockClose);$('utilityTitle').textContent=title;$('utilityBody').innerHTML=html;$('utilityScrim').classList.toggle('locked',utilityLocked);$('utilityScrim').classList.add('open')}$('utilityClose').onclick=closeUtility;$('utilityScrim').onclick=e=>{if(e.target===$('utilityScrim')&&!utilityLocked)closeUtility()};
   document.querySelector('.tool-grid').insertAdjacentHTML('beforeend','<button id="manageCategories">Категории</button><button id="restoreAuto">Автокопии</button>');document.querySelector('.data-tools').insertAdjacentHTML('beforeend','<div class="backup-note" id="backupNote">Автоматические копии включены</div>');
 
   function refreshCategorySelect(selected){const select=$('category');select.innerHTML=categories.map(c=>`<option ${c===selected?'selected':''}>${escapeHtml(c)}</option>`).join('')}
@@ -138,8 +138,8 @@
   const nowIso=()=>new Date().toISOString();
   let deletedItems=JSON.parse(localStorage.getItem('income-deleted-items-v1')||'[]');
   let activity=JSON.parse(localStorage.getItem('income-activity-v1')||'[]');
-  let financeUpdatedAt=localStorage.getItem('income-finance-updated-at')||nowIso();
-  let categoriesUpdatedAt=localStorage.getItem('income-categories-updated-at')||nowIso();
+  let financeUpdatedAt=localStorage.getItem('income-finance-updated-at')||(remoteFirst?'1970-01-01T00:00:00.000Z':nowIso());
+  let categoriesUpdatedAt=localStorage.getItem('income-categories-updated-at')||(remoteFirst?'1970-01-01T00:00:00.000Z':nowIso());
   let activeOwner='all';
   let formOwner='Антон';
   items=items.map((item,index)=>({...item,owner:item.owner||'Антон',order:item.order??index,updatedAt:item.updatedAt||'2026-08-25T00:00:00.000Z'}));
@@ -292,8 +292,13 @@
     $('statsCompare').innerHTML=`<span>К предыдущему месяцу</span><b class="${delta>0?'up':delta<0?'down':''}">${delta>0?'+':''}${delta}% · ${rub(now-before)}</b>`;
   }
   const renderStatsDetailsBase=renderStats;
+  function ensureStatsFilterGear(){
+    const summary=document.querySelector('.stats-summary');if(!summary)return;
+    if(!document.getElementById('statsFilterGear'))summary.insertAdjacentHTML('beforeend',`<button class="stats-filter-gear" id="statsFilterGear" aria-label="Фильтровать статистику"><svg class="ui-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 6h16M7 12h10M10 18h4"/></svg><span>Фильтр</span></button>`);
+    $('statsFilterGear').onclick=()=>{openUtility('Фильтр статистики',`<p class="sync-status">Статистика показывает только полученные доходы.</p><label>Чьи доходы показывать<select id="statsOwnerSheet"><option value="all">Все полученные</option><option>Антон</option><option>Алёна</option></select></label><div class="utility-actions"><button class="utility-primary" id="saveStatsFilter">Применить</button></div>`);$('statsOwnerSheet').value=statsOwner.value;$('saveStatsFilter').onclick=()=>{statsOwner.value=$('statsOwnerSheet').value;closeUtility();renderStats()}};
+  }
   renderStats=function(){
-    renderStatsDetailsBase();$('statsDetails').innerHTML='';if(statsStatus.isConnected)statsStatus.remove();statsOwner.options[0].textContent='Все полученные';statsOwner.parentElement.style.gridTemplateColumns='1fr';statsOwner.parentElement.hidden=statsPeriod==='year';document.querySelector('.stats-summary').classList.add('single');
+    renderStatsDetailsBase();$('statsDetails').innerHTML='';if(statsStatus.isConnected)statsStatus.remove();statsOwner.options[0].textContent='Все полученные';statsOwner.parentElement.style.gridTemplateColumns='1fr';statsOwner.parentElement.hidden=true;document.querySelector('.stats-summary').classList.add('single');ensureStatsFilterGear();
     if(statsPeriod==='year')renderReceivedYear();else renderReceivedMonth();
     $('statsCompare').hidden=true;renderBreakdown();
   };
@@ -501,7 +506,7 @@
   }
   function openLoanCalculator(id){
     const loan=findLoan(id);if(!loan)return;
-    openUtility('Калькулятор экономии',`<p class="sync-status">${escapeHtml(loan.name)} · остаток ${moneyText(loan.currentBalance)}</p><label class="loan-amount-label">Сумма досрочного платежа<div class="amountbox loan-amountbox"><input id="prepayAmount" inputmode="numeric" placeholder="0"><b>₽</b></div></label><div id="loanCalcResult"></div>`);
+    openUtility('Калькулятор экономии',`<p class="sync-status">${escapeHtml(loan.name)} · остаток ${moneyText(loan.currentBalance)}</p><label class="loan-amount-label">Сумма досрочного платежа<div class="amountbox loan-amountbox"><input id="prepayAmount" inputmode="numeric" placeholder="0"><b>₽</b></div></label><div id="loanCalcResult"></div>`,{lockClose:true});
     $('prepayAmount').oninput=e=>{e.target.value=e.target.value.replace(/\D/g,'');renderLoanCalc(loan.id)};
     renderLoanCalc(id);
   }
@@ -515,7 +520,7 @@
   }
   function openLoanPrepayment(id){
     const loan=findLoan(id);if(!loan)return;
-    openUtility('Досрочный платёж',`<p class="sync-status">${escapeHtml(loan.name)} · остаток ${moneyText(loan.currentBalance)}</p><label class="loan-amount-label">Сумма<div class="amountbox loan-amountbox"><input id="prepayAmount" inputmode="numeric" placeholder="0"><b>₽</b></div></label><div class="prepay-choice"><button class="active" data-prepay-mode="term">Сократить срок</button><button data-prepay-mode="payment">Уменьшить платёж</button></div><p class="prepay-preview" id="prepayPreview">Введите сумму платежа.</p><div class="utility-actions"><button class="utility-primary" id="recordPrepayment">Внести досрочный платёж</button></div>`);
+    openUtility('Досрочный платёж',`<p class="sync-status">${escapeHtml(loan.name)} · остаток ${moneyText(loan.currentBalance)}</p><label class="loan-amount-label">Сумма<div class="amountbox loan-amountbox"><input id="prepayAmount" inputmode="numeric" placeholder="0"><b>₽</b></div></label><div class="prepay-choice"><button class="active" data-prepay-mode="term">Сократить срок</button><button data-prepay-mode="payment">Уменьшить платёж</button></div><p class="prepay-preview" id="prepayPreview">Введите сумму платежа.</p><div class="utility-actions"><button class="utility-primary" id="recordPrepayment">Внести досрочный платёж</button></div>`,{lockClose:true});
     $('prepayAmount').oninput=e=>{e.target.value=e.target.value.replace(/\D/g,'');renderPrepayPreview(id)};
     document.querySelectorAll('[data-prepay-mode]').forEach(button=>button.onclick=()=>{document.querySelectorAll('[data-prepay-mode]').forEach(x=>x.classList.remove('active'));button.classList.add('active');renderPrepayPreview(id)});
     $('recordPrepayment').onclick=()=>{const amount=Math.min(parseMoney($('prepayAmount').value),loan.currentBalance),mode=document.querySelector('[data-prepay-mode].active')?.dataset.prepayMode||'term';if(amount<=0)return;const data=prepaymentScenarios(loan,amount);loan.transactions||=[];loan.transactions.push({id:loanId(),type:'prepayment',amount,date:today(),note:mode==='term'?'Сокращение срока':'Уменьшение платежа',strategy:mode});loan.currentBalance=Math.max(0,loan.currentBalance-amount);if(mode==='payment'&&data.newPayment)loan.monthlyPayment=data.newPayment;if(loan.currentBalance===0)loan.status='archived';loan.updatedAt=nowIso();persistFinance();closeUtility();renderInfo();toast('Досрочный платёж внесён')};
@@ -533,6 +538,6 @@
   if(currentView==='info')renderInfo();
 </script>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-<script src="supabase-sync.js?v=1"></script>
+<script src="supabase-sync.js?v=3"></script>
 </body>
 </html>

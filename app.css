@@ -996,3 +996,24 @@ input:focus,select:focus,textarea:focus,.amountbox:focus-within{
   font-size:18px!important;
   font-weight:560!important;
 }
+
+/* v54 — loan utility sheets close only by X */
+.utility-scrim.locked{
+  overscroll-behavior:contain!important;
+}
+.utility-scrim.locked .utility-sheet{
+  overscroll-behavior:contain!important;
+  touch-action:pan-y!important;
+}
+.utility-scrim.locked .grab{
+  opacity:.34!important;
+  pointer-events:none!important;
+}
+
+/* v56 — clear statistics filter and stable empty state */
+.stats-view .stats-summary{position:relative!important;padding-right:116px!important;min-height:88px!important}
+.stats-filter-gear{position:absolute;top:18px;right:18px;display:flex;align-items:center;gap:7px;height:34px;padding:0 11px;border:1px solid rgba(255,255,255,.14);border-radius:11px;background:rgba(255,255,255,.09);color:#eef3ef;font:inherit;font-size:11px;font-weight:580;white-space:nowrap}
+.stats-filter-gear .ui-icon{width:15px;height:15px;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round}
+.stats-filter-gear:active{background:rgba(255,255,255,.16)}
+.stats-breakdown-empty{display:grid;place-items:center;min-height:150px;padding:28px 18px!important;line-height:1.45}
+@media(max-width:360px){.stats-view .stats-summary{padding-right:98px!important}.stats-filter-gear{right:14px;padding:0 9px}.stats-filter-gear span{font-size:10px}}

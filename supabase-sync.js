@@ -71,12 +71,6 @@
       history:cloud.history||local.history||{},historyTotals:cloud.historyTotals||local.historyTotals||{}
     };
   }
-  const localModifiedAt=local=>Math.max(
-    stamp(local.financeUpdatedAt),stamp(local.categoriesUpdatedAt),
-    ...(local.items||[]).map(x=>stamp(x.updatedAt)),
-    ...(local.deletedItems||[]).map(x=>stamp(x.updatedAt))
-  );
-
   /* ---------- ошибки (никогда не трём локальные данные) ---------- */
   function showError(error){
     console.error('[supabase]',error);
@@ -145,19 +139,16 @@
     await ensureHousehold();
     if(!householdId){setSyncState('error','Ошибка');return}
     const {data,error}=await client.from('app_state')
-      .select('payload,revision,updated_at').eq('household_id',householdId).single();
+      .select('payload,revision,updated_at').eq('household_id',householdId).maybeSingle();
     if(error)throw error;
-    revision=Number(data.revision||0);localStorage.setItem(REVISION_KEY,String(revision));
-    const remote=data.payload||{};
-    const local=localPayload();
-    const hasRemote=Array.isArray(remote.items)&&remote.items.length;
-    const hasLocal=local.items?.length||Object.keys(local.history||{}).length||Object.keys(local.historyTotals||{}).length;
+    revision=Number(data?.revision||0);localStorage.setItem(REVISION_KEY,String(revision));
+    const remote=data?.payload||{};
+    const hasRemote=Array.isArray(remote.items)||Boolean(remote.finance)||Boolean(remote.history)||Boolean(remote.historyTotals);
     if(hasRemote){
-      // если локально есть более свежие правки — сливаем и отправляем, иначе принимаем облако
-      if(localModifiedAt(local)>stamp(remote.updatedAt)){applyPayload(mergePayload(remote,local));await saveNow()}
-      else applyPayload(remote);
-    }else if(hasLocal){
-      // первичная миграция: облако пустое, локально есть данные — заливаем их
+      // Supabase — источник истины: при каждом подключении сначала принимаем весь payload сервера.
+      applyPayload(remote);
+    }else{
+      applyPayload({version:6,updatedAt:new Date().toISOString(),items:[],deletedItems:[],finance:{},categories:categories||[],activity:[],history:{},historyTotals:{}});
       await saveNow();
     }
     subscribe();
@@ -172,7 +163,8 @@
         const row=payload.new;
         if(saving||Number(row.revision)<=revision)return;
         revision=Number(row.revision);localStorage.setItem(REVISION_KEY,String(revision));
-        applyPayload(mergePayload(row.payload||{},localPayload()));
+        // Новая серверная ревизия уже содержит полное состояние приложения.
+        applyPayload(row.payload||{});
         setSyncState('ok','Обновлено');
       }).subscribe();
   }
@@ -232,7 +224,11 @@
               status.textContent='Создаём аккаунт…';
               const signUp=await client.auth.signUp({email,password});
               if(signUp.error){status.textContent=authMessage(signUp.error);$('sbGo').disabled=false;return}
-              if(!signUp.data.session){status.textContent='Аккаунт создан. Нажмите «Войти» ещё раз этим же паролем.';$('sbGo').disabled=false;return}
+              if(!signUp.data.session){
+                status.textContent='Аккаунт создан, входим…';
+                const secondSignIn=await client.auth.signInWithPassword({email,password});
+                if(secondSignIn.error){status.textContent=authMessage(secondSignIn.error);$('sbGo').disabled=false;return}
+              }
             }else{status.textContent=authMessage(signIn.error);$('sbGo').disabled=false;return}
           }
           session=(await client.auth.getSession()).data.session||session;
@@ -249,7 +245,7 @@
     }
 
     openUtility('Синхронизация',`<div class="settings-status"><span class="settings-status-dot"></span><span><b>Синхронизация включена</b><small>${escapeHtml(session.user.email||'')}</small></span></div><p class="sync-status">Тот же email и пароль работают на любом другом телефоне — данные общие. Доступ защищён на сервере (RLS), посторонние ваши записи не видят.</p><div class="utility-actions"><button class="utility-primary" id="sbSyncNow">Обновить сейчас</button><button class="utility-secondary" id="sbSignOut">Выйти</button></div>`);
-    $('sbSyncNow').onclick=()=>saveNow().then(()=>toast('Готово'));
+    $('sbSyncNow').onclick=()=>connect().then(()=>toast('Данные загружены'));
     $('sbSignOut').onclick=async()=>{await client.auth.signOut();closeUtility();location.reload()};
   }
 

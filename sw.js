@@ -1,4 +1,4 @@
-const CACHE='moi-dohody-v50',FILES=['./','./index.html','./app.css?v=8','./google-sync.js?v=5','./manifest.webmanifest','./icon-192.png','./icon-512.png'];
+const CACHE='moi-dohody-v53',FILES=['./','./index.html','./app.css?v=10','./supabase-sync.js?v=1','./manifest.webmanifest','./icon-192.png','./icon-512.png'];
 self.addEventListener('install',event=>event.waitUntil(caches.open(CACHE).then(cache=>cache.addAll(FILES))));
 self.addEventListener('activate',event=>event.waitUntil(caches.keys().then(keys=>Promise.all(keys.filter(key=>key!==CACHE).map(key=>caches.delete(key))))));
 self.addEventListener('fetch',event=>{

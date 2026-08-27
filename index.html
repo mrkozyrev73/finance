@@ -7,7 +7,7 @@
   <meta name="apple-mobile-web-app-capable" content="yes">
   <link rel="manifest" href="manifest.webmanifest">
   <link rel="apple-touch-icon" href="icon-192.png">
-  <link rel="stylesheet" href="app.css?v=8">
+  <link rel="stylesheet" href="app.css?v=10">
   <title>Мои доходы</title>
 </head>
 <body>
@@ -218,9 +218,9 @@
   function openSettings(){
     const syncText=$('syncPill')?.textContent||'Синхронизация';
     openUtility('Настройки',`
-      <div class="settings-status"><span class="settings-status-dot"></span><span><b>Google Таблица</b><small>${escapeHtml(syncText)} · закрытая таблица с секретным token</small></span></div>
+      <div class="settings-status"><span class="settings-status-dot"></span><span><b>Синхронизация</b><small>${escapeHtml(syncText)} · Supabase, вход по паролю</small></span></div>
       <section class="settings-group"><h3>Синхронизация</h3>
-        ${settingsRow('googleSettings','↻','Google Таблица','Подключение, загрузка и второй телефон')}
+        ${settingsRow('supabaseSettings','↻','Синхронизация (Supabase)','Вход и второй телефон')}
       </section>
       <section class="settings-group"><h3>Данные и копии</h3>
         ${settingsRow('exportData','↓','Скачать копию','Сохранить резервный файл на устройство')}
@@ -233,7 +233,7 @@
         ${settingsRow('activityButton','⌁','История действий','Последние изменения приложения')}
         ${settingsRow('trashButton','⌫','Корзина','Удалённые доходы за 30 дней')}
       </section>
-      <p class="settings-privacy">Таблица остаётся закрытой. Не публикуйте ссылку Apps Script с token.</p>`);
+      <p class="settings-privacy">Данные хранятся в Supabase под защитой RLS. Вход по паролю, посторонние ваши записи не видят.</p>`);
     document.querySelectorAll('[data-settings-action]').forEach(button=>button.onclick=()=>$(button.dataset.settingsAction)?.click());
   }
   $('settingsButton').onclick=openSettings;
@@ -336,6 +336,14 @@
   const parseMoney=value=>Number(String(value||'').replace(/\D/g,''))||0;
   const parseRate=value=>Number(String(value||'').replace(',','.'))||0;
   const loanTransactionsSum=loan=>(loan.transactions||[]).filter(x=>x.type==='prepayment').reduce((sum,x)=>sum+Number(x.amount||0),0);
+  function loanInterestSaved(loan){
+    const prepaid=loanTransactionsSum(loan);
+    if(prepaid<=0||Number(loan.currentBalance)<=0||Number(loan.annualRate)<=0||Number(loan.monthlyPayment)<=0)return 0;
+    const withoutPrepayments=amortize({balance:Number(loan.currentBalance)+prepaid,annualRate:loan.annualRate,monthlyPayment:loan.monthlyPayment,startDate:loan.nextPaymentDate||today()});
+    const withPrepayments=amortize({balance:loan.currentBalance,annualRate:loan.annualRate,monthlyPayment:loan.monthlyPayment,startDate:loan.nextPaymentDate||today()});
+    if(withoutPrepayments.error||withPrepayments.error)return 0;
+    return Math.max(0,withoutPrepayments.totalInterest-withPrepayments.totalInterest);
+  }
   function pluralCredit(count){const last=count%10,last2=count%100;if(last===1&&last2!==11)return'активный кредит';if(last>=2&&last<=4&&(last2<12||last2>14))return'активных кредита';return'активных кредитов'}
   function addMonths(dateString,count){
     const base=new Date((dateString||today())+'T12:00:00'),day=base.getDate();
@@ -423,8 +431,8 @@
     return rows.length?rows.map(row=>`<div class="loan-operation"><span><b>${row.note?escapeHtml(row.note):(row.type==='prepayment'?'Досрочное погашение':'Платёж по кредиту')}</b><small>${niceDate(row.date||today(),{day:'numeric',month:'long',year:'numeric'})}</small></span><strong>${row.type==='prepayment'?'+':''}${moneyText(row.amount)}</strong></div>`).join(''):'<p class="loan-empty-note">Операций пока нет.</p>';
   }
   function loanCard(loan){
-    const progress=loanProgress(loan),prepaid=loanTransactionsSum(loan);
-    return `<section class="loan-card" data-loan="${loan.id}"><button class="loan-open"><span class="loan-card-top"><b>${escapeHtml(loan.name)}</b><small>${escapeHtml(loanTypes[loan.type]||'Кредит')}</small></span><strong>${moneyText(loan.currentBalance)}</strong><small class="loan-caption">осталось</small><p>${escapeHtml(loanMeta(loan))}</p>${progress==null?'':`<div class="loan-progress"><i style="width:${progress}%"></i></div><small class="loan-progress-text">${progress}% выплачено</small>`}<em>Досрочно: ${moneyText(prepaid)}</em></button><div class="loan-actions"><button data-loan-prepay="${loan.id}">Досрочно</button><button data-loan-calc="${loan.id}">Калькулятор</button><button data-loan-menu="${loan.id}">⋯</button></div></section>`;
+    const progress=loanProgress(loan),prepaid=loanTransactionsSum(loan),saved=loanInterestSaved(loan);
+    return `<section class="loan-card" data-loan="${loan.id}"><button class="loan-open"><span class="loan-card-top"><b>${escapeHtml(loan.name)}</b><small>${escapeHtml(loanTypes[loan.type]||'Кредит')}</small></span><strong>${moneyText(loan.currentBalance)}</strong><small class="loan-caption">осталось</small><p>${escapeHtml(loanMeta(loan))}</p>${progress==null?'':`<div class="loan-progress"><i style="width:${progress}%"></i></div><small class="loan-progress-text">${progress}% выплачено</small>`}<div class="loan-card-metrics"><span>Внесено досрочно <b>${moneyText(prepaid)}</b></span><span>Сэкономлено на процентах <b>${moneyText(saved)}</b></span></div></button><div class="loan-actions"><button data-loan-prepay="${loan.id}">Досрочно</button><button data-loan-calc="${loan.id}">Калькулятор</button><button data-loan-menu="${loan.id}">⋯</button></div></section>`;
   }
   function renderLoansFinance(){
     migrateLoans();
@@ -493,7 +501,7 @@
   }
   function openLoanCalculator(id){
     const loan=findLoan(id);if(!loan)return;
-    openUtility('Калькулятор экономии',`<p class="sync-status">${escapeHtml(loan.name)} · остаток ${moneyText(loan.currentBalance)}</p><label>Сумма досрочного платежа<div class="amountbox"><input id="prepayAmount" inputmode="numeric" placeholder="0"><b>₽</b></div></label><div id="loanCalcResult"></div>`);
+    openUtility('Калькулятор экономии',`<p class="sync-status">${escapeHtml(loan.name)} · остаток ${moneyText(loan.currentBalance)}</p><label class="loan-amount-label">Сумма досрочного платежа<div class="amountbox loan-amountbox"><input id="prepayAmount" inputmode="numeric" placeholder="0"><b>₽</b></div></label><div id="loanCalcResult"></div>`);
     $('prepayAmount').oninput=e=>{e.target.value=e.target.value.replace(/\D/g,'');renderLoanCalc(loan.id)};
     renderLoanCalc(id);
   }
@@ -507,10 +515,10 @@
   }
   function openLoanPrepayment(id){
     const loan=findLoan(id);if(!loan)return;
-    openUtility('Досрочный платёж',`<p class="sync-status">${escapeHtml(loan.name)} · остаток ${moneyText(loan.currentBalance)}</p><label>Сумма<div class="amountbox"><input id="prepayAmount" inputmode="numeric" placeholder="0"><b>₽</b></div></label><div class="prepay-choice"><button class="active" data-prepay-mode="term">Сократить срок</button><button data-prepay-mode="payment">Уменьшить платёж</button></div><p class="prepay-preview" id="prepayPreview">Введите сумму платежа.</p><div class="utility-actions"><button class="utility-primary" id="recordPrepayment">Записать платёж</button></div>`);
+    openUtility('Досрочный платёж',`<p class="sync-status">${escapeHtml(loan.name)} · остаток ${moneyText(loan.currentBalance)}</p><label class="loan-amount-label">Сумма<div class="amountbox loan-amountbox"><input id="prepayAmount" inputmode="numeric" placeholder="0"><b>₽</b></div></label><div class="prepay-choice"><button class="active" data-prepay-mode="term">Сократить срок</button><button data-prepay-mode="payment">Уменьшить платёж</button></div><p class="prepay-preview" id="prepayPreview">Введите сумму платежа.</p><div class="utility-actions"><button class="utility-primary" id="recordPrepayment">Внести досрочный платёж</button></div>`);
     $('prepayAmount').oninput=e=>{e.target.value=e.target.value.replace(/\D/g,'');renderPrepayPreview(id)};
     document.querySelectorAll('[data-prepay-mode]').forEach(button=>button.onclick=()=>{document.querySelectorAll('[data-prepay-mode]').forEach(x=>x.classList.remove('active'));button.classList.add('active');renderPrepayPreview(id)});
-    $('recordPrepayment').onclick=async()=>{const amount=Math.min(parseMoney($('prepayAmount').value),loan.currentBalance),mode=document.querySelector('[data-prepay-mode].active')?.dataset.prepayMode||'term';if(amount<=0)return;if(!await askConfirm('Записать досрочный платёж?',`${moneyText(amount)} будет вычтено из остатка кредита.`))return;const data=prepaymentScenarios(loan,amount);loan.transactions||=[];loan.transactions.push({id:loanId(),type:'prepayment',amount,date:today(),note:mode==='term'?'Сокращение срока':'Уменьшение платежа',strategy:mode});loan.currentBalance=Math.max(0,loan.currentBalance-amount);if(mode==='payment'&&data.newPayment)loan.monthlyPayment=data.newPayment;if(loan.currentBalance===0)loan.status='archived';loan.updatedAt=nowIso();persistFinance();closeUtility();renderInfo();toast('Досрочный платёж записан')};
+    $('recordPrepayment').onclick=()=>{const amount=Math.min(parseMoney($('prepayAmount').value),loan.currentBalance),mode=document.querySelector('[data-prepay-mode].active')?.dataset.prepayMode||'term';if(amount<=0)return;const data=prepaymentScenarios(loan,amount);loan.transactions||=[];loan.transactions.push({id:loanId(),type:'prepayment',amount,date:today(),note:mode==='term'?'Сокращение срока':'Уменьшение платежа',strategy:mode});loan.currentBalance=Math.max(0,loan.currentBalance-amount);if(mode==='payment'&&data.newPayment)loan.monthlyPayment=data.newPayment;if(loan.currentBalance===0)loan.status='archived';loan.updatedAt=nowIso();persistFinance();closeUtility();renderInfo();toast('Досрочный платёж внесён')};
   }
   function chartLines(base,shortened,lowered){
     const max=Math.max(base.schedule[0]?.balance||1,1),points=schedule=>schedule.filter((_,i)=>i%Math.max(1,Math.ceil(schedule.length/18))===0).map((p,i,arr)=>`${arr.length===1?0:i/(arr.length-1)*100},${100-p.balance/max*100}`).join(' ');
@@ -524,6 +532,7 @@
   renderInfo=renderLoansFinance;
   if(currentView==='info')renderInfo();
 </script>
-<script src="google-sync.js?v=5"></script>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="supabase-sync.js?v=1"></script>
 </body>
 </html>

@@ -1,160 +1,272 @@
-/* Supabase Auth + shared household state. No private/service keys belong here. */
+/* «Мои доходы» — слой данных Supabase (замена Google Sheets).
+   Модель: всё состояние приложения хранится как единый JSON payload в таблице
+   public.app_state (одна строка на household), под защитой RLS. Локальный localStorage
+   используется только как кеш/офлайн-буфер, источник истины — Supabase.
+   Вход: только по паролю (никаких magic link). service_role во фронте нет —
+   только публичный publishable/anon-ключ. */
 (() => {
   const CONFIG_KEY='income-supabase-config-v1';
-  const DEFAULT_CONFIG={url:'https://gftgurqxibkcueimsquz.supabase.co',key:'sb_publishable_O9mp1Y-ujrJQP6o6JM9WMg_Pj8dP5JW'};
   const HOUSEHOLD_KEY='income-supabase-household-v1';
   const REVISION_KEY='income-supabase-revision-v1';
-  let client=null,session=null,householdId=localStorage.getItem(HOUSEHOLD_KEY)||'',revision=Number(localStorage.getItem(REVISION_KEY)||0),channel=null,saving=false,pushTimer=null;
+  const LAST_ERROR_KEY='income-supabase-last-error';
+  // Публичные параметры проекта (можно переопределить в настройках приложения).
+  const DEFAULT_CONFIG={
+    url:'https://gftgurqxibkcueimsquz.supabase.co',
+    key:'sb_publishable_O9mp1Y-ujrJQP6o6JM9WMg_Pj8dP5JW'
+  };
+
+  let client=null,session=null;
+  let householdId=localStorage.getItem(HOUSEHOLD_KEY)||'';
+  let revision=Number(localStorage.getItem(REVISION_KEY)||0);
+  let channel=null,saving=false,pushTimer=null,connecting=null;
 
   const config=()=>{try{return JSON.parse(localStorage.getItem(CONFIG_KEY)||'null')||DEFAULT_CONFIG}catch{return DEFAULT_CONFIG}};
   const stamp=value=>{const n=Date.parse(value||0);return Number.isFinite(n)?n:0};
-  const newer=(a,b)=>stamp(a?.updatedAt)>=stamp(b?.updatedAt)?a:b;
 
-  function mergePayload(cloud={},local={}){
-    const deleted=new Map();
-    [...(cloud.deletedItems||[]),...(local.deletedItems||[])].forEach(x=>{const id=String(x.id),old=deleted.get(id);if(!old||stamp(x.updatedAt)>=stamp(old.updatedAt))deleted.set(id,x)});
-    const mergedItems=new Map();
-    [...(cloud.items||[]),...(local.items||[])].forEach(x=>{const id=String(x.id),old=mergedItems.get(id);if(!old||stamp(x.updatedAt)>=stamp(old.updatedAt))mergedItems.set(id,x)});
-    deleted.forEach((entry,id)=>{const item=mergedItems.get(id);if(!item||stamp(entry.updatedAt)>=stamp(item.updatedAt))mergedItems.delete(id)});
-    const financeSource=stamp(local.financeUpdatedAt)>=stamp(cloud.financeUpdatedAt)?local:cloud;
-    const categorySource=stamp(local.categoriesUpdatedAt)>=stamp(cloud.categoriesUpdatedAt)?local:cloud;
-    const activityMap=new Map();
-    [...(cloud.activity||[]),...(local.activity||[])].forEach(x=>activityMap.set(String(x.id),x));
-    return {
-      version:6,updatedAt:new Date().toISOString(),items:[...mergedItems.values()],deletedItems:[...deleted.values()],
-      finance:financeSource.finance||local.finance||cloud.finance||{},financeUpdatedAt:financeSource.financeUpdatedAt||local.financeUpdatedAt||cloud.financeUpdatedAt,
-      categories:categorySource.categories||local.categories||cloud.categories||[],categoriesUpdatedAt:categorySource.categoriesUpdatedAt||local.categoriesUpdatedAt||cloud.categoriesUpdatedAt,
-      activity:[...activityMap.values()].sort((a,b)=>stamp(a.at)-stamp(b.at)).slice(-250),
-      history:cloud.history||local.history||{},historyTotals:cloud.historyTotals||local.historyTotals||{}
-    };
-  }
-
+  /* ---------- payload <-> приложение ---------- */
   function localPayload(){
     const payload=buildPayload();
-    payload.history=history;payload.historyTotals=historyTotals;
+    payload.history=history;
+    payload.historyTotals=historyTotals;
     return payload;
   }
 
   function applyPayload(payload){
     if(!payload||!Array.isArray(payload.items))return;
-    applyCloud(payload);
-    if(payload.history){Object.keys(history).forEach(k=>delete history[k]);Object.assign(history,payload.history);localStorage.setItem('income-history-v1',JSON.stringify(history))}
-    if(payload.historyTotals){Object.keys(historyTotals).forEach(k=>delete historyTotals[k]);Object.assign(historyTotals,payload.historyTotals);localStorage.setItem('income-history-totals-v1',JSON.stringify(historyTotals))}
+    applyCloud({
+      ...payload,
+      finance:payload.finance||{},
+      deletedItems:payload.deletedItems||[],
+      activity:payload.activity||[]
+    });
+    if(payload.history){
+      Object.keys(history).forEach(k=>delete history[k]);
+      Object.assign(history,payload.history);
+      localStorage.setItem('income-history-v1',JSON.stringify(history));
+    }
+    if(payload.historyTotals){
+      Object.keys(historyTotals).forEach(k=>delete historyTotals[k]);
+      Object.assign(historyTotals,payload.historyTotals);
+      localStorage.setItem('income-history-totals-v1',JSON.stringify(historyTotals));
+    }
     render();
   }
 
+  function mergePayload(cloud={},local={}){
+    const deleted=new Map();
+    [...(cloud.deletedItems||[]),...(local.deletedItems||[])].forEach(x=>{const id=String(x.id),old=deleted.get(id);if(!old||stamp(x.updatedAt)>=stamp(old.updatedAt))deleted.set(id,x)});
+    const items=new Map();
+    [...(cloud.items||[]),...(local.items||[])].forEach(x=>{const id=String(x.id),old=items.get(id);if(!old||stamp(x.updatedAt)>=stamp(old.updatedAt))items.set(id,x)});
+    deleted.forEach((entry,id)=>{const item=items.get(id);if(!item||stamp(entry.updatedAt)>=stamp(item.updatedAt))items.delete(id)});
+    const financeSrc=stamp(local.financeUpdatedAt)>=stamp(cloud.financeUpdatedAt)?local:cloud;
+    const catSrc=stamp(local.categoriesUpdatedAt)>=stamp(cloud.categoriesUpdatedAt)?local:cloud;
+    const activity=new Map();
+    [...(cloud.activity||[]),...(local.activity||[])].forEach(x=>activity.set(String(x.id),x));
+    return {
+      version:6,updatedAt:new Date().toISOString(),
+      items:[...items.values()],deletedItems:[...deleted.values()],
+      finance:financeSrc.finance||local.finance||cloud.finance||{},financeUpdatedAt:financeSrc.financeUpdatedAt||local.financeUpdatedAt||cloud.financeUpdatedAt,
+      categories:catSrc.categories||local.categories||cloud.categories||[],categoriesUpdatedAt:catSrc.categoriesUpdatedAt||local.categoriesUpdatedAt||cloud.categoriesUpdatedAt,
+      activity:[...activity.values()].sort((a,b)=>stamp(a.at)-stamp(b.at)).slice(-250),
+      history:cloud.history||local.history||{},historyTotals:cloud.historyTotals||local.historyTotals||{}
+    };
+  }
+  const localModifiedAt=local=>Math.max(
+    stamp(local.financeUpdatedAt),stamp(local.categoriesUpdatedAt),
+    ...(local.items||[]).map(x=>stamp(x.updatedAt)),
+    ...(local.deletedItems||[]).map(x=>stamp(x.updatedAt))
+  );
+
+  /* ---------- ошибки (никогда не трём локальные данные) ---------- */
+  function showError(error){
+    console.error('[supabase]',error);
+    localStorage.setItem(LAST_ERROR_KEY,String(error?.message||error||'Ошибка'));
+    setSyncState('error',navigator.onLine?'Ошибка':'Офлайн');
+  }
+
+  /* ---------- клиент и авторизация ---------- */
   async function initializeClient(){
     const cfg=config();
-    if(!cfg?.url||!cfg?.key||!window.supabase?.createClient){setSyncState('error','Настроить');return false}
-    client=window.supabase.createClient(cfg.url,cfg.key,{auth:{persistSession:true,autoRefreshToken:true,detectSessionInUrl:true}});
-    const result=await client.auth.getSession();session=result.data.session;
-    client.auth.onAuthStateChange((_event,next)=>{session=next;if(next)connect().catch(showError);else{householdId='';setSyncState('error','Войти')}});
-    if(!session){
-      setSyncState('error','Войти');
-      const onboardingKey='income-supabase-onboarding-shown-v1';
-      if(location.protocol==='https:'&&!localStorage.getItem(onboardingKey)){
-        localStorage.setItem(onboardingKey,'1');
-        setTimeout(openSupabaseSettings,320);
-      }
-      return false;
+    if(!cfg?.url||!cfg?.key){setSyncState('error','Настроить');return false}
+    if(!window.supabase?.createClient){setSyncState('error','Обновить');return false}
+    if(!client){
+      client=window.supabase.createClient(cfg.url,cfg.key,{
+        auth:{persistSession:true,autoRefreshToken:true,detectSessionInUrl:false}
+      });
+      client.auth.onAuthStateChange((_event,next)=>{
+        session=next||null;
+        if(session)connect().catch(showError);
+        else{householdId='';setSyncState('error','Войти')}
+      });
     }
-    await connect();return true;
+    const {data}=await client.auth.getSession();
+    session=data.session||null;
+    if(!session){setSyncState('error','Войти');return false}
+    await connect();
+    return true;
   }
 
   async function findHousehold(){
-    const {data,error}=await client.from('household_members').select('household_id,role,households(name,invite_code)').eq('user_id',session.user.id).maybeSingle();
+    const {data,error}=await client.from('household_members')
+      .select('household_id,role,households(name,invite_code)')
+      .eq('user_id',session.user.id).maybeSingle();
     if(error)throw error;
     householdId=data?.household_id||'';
     if(householdId)localStorage.setItem(HOUSEHOLD_KEY,householdId);else localStorage.removeItem(HOUSEHOLD_KEY);
     return data;
   }
 
-  async function connect(){
+  // Создаётся молча при первом входе; терпит гонку (второй параллельный вызов).
+  async function ensureHousehold(){
+    let membership=await findHousehold();
+    if(membership&&householdId)return membership;
+    try{
+      const {data,error}=await client.rpc('create_household',{p_name:'Семья'});
+      if(error)throw error;
+      householdId=data?.[0]?.household_id||'';
+    }catch(error){
+      membership=await findHousehold();
+      if(membership&&householdId)return membership;
+      throw error;
+    }
+    if(householdId)localStorage.setItem(HOUSEHOLD_KEY,householdId);
+    return {household_id:householdId};
+  }
+
+  /* ---------- загрузка/слияние/подписка ---------- */
+  function connect(){
+    if(connecting)return connecting;
+    connecting=doConnect().catch(error=>{showError(error);throw error}).finally(()=>{connecting=null});
+    return connecting;
+  }
+  async function doConnect(){
     if(!session)return;
     setSyncState('','Загрузка');
-    const membership=await findHousehold();
-    if(!membership){setSyncState('error','Создать семью');return}
-    const {data,error}=await client.from('app_state').select('payload,revision,updated_at').eq('household_id',householdId).single();
+    await ensureHousehold();
+    if(!householdId){setSyncState('error','Ошибка');return}
+    const {data,error}=await client.from('app_state')
+      .select('payload,revision,updated_at').eq('household_id',householdId).single();
     if(error)throw error;
     revision=Number(data.revision||0);localStorage.setItem(REVISION_KEY,String(revision));
     const remote=data.payload||{};
     const local=localPayload();
-    if(Array.isArray(remote.items)&&remote.items.length){
-      const localModified=Math.max(stamp(local.financeUpdatedAt),stamp(local.categoriesUpdatedAt),...(local.items||[]).map(x=>stamp(x.updatedAt)),...(local.deletedItems||[]).map(x=>stamp(x.updatedAt)));
-      if(localModified>stamp(remote.updatedAt)){applyPayload(mergePayload(remote,local));await saveNow()}
+    const hasRemote=Array.isArray(remote.items)&&remote.items.length;
+    const hasLocal=local.items?.length||Object.keys(local.history||{}).length||Object.keys(local.historyTotals||{}).length;
+    if(hasRemote){
+      // если локально есть более свежие правки — сливаем и отправляем, иначе принимаем облако
+      if(localModifiedAt(local)>stamp(remote.updatedAt)){applyPayload(mergePayload(remote,local));await saveNow()}
       else applyPayload(remote);
+    }else if(hasLocal){
+      // первичная миграция: облако пустое, локально есть данные — заливаем их
+      await saveNow();
     }
-    else if(local.items?.length||Object.keys(local.history||{}).length||Object.keys(local.historyTotals||{}).length){await saveNow()}
-    subscribe();setSyncState('ok','Сохранено');
+    subscribe();
+    localStorage.removeItem(LAST_ERROR_KEY);
+    setSyncState('ok','Синхронизировано');
   }
 
   function subscribe(){
     if(channel)client.removeChannel(channel);
-    channel=client.channel(`income-state-${householdId}`).on('postgres_changes',{event:'UPDATE',schema:'public',table:'app_state',filter:`household_id=eq.${householdId}`},payload=>{
-      const row=payload.new;if(saving||Number(row.revision)<=revision)return;
-      revision=Number(row.revision);localStorage.setItem(REVISION_KEY,String(revision));applyPayload(mergePayload(row.payload||{},localPayload()));setSyncState('ok','Обновлено');
-    }).subscribe();
+    channel=client.channel(`app_state:${householdId}`)
+      .on('postgres_changes',{event:'UPDATE',schema:'public',table:'app_state',filter:`household_id=eq.${householdId}`},payload=>{
+        const row=payload.new;
+        if(saving||Number(row.revision)<=revision)return;
+        revision=Number(row.revision);localStorage.setItem(REVISION_KEY,String(revision));
+        applyPayload(mergePayload(row.payload||{},localPayload()));
+        setSyncState('ok','Обновлено');
+      }).subscribe();
   }
 
   async function saveNow(attempt=0){
     if(!client||!session||!householdId)return;
     saving=true;setSyncState('','Сохранение');
     try{
-      const {data,error}=await client.rpc('save_app_state',{p_household_id:householdId,p_payload:localPayload(),p_expected_revision:revision});
+      const {data,error}=await client.rpc('save_app_state',{
+        p_household_id:householdId,p_payload:localPayload(),p_expected_revision:revision
+      });
       if(error)throw error;
-      if(data?.conflict&&attempt<2){revision=Number(data.revision);applyPayload(mergePayload(data.payload||{},localPayload()));return await saveNow(attempt+1)}
+      if(data?.conflict&&attempt<2){
+        revision=Number(data.revision);
+        applyPayload(mergePayload(data.payload||{},localPayload()));
+        return await saveNow(attempt+1);
+      }
       if(!data?.ok)throw new Error('Не удалось сохранить изменения');
-      revision=Number(data.revision);localStorage.setItem(REVISION_KEY,String(revision));setSyncState('ok','Сохранено');
+      revision=Number(data.revision);localStorage.setItem(REVISION_KEY,String(revision));
+      localStorage.removeItem(LAST_ERROR_KEY);
+      setSyncState('ok','Синхронизировано');
+    }catch(error){
+      showError(error);toast('Не удалось синхронизировать данные');
     }finally{saving=false}
   }
 
+  // Вызывается приложением после каждого изменения (persist).
   function scheduleSupabase(){
     clearTimeout(pushTimer);
     if(!client||!session||!householdId){setSyncState('error',navigator.onLine?'Войти':'Офлайн');return}
-    setSyncState('','Сохранение');pushTimer=setTimeout(()=>saveNow().catch(showError),700);
+    setSyncState('','Сохранение');
+    pushTimer=setTimeout(()=>saveNow(),700);
   }
 
-  function showError(error){console.error(error);setSyncState('error',navigator.onLine?'Ошибка':'Офлайн');toast('Не удалось синхронизировать данные')}
-
-  function installSettingsButton(){
-    if(!document.getElementById('supabaseSettings')){
-      const hidden=document.createElement('button');hidden.id='supabaseSettings';hidden.hidden=true;document.body.append(hidden);hidden.onclick=openSupabaseSettings;
-    }
-  }
+  /* ---------- экран входа / статуса (внутри Настроек) ---------- */
+  const authMessage=error=>{const m=String(error?.message||'');
+    if(/invalid login/i.test(m))return'Неверный email или пароль.';
+    if(/already registered/i.test(m))return'Аккаунт с таким email уже есть — введите правильный пароль.';
+    if(/password/i.test(m))return'Пароль должен быть не короче 8 символов.';
+    if(/rate|too many/i.test(m))return'Слишком много попыток, подождите минуту.';
+    return m||'Не удалось войти.'};
 
   async function openSupabaseSettings(){
-    const cfg=config();
-    if(!cfg?.url||!cfg?.key){
-      openUtility('Подключить Supabase',`<p class="sync-status">Создайте приватный проект Supabase и вставьте два публичных параметра из Project Settings → API.</p><label>Project URL<input id="sbUrl" type="url" placeholder="https://…supabase.co"></label><label>Publishable key<input id="sbKey" autocomplete="off" placeholder="sb_publishable_…"></label><div class="utility-actions"><button class="utility-primary" id="saveSupabaseConfig">Сохранить</button></div>`);
-      $('saveSupabaseConfig').onclick=()=>{const url=$('sbUrl').value.trim(),key=$('sbKey').value.trim();if(!url||!key)return;localStorage.setItem(CONFIG_KEY,JSON.stringify({url,key}));closeUtility();location.reload()};return;
-    }
     if(!client)await initializeClient();
+    if(!client){openUtility('Синхронизация','<p class="sync-status">Не удалось подключиться к серверу. Проверьте интернет и обновите страницу.</p>');return}
+
     if(!session){
-      openUtility('Вход',`<p class="sync-status">Один раз создайте простой вход для себя и Алёны. Данные будут видны только участникам семейного пространства.</p><label>Email<input id="sbEmail" type="email" autocomplete="email" placeholder="name@gmail.com"></label><label>Пароль<input id="sbPassword" type="password" autocomplete="current-password" minlength="8" placeholder="Не менее 8 символов"></label><div class="utility-actions"><button class="utility-primary" id="signInSupabase">Войти</button><button class="utility-secondary" id="signUpSupabase">Создать вход</button><button class="utility-secondary" id="resetSupabaseConfig">Изменить подключение</button></div><p class="sync-status" id="sbAuthStatus"></p>`);
-      const credentials=()=>({email:$('sbEmail').value.trim(),password:$('sbPassword').value});
-      const authMessage=error=>{const message=String(error?.message||'');if(/invalid login/i.test(message))return'Неверный email или пароль.';if(/already registered|already been registered|user already/i.test(message))return'Такой вход уже есть — нажмите «Войти».';if(/password/i.test(message))return'Пароль должен содержать не менее 8 символов.';if(/email/i.test(message))return'Проверьте email в настройках Supabase Auth и попробуйте ещё раз.';return message||'Не удалось выполнить вход.'};
-      $('signInSupabase').onclick=async()=>{const values=credentials();if(!values.email||values.password.length<8){$('sbAuthStatus').textContent='Введите email и пароль не короче 8 символов.';return}$('sbAuthStatus').textContent='Входим…';const {error}=await client.auth.signInWithPassword(values);if(error){$('sbAuthStatus').textContent=authMessage(error);return}closeUtility();await connect();openSupabaseSettings()};
-      $('signUpSupabase').onclick=async()=>{const values=credentials();if(!values.email||values.password.length<8){$('sbAuthStatus').textContent='Введите email и пароль не короче 8 символов.';return}$('sbAuthStatus').textContent='Создаём вход…';const {data,error}=await client.auth.signUp(values);if(error){$('sbAuthStatus').textContent=authMessage(error);return}if(!data.session){const login=await client.auth.signInWithPassword(values);if(login.error){$('sbAuthStatus').textContent=authMessage(login.error);return}}closeUtility();await connect();openSupabaseSettings()};
-      $('resetSupabaseConfig').onclick=()=>{localStorage.removeItem(CONFIG_KEY);location.reload()};return;
+      openUtility('Вход',`<p class="sync-status">Войдите одним и тем же аккаунтом на обоих телефонах — доходы синхронизируются автоматически. Если аккаунта ещё нет, он создастся сам.</p><label>Email<input id="sbEmail" type="email" autocomplete="email" autocapitalize="off" placeholder="name@mail.com"></label><label>Пароль<input id="sbPassword" type="password" autocomplete="current-password" placeholder="Не менее 8 символов"></label><div class="utility-actions"><button class="utility-primary" id="sbGo">Войти</button></div><p class="sync-status" id="sbAuthStatus"></p>`);
+      const go=async()=>{
+        const email=$('sbEmail').value.trim(),password=$('sbPassword').value,status=$('sbAuthStatus');
+        if(!email||password.length<8){status.textContent='Введите email и пароль не короче 8 символов.';return}
+        $('sbGo').disabled=true;status.textContent='Входим…';
+        try{
+          const signIn=await client.auth.signInWithPassword({email,password});
+          if(signIn.error){
+            if(/invalid login/i.test(String(signIn.error.message))){
+              status.textContent='Создаём аккаунт…';
+              const signUp=await client.auth.signUp({email,password});
+              if(signUp.error){status.textContent=authMessage(signUp.error);$('sbGo').disabled=false;return}
+              if(!signUp.data.session){status.textContent='Аккаунт создан. Нажмите «Войти» ещё раз этим же паролем.';$('sbGo').disabled=false;return}
+            }else{status.textContent=authMessage(signIn.error);$('sbGo').disabled=false;return}
+          }
+          session=(await client.auth.getSession()).data.session||session;
+          closeUtility();toast('Синхронизация включена');
+          await connect();
+          openSupabaseSettings();
+        }catch(error){showError(error);status.textContent='Ошибка сети. Попробуйте ещё раз.';$('sbGo').disabled=false}
+      };
+      $('sbGo').onclick=go;
+      $('sbPassword').addEventListener('keydown',e=>{if(e.key==='Enter')go()});
+      $('sbEmail').addEventListener('keydown',e=>{if(e.key==='Enter')$('sbPassword').focus()});
+      setTimeout(()=>$('sbEmail')?.focus(),120);
+      return;
     }
-    const membership=await findHousehold();
-    if(!membership){
-      openUtility('Семейный доступ',`<p class="sync-status">Создайте новое семейное пространство на первом телефоне. На втором — введите код приглашения.</p><label>Название<input id="householdName" value="Моя семья"></label><div class="utility-actions"><button class="utility-primary" id="createHousehold">Создать пространство</button></div><label style="margin-top:18px">Код приглашения<input id="inviteCode" autocapitalize="characters" placeholder="XXXXXXXXXX"></label><div class="utility-actions"><button class="utility-secondary" id="joinHousehold">Присоединиться</button></div><p class="sync-status" id="householdStatus"></p>`);
-      $('createHousehold').onclick=async()=>{const {data,error}=await client.rpc('create_household',{p_name:$('householdName').value.trim()||'Моя семья'});if(error){$('householdStatus').textContent=error.message;return}householdId=data?.[0]?.household_id||'';localStorage.setItem(HOUSEHOLD_KEY,householdId);closeUtility();await connect();openSupabaseSettings()};
-      $('joinHousehold').onclick=async()=>{const {data,error}=await client.rpc('join_household',{p_invite_code:$('inviteCode').value.trim()});if(error){$('householdStatus').textContent=error.message;return}householdId=data;localStorage.setItem(HOUSEHOLD_KEY,householdId);closeUtility();await connect()};return;
-    }
-    const household=membership.households||{};
-    openUtility('Supabase',`<div class="settings-status"><span class="settings-status-dot"></span><span><b>${escapeHtml(household.name||'Семейное пространство')}</b><small>${escapeHtml(session.user.email||'')} · синхронизация включена</small></span></div><label>Код для второго телефона<input value="${escapeHtml(household.invite_code||'')}" readonly></label><div class="utility-actions"><button class="utility-primary" id="syncSupabaseNow">Синхронизировать сейчас</button><button class="utility-secondary" id="signOutSupabase">Выйти</button><button class="utility-secondary" id="resetSupabaseConfig">Изменить подключение</button></div>`);
-    $('syncSupabaseNow').onclick=()=>saveNow().then(()=>toast('Синхронизация завершена')).catch(showError);
-    $('signOutSupabase').onclick=async()=>{await client.auth.signOut();closeUtility();location.reload()};
-    $('resetSupabaseConfig').onclick=()=>{localStorage.removeItem(CONFIG_KEY);closeUtility();location.reload()};
+
+    openUtility('Синхронизация',`<div class="settings-status"><span class="settings-status-dot"></span><span><b>Синхронизация включена</b><small>${escapeHtml(session.user.email||'')}</small></span></div><p class="sync-status">Тот же email и пароль работают на любом другом телефоне — данные общие. Доступ защищён на сервере (RLS), посторонние ваши записи не видят.</p><div class="utility-actions"><button class="utility-primary" id="sbSyncNow">Обновить сейчас</button><button class="utility-secondary" id="sbSignOut">Выйти</button></div>`);
+    $('sbSyncNow').onclick=()=>saveNow().then(()=>toast('Готово'));
+    $('sbSignOut').onclick=async()=>{await client.auth.signOut();closeUtility();location.reload()};
   }
 
+  /* ---------- регистрация в приложении ---------- */
+  if(!document.getElementById('supabaseSettings')){
+    const button=document.createElement('button');
+    button.id='supabaseSettings';button.hidden=true;button.onclick=openSupabaseSettings;
+    document.body.append(button);
+  }
   window.openSupabaseSettings=openSupabaseSettings;
   window.scheduleCloudSync=scheduleSupabase;
   window.addEventListener('online',()=>initializeClient().catch(showError));
   window.addEventListener('offline',()=>setSyncState('error','Офлайн'));
-  installSettingsButton();
+  const syncPill=document.getElementById('syncPill');
+  if(syncPill)syncPill.onclick=()=>{if(session&&typeof openSettings==='function')openSettings();else openSupabaseSettings()};
+  // остатки Google-конфига больше не нужны
   localStorage.removeItem('income-google-sync-url');
+  localStorage.removeItem('income-google-sync-last-error');
   initializeClient().catch(showError);
 })();

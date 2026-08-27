@@ -7,7 +7,7 @@
   <meta name="apple-mobile-web-app-capable" content="yes">
   <link rel="manifest" href="manifest.webmanifest">
   <link rel="apple-touch-icon" href="icon-192.png">
-  <link rel="stylesheet" href="app.css?v=14">
+  <link rel="stylesheet" href="app.css?v=15">
   <title>Мои доходы</title>
 </head>
 <body>
@@ -79,6 +79,7 @@
   $('exportData').onclick=()=>{const blob=new Blob([JSON.stringify({version:6,exportedAt:new Date().toISOString(),items,finance,categories,history,historyTotals},null,2)],{type:'application/json'}),a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download=`moi-dohody-${today()}.json`;a.click();URL.revokeObjectURL(a.href);toast('Резервная копия сохранена')};
   $('importData').onclick=()=>$('importFile').click();
   $('importFile').onchange=async e=>{try{const data=JSON.parse(await e.target.files[0].text());let changed=false;if(Array.isArray(data.items)){items=data.items.filter(x=>x.amount>0&&x.name&&x.month);changed=true}if(data.finance){finance=data.finance;persistFinance();changed=true}if(Array.isArray(data.categories)){categories=[...new Set(data.categories.filter(Boolean))];localStorage.setItem('income-categories-v1',JSON.stringify(categories));changed=true}if(data.history){Object.keys(history).forEach(k=>delete history[k]);Object.assign(history,data.history);localStorage.setItem('income-history-v1',JSON.stringify(history));changed=true}if(data.historyTotals){Object.keys(historyTotals).forEach(k=>delete historyTotals[k]);Object.assign(historyTotals,data.historyTotals);localStorage.setItem('income-history-totals-v1',JSON.stringify(historyTotals));changed=true}if(!changed)throw new Error();persist();render();toast('Данные восстановлены')}catch{toast('Не удалось прочитать копию')}e.target.value=''};
+  const syncVisualHeight=()=>document.documentElement.style.setProperty('--vvh',`${window.visualViewport?.height||window.innerHeight}px`);syncVisualHeight();window.visualViewport?.addEventListener('resize',syncVisualHeight);
   if('serviceWorker'in navigator&&location.protocol!=='file:')navigator.serviceWorker.register('sw.js').then(registration=>registration.update()).catch(()=>{});render();
   $('monthPicker').onclick=e=>{if(currentView!=='home'){e.preventDefault();showView('home')}};
   const financeShortcut=$('infoTab');financeShortcut.className='summary-finance';financeShortcut.innerHTML='Финансы <svg class="ui-icon small" viewBox="0 0 24 24"><path d="m9 18 6-6-6-6"/></svg>';document.querySelector('.summary').prepend(financeShortcut);

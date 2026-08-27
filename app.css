@@ -1022,3 +1022,8 @@ input:focus,select:focus,textarea:focus,.amountbox:focus-within{
 .utility-body,.utility-actions{position:relative;z-index:2}
 .utility-actions button{position:relative;z-index:3;pointer-events:auto!important;touch-action:manipulation!important}
 .utility-actions button:disabled{opacity:.68}
+
+/* v58 — income form remains usable above the iPhone keyboard */
+.scrim .sheet{max-height:calc(var(--vvh,100dvh) - 8px);overflow-y:auto;overscroll-behavior:contain;-webkit-overflow-scrolling:touch}
+.scrim #form{padding-bottom:max(12px,env(safe-area-inset-bottom))}
+.scrim #form .save{position:sticky;z-index:4;bottom:0;box-shadow:0 -10px 24px rgba(247,249,246,.96)}

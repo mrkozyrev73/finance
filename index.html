@@ -216,9 +216,9 @@
   function openSettings(){
     const syncText=$('syncPill')?.textContent||'Синхронизация';
     openUtility('Настройки',`
-      <div class="settings-status"><span class="settings-status-dot"></span><span><b>Supabase</b><small>${escapeHtml(syncText)} · закрытое семейное пространство</small></span></div>
+      <div class="settings-status"><span class="settings-status-dot"></span><span><b>Google Таблица</b><small>${escapeHtml(syncText)} · закрытая таблица с секретным token</small></span></div>
       <section class="settings-group"><h3>Синхронизация</h3>
-        ${settingsRow('supabaseSettings','↻','Supabase и семейный доступ','Вход, подключение и второй телефон')}
+        ${settingsRow('googleSettings','↻','Google Таблица','Подключение, загрузка и второй телефон')}
       </section>
       <section class="settings-group"><h3>Данные и копии</h3>
         ${settingsRow('exportData','↓','Скачать копию','Сохранить резервный файл на устройство')}
@@ -231,7 +231,7 @@
         ${settingsRow('activityButton','⌁','История действий','Последние изменения приложения')}
         ${settingsRow('trashButton','⌫','Корзина','Удалённые доходы за 30 дней')}
       </section>
-      <p class="settings-privacy">Доступ защищён Supabase Auth и политиками базы данных.</p>`);
+      <p class="settings-privacy">Таблица остаётся закрытой. Не публикуйте ссылку Apps Script с token.</p>`);
     document.querySelectorAll('[data-settings-action]').forEach(button=>button.onclick=()=>$(button.dataset.settingsAction)?.click());
   }
   $('settingsButton').onclick=openSettings;
@@ -314,7 +314,6 @@
   const renderFreshBase=render;render=function(){renderFreshBase();revealFreshChanges()};
   revealFreshChanges();
 </script>
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-<script src="supabase-sync.js?v=6"></script>
+<script src="google-sync.js?v=1"></script>
 </body>
 </html>

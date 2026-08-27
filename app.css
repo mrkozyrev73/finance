@@ -1017,3 +1017,8 @@ input:focus,select:focus,textarea:focus,.amountbox:focus-within{
 .stats-filter-gear:active{background:rgba(255,255,255,.16)}
 .stats-breakdown-empty{display:grid;place-items:center;min-height:150px;padding:28px 18px!important;line-height:1.45}
 @media(max-width:360px){.stats-view .stats-summary{padding-right:98px!important}.stats-filter-gear{right:14px;padding:0 9px}.stats-filter-gear span{font-size:10px}}
+
+/* v57 — reliable controls inside utility sheets on iOS */
+.utility-body,.utility-actions{position:relative;z-index:2}
+.utility-actions button{position:relative;z-index:3;pointer-events:auto!important;touch-action:manipulation!important}
+.utility-actions button:disabled{opacity:.68}

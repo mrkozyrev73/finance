@@ -700,3 +700,76 @@ label,.seg-label,.utility-body label{font-size:12px!important;font-weight:600!im
 
 /* One continuous canvas, including the iPhone safe area. */
 html,body{background:var(--paper)!important}
+
+/* v42 — mobile feel pass: quicker taps, calmer motion, no accidental touch drag */
+:root{
+  --tap-ease:cubic-bezier(.23,1,.32,1);
+  --drawer-ease:cubic-bezier(.32,.72,0,1);
+}
+*{-webkit-tap-highlight-color:transparent}
+button,.sheet-link,.row-main,.check,.delete-row,input,select,textarea{touch-action:manipulation}
+button,.sheet-link,.row-main,.check,.delete-row,.category-sheet-list>button,.donut-legend-row{user-select:none;-webkit-user-select:none}
+button,.sheet-link,.row-main,.check,.delete-row,.settings-row,.category-card,.donut-legend-row,.category-sheet-list>button{
+  transition-property:transform,background-color,color,border-color,box-shadow,opacity!important;
+  transition-duration:120ms,150ms,150ms,150ms,170ms,150ms!important;
+  transition-timing-function:var(--tap-ease),ease,ease,ease,ease,ease!important;
+}
+button:active,.sheet-link:active,.row-main:active,.settings-row:active,.category-card:active,.donut-legend-row:active,.category-sheet-list>button:active{
+  transform:scale(.988)!important;
+}
+.primary:active,.save:active,.nav button:active,.month-nav button:active,.settings-trigger:active{
+  transform:scale(.975)!important;
+}
+.check:active,.delete-row:active,.credit-delete:active,.early-row button:active,.utility-close:active,.close:active{
+  transform:scale(.94)!important;
+}
+.row{
+  transition:background-color 220ms ease,box-shadow 220ms ease,opacity 160ms ease!important;
+  will-change:auto!important;
+}
+.row .row-main{min-height:60px!important}
+.row.dragging{
+  transform:none!important;
+  box-shadow:0 8px 24px rgba(23,59,42,.16)!important;
+}
+.scrim,.utility-scrim,.confirm-scrim{
+  transition:opacity 170ms var(--tap-ease),visibility 0s linear 170ms!important;
+}
+.scrim.open,.utility-scrim.open,.confirm-scrim.open{
+  transition:opacity 170ms var(--tap-ease),visibility 0s!important;
+}
+.sheet,.utility-sheet{
+  will-change:transform;
+  transition:transform 235ms var(--drawer-ease)!important;
+}
+.confirm-box{
+  transition:opacity 170ms var(--tap-ease),transform 190ms var(--tap-ease)!important;
+}
+.toast{
+  transition:opacity 160ms var(--tap-ease),transform 160ms var(--tap-ease),visibility 0s linear 160ms!important;
+}
+.toast.show{
+  transition:opacity 160ms var(--tap-ease),transform 160ms var(--tap-ease),visibility 0s!important;
+}
+.nav{
+  transform:translate3d(-50%,0,0)!important;
+  will-change:transform;
+}
+.nav button.active{
+  transition-duration:120ms,150ms,150ms,150ms,150ms,150ms!important;
+}
+input,select,textarea{
+  font-size:16px!important;
+}
+input:focus,select:focus,textarea:focus,.amountbox:focus-within{
+  border-color:rgba(23,59,42,.38)!important;
+  box-shadow:0 0 0 3px rgba(23,59,42,.09)!important;
+}
+@media(hover:none),(pointer:coarse){
+  .row:hover,.settings-row:hover,.category-card:hover,.settings-trigger:hover{background:inherit!important}
+  .row .edit-row,.row .delete-row{opacity:.42!important}
+}
+@media(prefers-reduced-motion:reduce){
+  button,.sheet-link,.row-main,.check,.delete-row,.settings-row,.category-card,.donut-legend-row,.category-sheet-list>button,
+  .sheet,.utility-sheet,.confirm-box,.toast{transition:opacity 120ms ease,background-color 120ms ease,color 120ms ease!important;transform:none!important}
+}

@@ -7,7 +7,7 @@
   <meta name="apple-mobile-web-app-capable" content="yes">
   <link rel="manifest" href="manifest.webmanifest">
   <link rel="apple-touch-icon" href="icon-192.png">
-  <link rel="stylesheet" href="app.css?v=1">
+  <link rel="stylesheet" href="app.css?v=2">
   <title>Мои доходы</title>
 </head>
 <body>
@@ -313,6 +313,18 @@
   }
   const renderFreshBase=render;render=function(){renderFreshBase();revealFreshChanges()};
   revealFreshChanges();
+</script>
+<script>
+  /* v42 — phone interaction polish: no accidental long-press drag on touch screens. */
+  const coarsePointer=matchMedia('(hover: none), (pointer: coarse)').matches;
+  if(coarsePointer){
+    setupTouchDrag=function(){};
+    setupNativeDrag=function(row){row.draggable=false};
+    document.addEventListener('dragstart',event=>{
+      if(event.target.closest?.('#list .row'))event.preventDefault();
+    },{capture:true});
+    render();
+  }
 </script>
 <script src="google-sync.js?v=1"></script>
 </body>

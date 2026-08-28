@@ -1034,8 +1034,8 @@ input:focus,select:focus,textarea:focus,.amountbox:focus-within{
 
 /* v58 — income form remains usable above the iPhone keyboard */
 .scrim .sheet{max-height:calc(var(--vvh,100dvh) - 8px);overflow-y:auto;overscroll-behavior:contain;-webkit-overflow-scrolling:touch}
-.scrim #form{padding-bottom:calc(18px + var(--keyboard-inset,0px) + env(safe-area-inset-bottom))}
-.scrim #form .save{position:sticky;z-index:4;bottom:calc(8px + var(--keyboard-inset,0px));margin-top:18px;box-shadow:0 -14px 28px rgba(247,249,246,.98)}
+.scrim #form{padding-bottom:calc(86px + var(--keyboard-inset,0px) + env(safe-area-inset-bottom))}
+.scrim #form .save{position:relative;z-index:1;margin-top:18px;box-shadow:none}
 .scrim #form .save+button{margin-top:10px}
 
 /* keyboard-aware sheet: anchor above the on-screen keyboard */

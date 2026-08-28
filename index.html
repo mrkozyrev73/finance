@@ -2,7 +2,7 @@
 <html lang="ru">
 <head>
   <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+  <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover">
   <meta name="theme-color" content="#f3f1e9">
   <meta name="apple-mobile-web-app-capable" content="yes">
   <style>
@@ -2140,9 +2140,168 @@ input:focus,select:focus,textarea:focus,.amountbox:focus-within,.loan-amountbox:
 }
 .finance-main .loan-safe .safe-metric-input{
   flex:0 1 auto!important;
-  width:1ch!important;
-  min-width:1ch!important;
+  width:160px!important;
+  min-width:160px!important;
   max-width:calc(100vw - 170px)!important;
+}
+
+/* v101 — lock horizontal page movement and simplify loan calculator layout */
+html,body{
+  width:100%!important;
+  max-width:100%!important;
+  overflow-x:hidden!important;
+  overscroll-behavior-x:none!important;
+  touch-action:pan-y manipulation!important;
+}
+.app,.finance-main,.info-view,.utility-scrim,.scrim{
+  max-width:100vw!important;
+  overflow-x:hidden!important;
+  overscroll-behavior-x:none!important;
+}
+.finance-main *,.utility-sheet *{
+  max-width:100%;
+}
+.loan-calc-sheet{
+  display:grid!important;
+  gap:12px!important;
+}
+.loan-calc-input{
+  display:flex!important;
+  align-items:center!important;
+  width:100%!important;
+  height:58px!important;
+  padding:0 14px!important;
+  border:1px solid rgba(24,31,24,.09)!important;
+  border-radius:18px!important;
+  background:#fffefa!important;
+  box-shadow:none!important;
+}
+.loan-calc-input input{
+  flex:1 1 auto!important;
+  min-width:0!important;
+  height:100%!important;
+  margin:0!important;
+  padding:0!important;
+  border:0!important;
+  background:transparent!important;
+  box-shadow:none!important;
+  color:#172019!important;
+  font-size:30px!important;
+  font-weight:720!important;
+  letter-spacing:-.04em!important;
+}
+.loan-calc-input b{
+  flex:0 0 auto!important;
+  color:rgba(23,27,23,.56)!important;
+  font-size:18px!important;
+  font-weight:560!important;
+}
+.loan-calc-summary{
+  display:grid!important;
+  gap:5px!important;
+  padding:13px 14px!important;
+  border-radius:17px!important;
+  background:#f2f6ef!important;
+  color:#6f786f!important;
+  font-size:12px!important;
+  line-height:1.35!important;
+}
+.loan-calc-summary b{
+  color:#172019!important;
+  font-size:14px!important;
+}
+.loan-scenarios.simple{
+  display:grid!important;
+  grid-template-columns:1fr!important;
+  gap:10px!important;
+}
+.loan-scenario{
+  display:grid!important;
+  gap:8px!important;
+  padding:14px!important;
+  border-radius:18px!important;
+  background:#fffefa!important;
+  border:1px solid rgba(24,31,24,.08)!important;
+  box-shadow:none!important;
+}
+.loan-scenario h4{
+  margin:0 0 2px!important;
+  color:#172019!important;
+  font-size:16px!important;
+  font-weight:720!important;
+  letter-spacing:-.025em!important;
+}
+.loan-scenario span{
+  display:flex!important;
+  justify-content:space-between!important;
+  gap:12px!important;
+  color:#7a837a!important;
+  font-size:12px!important;
+}
+.loan-scenario b{
+  color:#172019!important;
+  font-size:12px!important;
+  font-weight:680!important;
+  text-align:right!important;
+}
+.stats-status-tabs{
+  order:4;
+  display:grid!important;
+  grid-template-columns:repeat(3,1fr)!important;
+  gap:4px!important;
+  width:100%!important;
+  margin:8px 0 0!important;
+  padding:4px!important;
+  border:1px solid rgba(24,31,24,.08)!important;
+  border-radius:18px!important;
+  background:#edf3e9!important;
+}
+.stats-status-tabs button{
+  height:38px!important;
+  border:0!important;
+  border-radius:14px!important;
+  background:transparent!important;
+  color:#6d786e!important;
+  font-size:12px!important;
+  font-weight:680!important;
+  letter-spacing:-.01em!important;
+}
+.stats-status-tabs button.active{
+  background:#fffefa!important;
+  color:#172019!important;
+  box-shadow:0 4px 14px rgba(24,31,24,.07)!important;
+}
+.stats-filter-gear{
+  width:34px!important;
+  height:34px!important;
+  min-width:34px!important;
+  padding:0!important;
+  justify-content:center!important;
+  border-radius:12px!important;
+}
+.stats-filter-gear span{
+  display:none!important;
+}
+.stats-filter-gear .ui-icon{
+  width:17px!important;
+  height:17px!important;
+}
+.stats-view .stats-status-tabs{
+  display:none!important;
+}
+
+/* v108 — every sheet can be dismissed by a downward swipe from its surface */
+.sheet,.utility-sheet{
+  touch-action:pan-y!important;
+  overscroll-behavior-x:none!important;
+  overflow-x:hidden!important;
+  left:auto!important;
+  right:auto!important;
+}
+.sheet.swiping,.utility-sheet.swiping{
+  transition:none!important;
+  will-change:transform!important;
+  translate:none!important;
 }
 </style>
   <title>Мои доходы</title>
@@ -2156,7 +2315,7 @@ input:focus,select:focus,textarea:focus,.amountbox:focus-within,.loan-amountbox:
   <button class="carry" id="carryWaiting"></button>
   <section class="list" id="homeView"><div id="list"></div></section>
   <section class="stats-view" id="statsView" hidden><div class="stats-head"><p class="kicker">ИСТОРИЯ ДОХОДОВ</p><h2>Статистика</h2><div class="period-switch"><button class="active" data-period="month">Месяц</button><button data-period="year">Год</button></div><select class="year-select" id="yearSelect" hidden aria-label="Выбрать год"><option>2026</option><option>2025</option><option>2024</option><option>2023</option><option>2022</option></select><p id="statsHint">Учитываются только доходы с галочкой</p></div><div class="stats-summary single"><span><i id="statsTotalLabel">Получено за месяц</i><b id="statsTotal">0 ₽</b></span><span hidden><i id="statsReceivedLabel"></i><b id="statsReceived">0 ₽</b></span></div><div class="category-stats" id="categoryStats"></div><div class="stats-details" id="statsDetails"></div><section class="data-tools"><div class="tool-grid"><button id="exportData">Скачать копию</button><button id="importData">Восстановить</button></div><input id="importFile" type="file" accept="application/json" hidden></section></section>
-  <section class="info-view" id="infoView" hidden><div class="info-head"><p class="kicker">ЛИЧНЫЕ ДАННЫЕ</p><h2>Прочая информация</h2></div><section class="info-card"><h3>Финансовое состояние</h3><p>Все суммы сохраняются автоматически</p><div class="finance-section single"><h4>Сейф</h4><label class="finance-field">Сумма<input class="money-input" id="safeAmount" inputmode="numeric"></label></div><div class="finance-section"><h4>Ипотека</h4><label class="finance-field">Текущий долг<input class="money-input" id="mortgageDebt" inputmode="numeric"></label><div class="early-inline"><span>Досрочно внесено: <b id="mortgageEarlyText">0 ₽</b></span><div class="early-add"><input id="mortgageEarlyAdd" inputmode="numeric" placeholder="Добавить"><button id="addMortgageEarly" aria-label="Добавить досрочный платёж">+</button></div></div><div class="early-list" id="mortgageEarlyList"></div></div><div class="finance-section"><h4>Кредит Сбер</h4><label class="finance-field">Остаток долга<input class="money-input" id="sberDebt" inputmode="numeric"></label><div class="early-inline"><span>Досрочно внесено: <b id="sberEarlyText">0 ₽</b></span><div class="early-add"><input id="sberEarlyAdd" inputmode="numeric" placeholder="Добавить"><button id="addSberEarly" aria-label="Добавить досрочный платёж">+</button></div></div><div class="early-list" id="sberEarlyList"></div></div></section><section class="info-card"><h3>Заметки</h3><p>Свободная информация, напоминания и планы</p><textarea class="notes" id="freeNotes" placeholder="Напишите что-нибудь важное…"></textarea><div class="save-note" id="notesStatus">Сохраняется автоматически</div></section></section>
+  <section class="info-view" id="infoView" hidden><div class="info-head"><p class="kicker">ЛИЧНЫЕ ДАННЫЕ</p><h2>Прочая информация</h2></div><section class="info-card"><h3>Финансовое состояние</h3><p>Все суммы сохраняются автоматически</p><div class="finance-section single"><h4>Сейф</h4><label class="finance-field">Сумма<input class="money-input" id="legacySafeAmount" inputmode="numeric"></label></div><div class="finance-section"><h4>Ипотека</h4><label class="finance-field">Текущий долг<input class="money-input" id="mortgageDebt" inputmode="numeric"></label><div class="early-inline"><span>Досрочно внесено: <b id="mortgageEarlyText">0 ₽</b></span><div class="early-add"><input id="mortgageEarlyAdd" inputmode="numeric" placeholder="Добавить"><button id="addMortgageEarly" aria-label="Добавить досрочный платёж">+</button></div></div><div class="early-list" id="mortgageEarlyList"></div></div><div class="finance-section"><h4>Кредит Сбер</h4><label class="finance-field">Остаток долга<input class="money-input" id="sberDebt" inputmode="numeric"></label><div class="early-inline"><span>Досрочно внесено: <b id="sberEarlyText">0 ₽</b></span><div class="early-add"><input id="sberEarlyAdd" inputmode="numeric" placeholder="Добавить"><button id="addSberEarly" aria-label="Добавить досрочный платёж">+</button></div></div><div class="early-list" id="sberEarlyList"></div></div></section><section class="info-card"><h3>Заметки</h3><p>Свободная информация, напоминания и планы</p><textarea class="notes" id="freeNotes" placeholder="Напишите что-нибудь важное…"></textarea><div class="save-note" id="notesStatus">Сохраняется автоматически</div></section></section>
 </main>
 <div class="scrim" id="scrim">
   <section class="sheet" role="dialog" aria-modal="true" aria-labelledby="dialogTitle">
@@ -2205,7 +2364,7 @@ input:focus,select:focus,textarea:focus,.amountbox:focus-within,.loan-amountbox:
   function validate(){$('save').disabled=!Number($('amount').value)||!$('name').value.trim()}
   function openAdd(){editingId=null;$('repeatNext').hidden=true;$('deleteInEdit').hidden=true;$('form').reset();$('dialogKicker').textContent='НОВАЯ ЗАПИСЬ';$('dialogTitle').textContent='Добавить доход';setStatus('waiting');validate();$('scrim').classList.add('open');setTimeout(()=>$('amount').focus(),80)}
   function openEdit(id){const item=items.find(entry=>entry.id===id);if(!item)return;editingId=id;$('repeatNext').hidden=false;$('deleteInEdit').hidden=false;$('dialogKicker').textContent='РЕДАКТИРОВАНИЕ';$('dialogTitle').textContent='Изменить доход';$('amount').value=item.amount;$('name').value=item.name;$('category').value=item.category;$('date').value=item.date||'';setStatus(item.status);validate();$('scrim').classList.add('open');setTimeout(()=>$('amount').focus(),80)}
-  $('open').onclick=openAdd;$('homeTab').onclick=()=>showView('home');$('statsTab').onclick=()=>showView('stats');$('infoTab').onclick=()=>showView('info');$('yearSelect').onchange=event=>{selectedYear=Number(event.target.value);renderStats()};$('close').onclick=()=>$('scrim').classList.remove('open');$('scrim').onclick=e=>{if(e.target===$('scrim'))$('scrim').classList.remove('open')};document.querySelectorAll('[data-status]').forEach(b=>b.onclick=()=>setStatus(b.dataset.status));document.querySelectorAll('[data-period]').forEach(button=>button.onclick=()=>{statsPeriod=button.dataset.period;renderStats()});$('amount').oninput=e=>{e.target.value=e.target.value.replace(/\D/g,'');validate()};$('name').oninput=validate;[['safeAmount','safe'],['mortgageDebt','mortgageDebt'],['sberDebt','sberDebt']].forEach(([id,field])=>{const input=$(id);input.onfocus=()=>input.value=finance[field]||'';input.oninput=e=>{e.target.value=e.target.value.replace(/\D/g,'');finance[field]=Number(e.target.value);persistFinance()};input.onblur=()=>input.value=moneyText(finance[field])});function addEarly(type,inputId){const input=$(inputId),value=Number(input.value.replace(/\D/g,''));if(!value)return;finance[type]||=[];finance[type].push({id:Date.now(),amount:value,date:today()});input.value='';persistFinance();renderInfo();toast('Досрочка добавлена')}$('mortgageEarlyAdd').oninput=e=>e.target.value=e.target.value.replace(/\D/g,'');$('sberEarlyAdd').oninput=e=>e.target.value=e.target.value.replace(/\D/g,'');$('addMortgageEarly').onclick=()=>addEarly('mortgageEarlyPayments','mortgageEarlyAdd');$('addSberEarly').onclick=()=>addEarly('sberEarlyPayments','sberEarlyAdd');$('freeNotes').oninput=e=>{finance.notes=e.target.value;persistFinance();$('notesStatus').textContent='Сохранено'};
+  $('open').onclick=openAdd;$('homeTab').onclick=()=>showView('home');$('statsTab').onclick=()=>showView('stats');$('infoTab').onclick=()=>showView('info');$('yearSelect').onchange=event=>{selectedYear=Number(event.target.value);renderStats()};$('close').onclick=()=>$('scrim').classList.remove('open');$('scrim').onclick=e=>{if(e.target===$('scrim'))$('scrim').classList.remove('open')};document.querySelectorAll('[data-status]').forEach(b=>b.onclick=()=>setStatus(b.dataset.status));document.querySelectorAll('[data-period]').forEach(button=>button.onclick=()=>{statsPeriod=button.dataset.period;renderStats()});$('amount').oninput=e=>{e.target.value=e.target.value.replace(/\D/g,'');validate()};$('name').oninput=validate;[['safeAmount','safe'],['mortgageDebt','mortgageDebt'],['sberDebt','sberDebt']].forEach(([id,field])=>{const input=$(id);if(!input)return;input.onfocus=()=>input.value=finance[field]||'';input.oninput=e=>{e.target.value=e.target.value.replace(/\D/g,'');finance[field]=Number(e.target.value);persistFinance()};input.onblur=()=>input.value=moneyText(finance[field])});function addEarly(type,inputId){const input=$(inputId),value=Number(input.value.replace(/\D/g,''));if(!value)return;finance[type]||=[];finance[type].push({id:Date.now(),amount:value,date:today()});input.value='';persistFinance();renderInfo();toast('Досрочка добавлена')}$('mortgageEarlyAdd').oninput=e=>e.target.value=e.target.value.replace(/\D/g,'');$('sberEarlyAdd').oninput=e=>e.target.value=e.target.value.replace(/\D/g,'');$('addMortgageEarly').onclick=()=>addEarly('mortgageEarlyPayments','mortgageEarlyAdd');$('addSberEarly').onclick=()=>addEarly('sberEarlyPayments','sberEarlyAdd');$('freeNotes').oninput=e=>{finance.notes=e.target.value;persistFinance();$('notesStatus').textContent='Сохранено'};
   $('form').onsubmit=e=>{e.preventDefault();const savedStatus=newStatus;const entry={id:editingId||Date.now(),name:$('name').value.trim(),category:$('category').value,amount:Number($('amount').value),status:savedStatus,date:savedStatus==='received'?$('date').value:'',month:editingId?(items.find(item=>item.id===editingId)?.month||currentMonth):currentMonth};if(editingId){items=items.map(item=>item.id===editingId?entry:item)}else{items.push(entry)}const wasEditing=Boolean(editingId);editingId=null;persist();render();$('form').reset();setStatus('waiting');validate();$('scrim').classList.remove('open');toast(wasEditing?'Изменения сохранены':savedStatus==='received'?'Полученный доход добавлен':'Ожидаемый доход добавлен')};
   function offsetMonth(value,delta=1){const [y,m]=value.split('-').map(Number),d=new Date(Date.UTC(y,m-1+delta,1));return `${d.getUTCFullYear()}-${String(d.getUTCMonth()+1).padStart(2,'0')}`}function selectMonth(value,manual=true){if(!/^\d{4}-\d{2}$/.test(value))return;currentMonth=value;followsCalendar=!manual||value===currentRealMonth();selectedYear=Number(value.slice(0,4));$('yearSelect').value=selectedYear;selectedStatsCategory=null;render();window.scrollTo({top:0,behavior:'auto'})}function moveMonth(delta){selectMonth(offsetMonth(currentMonth,delta))}function refreshCalendar(){const actual=currentRealMonth();if(followsCalendar&&currentMonth!==actual)selectMonth(actual,false)}
   $('prevMonth').onclick=()=>moveMonth(-1);$('nextMonth').onclick=()=>moveMonth(1);$('monthPicker').onchange=e=>selectMonth(e.target.value);document.querySelectorAll('[data-filter]').forEach(b=>b.onclick=()=>{activeFilter=b.dataset.filter;render()});
@@ -2375,7 +2534,7 @@ input:focus,select:focus,textarea:focus,.amountbox:focus-within,.loan-amountbox:
     document.querySelectorAll('[data-settings-action]').forEach(button=>button.onclick=()=>$(button.dataset.settingsAction)?.click());
   }
   $('settingsButton').onclick=openSettings;
-  $('syncPill').onclick=openSettings;
+  if($('syncPill'))$('syncPill').onclick=openSettings;
 </script>
 <script>
   /* Statistics details live in a focused sheet; the page keeps the overview calm. */
@@ -3187,8 +3346,7 @@ input:focus,select:focus,textarea:focus,.amountbox:focus-within,.loan-amountbox:
       const focused=document.activeElement===safe;
       const next=cleanDigits(safe.value);
       if(!focused&&safe.value!==next)safe.value=next;
-      const length=(focused?String(safe.value||''):next).length||1;
-      safe.style.width=Math.max(2,length)+'ch';
+      safe.style.width='160px';
     };
     const wrap=name=>{
       const base=window[name]||globalThis[name];
@@ -3205,14 +3363,24 @@ input:focus,select:focus,textarea:focus,.amountbox:focus-within,.loan-amountbox:
   }catch(error){console.warn('safe ruble v86 skipped',error)}})();
 </script>
 <script>
+  /* v100 — legacy Safe field no longer steals the editable Safe input. */
+  (()=>{try{
+    const legacy=$('legacySafeAmount');
+    if(legacy){
+      legacy.value=(Number(finance?.safe)||0).toLocaleString('ru-RU');
+      legacy.onfocus=legacy.oninput=legacy.onblur=null;
+      legacy.disabled=true;
+    }
+  }catch(error){console.warn('legacy safe v100 skipped',error)}})();
+</script>
+<script>
   /* v99 — Safe input stays editable while ₽ remains visually attached. */
   (()=>{try{
     const digits=value=>String(value||'').replace(/[^\d]/g,'');
     const pretty=value=>digits(value).replace(/\B(?=(\d{3})+(?!\d))/g,' ');
     const fit=safe=>{
       if(!safe)return;
-      const length=Math.max(2,String(safe.value||'0').length);
-      safe.style.width=`${length}ch`;
+      safe.style.width='160px';
     };
     const wire=()=>{
       const safe=$('safeAmount');
@@ -3260,6 +3428,408 @@ input:focus,select:focus,textarea:focus,.amountbox:focus-within,.loan-amountbox:
   }catch(error){console.warn('save validation v98 skipped',error)}})();
 </script>
 <script>
+  /* v104 — stats summary filter is icon-only and actually applies owner filter. */
+  (()=>{try{
+    let statsOwnerFilter='all';
+    const patchStatsFilterGear=()=>{
+      const gear=$('statsFilterGear');
+      if(!gear)return;
+      gear.innerHTML='<svg class="ui-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 7h16M7 12h10M10 17h4"/></svg>';
+      gear.setAttribute('aria-label','Фильтр статистики');
+      gear.onclick=()=>{
+        openUtility('Фильтр',`<p class="sync-status">Выберите, чьи доходы учитывать в статистике.</p><label>Доходы<select id="statsOwnerSheet"><option value="all">Все</option><option>Антон</option><option>Алёна</option></select></label><div class="utility-actions"><button class="utility-primary" id="saveStatsFilter">Применить</button></div>`);
+        $('statsOwnerSheet').value=statsOwnerFilter;
+        $('saveStatsFilter').onclick=()=>{
+          statsOwnerFilter=$('statsOwnerSheet').value;
+          if(window.statsOwner&&statsOwner.isConnected)statsOwner.value=statsOwnerFilter;
+          closeUtility();
+          renderStats();
+        };
+      };
+    };
+    const applyOwnerFilter=()=>{
+      if(statsOwnerFilter==='all')return;
+      const allowed=item=>item.owner===statsOwnerFilter;
+      if(statsPeriod==='year')return;
+      const statusButton=document.querySelector('[data-stats-status].active');
+      const status=statusButton?.dataset.statsStatus||'received';
+      const entries=monthItems().filter(item=>allowed(item)&&(status==='all'||item.status===status));
+      const total=entries.reduce((sum,item)=>sum+item.amount,0);
+      $('statsTotal').textContent=rub(total);
+      if(typeof donutMarkup==='function'&&$('statsBreakdown')){
+        const groups={};
+        entries.forEach(item=>groups[item.category]=(groups[item.category]||0)+item.amount);
+        $('statsBreakdown').innerHTML=donutMarkup(Object.entries(groups).sort((a,b)=>b[1]-a[1]),`${statsOwnerFilter} · ${monthInLabel()}`,'Нажмите на категорию');
+      }
+    };
+    const baseRenderStats=renderStats;
+    renderStats=function(...args){
+      const result=baseRenderStats.apply(this,args);
+      patchStatsFilterGear();
+      applyOwnerFilter();
+      return result;
+    };
+    patchStatsFilterGear();
+  }catch(error){console.warn('stats gear v104 skipped',error)}})();
+</script>
+<script>
+  /* v103 — working status filter for Statistics: all / waiting / received. */
+  (()=>{try{
+    let statsStatusFilter='received';
+    const statusTitle=()=>statsStatusFilter==='waiting'?'Ожидается':statsStatusFilter==='all'?'Все доходы':'Получено';
+    const statusItems=()=>monthItems().filter(item=>{
+      const ownerOk=!window.statsOwner||statsOwner.value==='all'||item.owner===statsOwner.value;
+      const statusOk=statsStatusFilter==='all'||item.status===statsStatusFilter;
+      return ownerOk&&statusOk;
+    });
+    const ensureStatsStatusTabs=()=>{
+      const head=document.querySelector('.stats-head');
+      if(!head||document.getElementById('statsStatusTabs'))return;
+      head.insertAdjacentHTML('beforeend',`<div class="stats-status-tabs" id="statsStatusTabs"><button data-stats-status="all">Все</button><button data-stats-status="waiting">Ожидаются</button><button data-stats-status="received">Получены</button></div>`);
+    };
+    const syncStatsStatusTabs=()=>{
+      ensureStatsStatusTabs();
+      document.querySelectorAll('[data-stats-status]').forEach(button=>{
+        button.classList.toggle('active',button.dataset.statsStatus===statsStatusFilter);
+        button.onclick=()=>{statsStatusFilter=button.dataset.statsStatus;renderStats()};
+      });
+    };
+    const groupsFrom=entries=>{
+      const groups={};
+      entries.forEach(item=>{groups[item.category]=(groups[item.category]||0)+item.amount});
+      return Object.entries(groups).sort((a,b)=>b[1]-a[1]);
+    };
+    const baseRenderStats=renderStats;
+    renderStats=function(){
+      baseRenderStats();
+      syncStatsStatusTabs();
+      if(statsPeriod==='year')return;
+      const entries=statusItems(),total=entries.reduce((sum,item)=>sum+item.amount,0),received=entries.filter(item=>item.status==='received').reduce((sum,item)=>sum+item.amount,0);
+      $('statsTotalLabel').textContent=`${statusTitle()} за ${monthLabel().toLowerCase()}`;
+      $('statsTotal').textContent=rub(total);
+      if($('statsReceived'))$('statsReceived').textContent=rub(received);
+      $('statsHint').textContent=statsStatusFilter==='received'?'Учитываются только доходы с галочкой':statsStatusFilter==='waiting'?'Показаны доходы, которые ещё ожидаются':'Показаны все доходы месяца';
+      if(typeof donutMarkup==='function'&&$('statsBreakdown')){
+        $('statsBreakdown').innerHTML=donutMarkup(groupsFrom(entries),`${statusTitle()} в ${monthInLabel()}`,'Нажмите на категорию');
+        document.querySelectorAll('[data-chart-key]').forEach(button=>button.onclick=()=>openUtility(decodeURIComponent(button.dataset.chartKey),`<div class="category-sheet-list">${entries.filter(item=>item.category===decodeURIComponent(button.dataset.chartKey)).map(item=>`<button data-income-detail="${item.id}"><span><b>${escapeHtml(item.name)}</b><small>${escapeHtml(item.owner||'')} · ${item.status==='received'?'получен':'ожидается'}</small></span><strong>${rub(item.amount)}</strong></button>`).join('')||'<p class="sync-status">Доходов в этой выборке нет.</p>'}</div>`));
+      }
+      $('categoryStats').innerHTML='';
+      $('statsDetails').innerHTML='';
+    };
+    renderStats();
+  }catch(error){console.warn('stats status v103 skipped',error)}})();
+</script>
+<script>
+  /* v105 — no status segmented control on Statistics page. */
+  (()=>{try{
+    const removeStatsStatusTabs=()=>document.getElementById('statsStatusTabs')?.remove();
+    const baseRenderStats=renderStats;
+    renderStats=function(...args){
+      const result=baseRenderStats.apply(this,args);
+      removeStatsStatusTabs();
+      return result;
+    };
+    removeStatsStatusTabs();
+  }catch(error){console.warn('stats no-tabs v105 skipped',error)}})();
+</script>
+<script>
+  /* v102 — stable loan edit + real annuity early-payment calculator with decimals. */
+  (()=>{try{
+    const digitsDecimal=value=>{
+      let text=String(value||'').replace(',', '.').replace(/[^\d.]/g,'');
+      const parts=text.split('.');
+      if(parts.length>2)text=parts.shift()+'.'+parts.join('');
+      return text;
+    };
+    const parseAmount=value=>{
+      const text=digitsDecimal(value);
+      if(!text)return 0;
+      return Math.round(Number(text)*100)/100||0;
+    };
+    const formatAmount=value=>{
+      const n=Number(value)||0;
+      return new Intl.NumberFormat('ru-RU',{minimumFractionDigits:n%1?2:0,maximumFractionDigits:2}).format(n);
+    };
+    const money=value=>formatAmount(value)+' ₽';
+    const monthlyRate=annualRate=>(Number(annualRate)||0)/100/12;
+    const annuityPayment=(balance,annualRate,months)=>{
+      balance=Number(balance)||0;months=Math.max(1,Math.round(Number(months)||1));
+      const r=monthlyRate(annualRate);
+      if(balance<=0)return 0;
+      if(!r)return balance/months;
+      return balance*r/(1-Math.pow(1+r,-months));
+    };
+    const monthsToPayoff=(balance,annualRate,payment)=>{
+      balance=Number(balance)||0;payment=Number(payment)||0;
+      const r=monthlyRate(annualRate);
+      if(balance<=0)return 0;
+      if(payment<=0)return Infinity;
+      if(!r)return Math.ceil(balance/payment);
+      if(payment<=balance*r)return Infinity;
+      return Math.ceil(-Math.log(1-balance*r/payment)/Math.log(1+r));
+    };
+    const amortizeReal=(balance,annualRate,payment,monthsLimit=720)=>{
+      balance=Number(balance)||0;payment=Number(payment)||0;
+      const r=monthlyRate(annualRate),rows=[];let totalInterest=0;
+      if(balance<=0)return{months:0,totalInterest:0,rows,error:''};
+      if(payment<=0)return{months:0,totalInterest:0,rows,error:'Не указан ежемесячный платёж.'};
+      if(r&&payment<=balance*r)return{months:Infinity,totalInterest:Infinity,rows,error:'Ежемесячный платёж меньше начисляемых процентов. Проверьте ставку или платёж.'};
+      for(let month=1;month<=monthsLimit&&balance>0.005;month++){
+        const interest=balance*r;
+        const paid=Math.min(payment,balance+interest);
+        const principal=Math.max(0,paid-interest);
+        balance=Math.max(0,balance-principal);
+        totalInterest+=interest;
+        rows.push({month,balance,interest,principal,payment:paid});
+      }
+      if(balance>0.005)return{months:rows.length,totalInterest,rows,error:'Срок расчёта слишком большой. Проверьте данные кредита.'};
+      return{months:rows.length,totalInterest,rows,error:''};
+    };
+    const addMonthsLabel=(date,months)=>{
+      const d=new Date((date||today())+'T12:00:00');
+      d.setMonth(d.getMonth()+Math.max(0,Number(months)||0));
+      return d.toLocaleDateString('ru-RU',{month:'long',year:'numeric'});
+    };
+    const loanBaseMonths=loan=>{
+      const balance=Number(loan.currentBalance)||0,payment=Number(loan.monthlyPayment)||0;
+      if(loan.originalEndDate&&loan.nextPaymentDate){
+        const a=new Date(loan.nextPaymentDate+'T12:00:00'),b=new Date(loan.originalEndDate+'T12:00:00');
+        const diff=(b.getFullYear()-a.getFullYear())*12+b.getMonth()-a.getMonth()+(b.getDate()>=a.getDate()?1:0);
+        if(diff>0)return diff;
+      }
+      return monthsToPayoff(balance,loan.annualRate,payment);
+    };
+    const scenarioRows=rows=>Object.entries(rows).map(([label,value])=>`<span>${label}<b>${value}</b></span>`).join('');
+    const calcLoanPrepayment=(loan,amount)=>{
+      const balance=Number(loan.currentBalance)||0,rate=Number(loan.annualRate)||0,currentPayment=Number(loan.monthlyPayment)||0,prepay=Math.min(Math.max(0,amount),balance);
+      const baseMonths=loanBaseMonths(loan);
+      const payment=currentPayment>0?currentPayment:annuityPayment(balance,rate,Number.isFinite(baseMonths)?baseMonths:1);
+      const base=amortizeReal(balance,rate,payment);
+      if(base.error)return{error:base.error};
+      if(prepay>=balance)return{closed:true,base,payment,prepay};
+      const newBalance=balance-prepay;
+      const term=amortizeReal(newBalance,rate,payment);
+      const lowerPayment=annuityPayment(newBalance,rate,base.months);
+      const lowered=amortizeReal(newBalance,rate,lowerPayment,base.months+2);
+      if(term.error||lowered.error)return{error:term.error||lowered.error};
+      return{base,term,lowered,payment,lowerPayment,prepay,newBalance};
+    };
+    renderLoanCalc=function(id){
+      const loan=findLoan(id),out=$('loanCalcResult');if(!loan||!out)return;
+      const amount=parseAmount($('prepayAmount')?.value);
+      if(amount<=0){out.innerHTML='<p class="sync-status">Введите сумму — покажу два варианта: сократить срок или уменьшить платёж.</p>';return}
+      const data=calcLoanPrepayment(loan,amount);
+      if(data.error){out.innerHTML=`<p class="loan-error">${escapeHtml(data.error)}</p>`;return}
+      if(data.closed){out.innerHTML=`<p class="loan-good">Этой суммы хватит, чтобы закрыть кредит полностью. К погашению: ${money(loan.currentBalance)}</p>`;return}
+      const baseInterest=data.base.totalInterest,termInterest=data.term.totalInterest,payInterest=data.lowered.totalInterest;
+      out.innerHTML=`<div class="loan-calc-summary"><b>Расчёт от текущего остатка ${money(loan.currentBalance)}</b><span>Ставка ${String(loan.annualRate||0).replace('.',',')}% · текущий платёж ${money(data.payment)}</span></div><div class="loan-scenarios simple"><section class="loan-scenario"><h4>Сократить срок</h4>${scenarioRows({'Закрытие было':addMonthsLabel(loan.nextPaymentDate,data.base.months),'Закрытие станет':addMonthsLabel(loan.nextPaymentDate,data.term.months),'Срок меньше':`${Math.max(0,data.base.months-data.term.months)} мес.`,'Проценты было':money(baseInterest),'Проценты станет':money(termInterest),'Экономия':money(Math.max(0,baseInterest-termInterest))})}</section><section class="loan-scenario"><h4>Уменьшить платёж</h4>${scenarioRows({'Платёж был':money(data.payment),'Платёж станет':money(data.lowerPayment),'Меньше в месяц':money(Math.max(0,data.payment-data.lowerPayment)),'Срок остаётся':`${data.base.months} мес.`,'Проценты станет':money(payInterest),'Экономия':money(Math.max(0,baseInterest-payInterest))})}</section></div><p class="sync-status">Формула аннуитетная: проценты считаются от остатка, тело платежа уменьшает долг. Банк может чуть отличаться из-за даты списания и округлений.</p>`;
+    };
+    openLoanCalculator=function(id){
+      const loan=findLoan(id);if(!loan)return;
+      openUtility('Калькулятор экономии',`<div class="loan-calc-sheet"><p class="sync-status">${escapeHtml(loan.name)} · остаток ${moneyText(loan.currentBalance)} · ставка ${String(loan.annualRate||0).replace('.',',')}%</p><label class="loan-amount-label">Сумма досрочного платежа<div class="loan-calc-input"><input id="prepayAmount" inputmode="decimal" enterkeyhint="done" placeholder="0" autocomplete="off"><b>₽</b></div></label><div id="loanCalcResult"></div></div>`,{lockClose:true});
+      const input=$('prepayAmount');
+      input?.addEventListener('input',()=>{input.value=digitsDecimal(input.value);renderLoanCalc(id)});
+      renderLoanCalc(id);
+    };
+    const baseOpenLoanForm=typeof openLoanForm==='function'?openLoanForm:null;
+    if(baseOpenLoanForm){
+      openLoanForm=function(...args){
+        document.documentElement.classList.add('loan-editing');
+        const result=baseOpenLoanForm.apply(this,args);
+        setTimeout(()=>document.documentElement.classList.remove('loan-editing'),180);
+        return result;
+      };
+    }
+  }catch(error){console.warn('loan UX/calculator v102 skipped',error)}})();
+</script>
+<script>
+  /* v106 — resilient button wiring after accumulated UI layers. */
+  (()=>{try{
+    const callIf=functionName=>(...args)=>{
+      const fn=window[functionName]||globalThis[functionName];
+      if(typeof fn==='function')return fn(...args);
+    };
+    const bindCoreButtons=()=>{
+      const settings=$('settingsButton');
+      if(settings){
+        settings.style.pointerEvents='auto';
+        settings.onclick=event=>{event.preventDefault();event.stopPropagation();callIf('openSettings')()};
+      }
+      const sync=$('syncPill');
+      if(sync)sync.onclick=event=>{event.preventDefault();callIf('openSettings')()};
+      const addLoan=$('addLoan');
+      if(addLoan){
+        addLoan.style.pointerEvents='auto';
+        addLoan.disabled=false;
+        addLoan.onclick=event=>{event.preventDefault();event.stopPropagation();callIf('openLoanForm')()};
+      }
+      document.querySelectorAll('[data-loan] .loan-open').forEach(button=>{
+        button.onclick=event=>{event.preventDefault();callIf('openLoanDetail')(button.closest('[data-loan]').dataset.loan)};
+      });
+      document.querySelectorAll('[data-loan-prepay]').forEach(button=>{
+        button.onclick=event=>{event.preventDefault();event.stopPropagation();callIf('openLoanPrepayment')(button.dataset.loanPrepay)};
+      });
+      document.querySelectorAll('[data-loan-calc]').forEach(button=>{
+        button.onclick=event=>{event.preventDefault();event.stopPropagation();callIf('openLoanCalculator')(button.dataset.loanCalc)};
+      });
+      document.querySelectorAll('[data-loan-menu]').forEach(button=>{
+        button.onclick=event=>{event.preventDefault();event.stopPropagation();callIf('openLoanMenu')(button.dataset.loanMenu)};
+      });
+    };
+    const wrap=name=>{
+      const base=window[name]||globalThis[name];
+      if(typeof base!=='function'||base.__wiredV106)return;
+      const wrapped=function(...args){const result=base.apply(this,args);setTimeout(bindCoreButtons,0);requestAnimationFrame(bindCoreButtons);return result};
+      wrapped.__wiredV106=true;
+      globalThis[name]=wrapped;
+    };
+    ['render','renderInfo','renderLoansFinance','showView','openSettings'].forEach(wrap);
+    document.addEventListener('click',event=>{
+      const settings=event.target.closest?.('#settingsButton');
+      if(settings){event.preventDefault();event.stopPropagation();callIf('openSettings')()}
+      const addLoan=event.target.closest?.('#addLoan');
+      if(addLoan){event.preventDefault();event.stopPropagation();callIf('openLoanForm')()}
+    },true);
+    bindCoreButtons();
+  }catch(error){console.warn('button wiring v106 skipped',error)}})();
+</script>
+<script>
+  /* v109 — hard horizontal lock for all sheets: Y-only motion. */
+  (()=>{try{
+    const clampSheetX=()=>{
+      document.querySelectorAll('#scrim .sheet,#utilityScrim .utility-sheet').forEach(sheet=>{
+        if(sheet.style.transform&&/translate3d\((?!0)/.test(sheet.style.transform)){
+          sheet.style.setProperty('transform','translate3d(0,0,0)','important');
+        }
+      });
+    };
+    document.addEventListener('pointermove',event=>{
+      const sheet=event.target.closest?.('#scrim .sheet,#utilityScrim .utility-sheet');
+      if(!sheet)return;
+      if(event.target.closest?.('input,select,textarea,button,a,label,[contenteditable="true"]'))return;
+      const activeScrim=sheet.closest('.scrim.open,.utility-scrim.open');
+      if(!activeScrim)return;
+      clampSheetX();
+    },{capture:true,passive:false});
+    const wrap=name=>{
+      const base=window[name]||globalThis[name];
+      if(typeof base!=='function'||base.__lockXV109)return;
+      const wrapped=function(...args){const result=base.apply(this,args);requestAnimationFrame(clampSheetX);return result};
+      wrapped.__lockXV109=true;
+      globalThis[name]=wrapped;
+    };
+    ['openAdd','openEdit','openUtility','openSettings','openLoanForm','openLoanCalculator','openLoanPrepayment'].forEach(wrap);
+  }catch(error){console.warn('sheet x-lock v109 skipped',error)}})();
+</script>
+<script>
+  /* v108 — universal drag-down dismiss from anywhere inside sheets. */
+  (()=>{try{
+    const interactive='button,input,select,textarea,a,label,[contenteditable="true"],.category-manage-row,.loan-calc-input,.amountbox';
+    const bindUniversalSwipe=(scrim,sheet,dismiss,canDismiss=()=>true)=>{
+      if(!scrim||!sheet||sheet.dataset.swipeAnywhereV108)return;
+      sheet.dataset.swipeAnywhereV108='1';
+      let pointerId=null,startX=0,startY=0,lastY=0,lastT=0,velocity=0,dragging=false,tracking=false;
+      const clear=()=>{
+        pointerId=null;tracking=false;dragging=false;velocity=0;
+        sheet.classList.remove('swiping');
+        sheet.style.removeProperty('transition');
+        sheet.style.removeProperty('transform');
+        scrim.style.removeProperty('opacity');
+      };
+      const settle=()=>{
+        sheet.classList.remove('swiping');
+        sheet.style.setProperty('transition','transform 260ms cubic-bezier(.32,.72,0,1)','important');
+        sheet.style.setProperty('transform','translate3d(0,0,0)','important');
+        scrim.style.opacity='1';
+        setTimeout(clear,270);
+      };
+      const close=()=>{
+        sheet.classList.remove('swiping');
+        sheet.style.setProperty('transition','transform 220ms cubic-bezier(.23,1,.32,1)','important');
+        sheet.style.setProperty('transform','translate3d(0,100%,0)','important');
+        scrim.style.opacity='0';
+        setTimeout(()=>{dismiss();clear()},230);
+      };
+      const down=event=>{
+        if(pointerId!==null||event.button!==undefined&&event.button!==0)return;
+        if(event.target.closest?.(interactive))return;
+        if(!canDismiss())return;
+        pointerId=event.pointerId;tracking=true;dragging=false;
+        startX=event.clientX;startY=lastY=event.clientY;lastT=performance.now();
+        sheet.setPointerCapture?.(pointerId);
+      };
+      const move=event=>{
+        if(event.pointerId!==pointerId||!tracking)return;
+        const dx=event.clientX-startX,dy=event.clientY-startY;
+        if(!dragging){
+          if(Math.hypot(dx,dy)<9)return;
+          if(Math.abs(dx)>Math.abs(dy)*1.15){
+            event.preventDefault();
+            sheet.style.setProperty('transform','translate3d(0,0,0)','important');
+            return;
+          }
+          dragging=true;
+          sheet.classList.add('swiping');
+          sheet.style.setProperty('transition','none','important');
+        }
+        event.preventDefault();
+        const now=performance.now(),dt=Math.max(1,now-lastT);
+        velocity=(event.clientY-lastY)/dt;
+        lastY=event.clientY;lastT=now;
+        const y=dy<0?dy*.12:dy;
+        sheet.style.setProperty('transform',`translate3d(0,${y}px,0)`,'important');
+        scrim.style.opacity=String(Math.max(.25,1-Math.max(0,dy)/(sheet.offsetHeight*.85)));
+      };
+      const up=event=>{
+        if(event.pointerId!==pointerId)return;
+        const dy=event.clientY-startY,projected=dy+Math.max(0,velocity)*140;
+        dragging&&(projected>88||velocity>.55)?close():settle();
+      };
+      sheet.addEventListener('pointerdown',down,true);
+      sheet.addEventListener('pointermove',move,{capture:true,passive:false});
+      sheet.addEventListener('pointerup',up,true);
+      sheet.addEventListener('pointercancel',up,true);
+    };
+    const attach=()=>{
+      bindUniversalSwipe($('scrim'),document.querySelector('#scrim .sheet'),()=>{$('scrim')?.classList.remove('open')},()=>true);
+      bindUniversalSwipe($('utilityScrim'),document.querySelector('#utilityScrim .utility-sheet'),()=>{if(typeof closeUtility==='function')closeUtility();else $('utilityScrim')?.classList.remove('open')},()=>true);
+    };
+    const wrap=name=>{
+      const base=window[name]||globalThis[name];
+      if(typeof base!=='function'||base.__swipeAnywhereV108)return;
+      const wrapped=function(...args){const result=base.apply(this,args);setTimeout(attach,0);requestAnimationFrame(attach);return result};
+      wrapped.__swipeAnywhereV108=true;
+      globalThis[name]=wrapped;
+    };
+    ['openAdd','openEdit','openUtility','openSettings','openLoanForm','openLoanCalculator','openLoanPrepayment','renderInfo','showView'].forEach(wrap);
+    attach();
+  }catch(error){console.warn('swipe anywhere v108 skipped',error)}})();
+</script>
+<script>
+  /* v107 — disable obsolete legacy credit enhancer that expects #addCredit. */
+  (()=>{try{
+    if(typeof enhanceFinance==='function'){
+      enhanceFinance=function(){};
+    }
+    const ensureButtons=()=>{
+      if($('settingsButton'))$('settingsButton').onclick=event=>{event.preventDefault();event.stopPropagation();openSettings()};
+      if($('addLoan'))$('addLoan').onclick=event=>{event.preventDefault();event.stopPropagation();openLoanForm()};
+      document.querySelectorAll('[data-settings-action]').forEach(button=>{
+        button.onclick=()=>$(button.dataset.settingsAction)?.click();
+      });
+    };
+    const wrap=name=>{
+      const base=window[name]||globalThis[name];
+      if(typeof base!=='function'||base.__stableButtonsV107)return;
+      const wrapped=function(...args){const result=base.apply(this,args);setTimeout(ensureButtons,0);requestAnimationFrame(ensureButtons);return result};
+      wrapped.__stableButtonsV107=true;
+      globalThis[name]=wrapped;
+    };
+    ['render','renderInfo','renderLoansFinance','showView','openSettings'].forEach(wrap);
+    ensureButtons();
+  }catch(error){console.warn('stable buttons v107 skipped',error)}})();
+</script>
+<script>
   /* v96 — remove obsolete default category from already-saved local categories. */
   (()=>{try{
     const obsolete=new Set(['Доход Алёны','Доход Алены']);
@@ -3291,6 +3861,818 @@ input:focus,select:focus,textarea:focus,.amountbox:focus-within,.loan-amountbox:
       };
     }
   }catch(error){console.warn('category cleanup v96 skipped',error)}})();
+</script>
+<script>
+  /* v110 — final UI wiring: finance add-credit works, status tabs only on Home. */
+  (()=>{try{
+    const hideNonHomeStatusFilters=()=>{
+      const isHome=currentView==='home'||document.body.classList.contains('view-home');
+      const statusFilter=$('statusFilter');
+      if(statusFilter){
+        statusFilter.hidden=!isHome;
+        statusFilter.style.display=isHome?'':'none';
+      }
+      const carry=$('carryWaiting');
+      if(carry){
+        carry.hidden=!isHome;
+        if(!isHome)carry.style.display='none';
+        else carry.style.removeProperty('display');
+      }
+      document.querySelectorAll('#statsStatusTabs,.stats-status-tabs').forEach(node=>node.remove());
+    };
+    const openCreditForm=()=>{
+      if(typeof openLoanForm==='function')openLoanForm();
+      else if(typeof openUtility==='function')openUtility('Новый кредит','<p class="sync-status">Форма кредита временно недоступна.</p>');
+    };
+    document.addEventListener('click',event=>{
+      const addLoan=event.target.closest?.('#addLoan,.loan-add');
+      if(addLoan){
+        event.preventDefault();
+        event.stopPropagation();
+        event.stopImmediatePropagation?.();
+        openCreditForm();
+        return;
+      }
+    },true);
+    const bindAddLoan=()=>{
+      document.querySelectorAll('#addLoan,.loan-add').forEach(button=>{
+        button.disabled=false;
+        button.style.pointerEvents='auto';
+        button.onclick=event=>{
+          event.preventDefault();
+          event.stopPropagation();
+          openCreditForm();
+        };
+      });
+    };
+    const wrap=name=>{
+      const base=window[name]||globalThis[name];
+      if(typeof base!=='function'||base.__finalUiV110)return;
+      const wrapped=function(...args){
+        const result=base.apply(this,args);
+        requestAnimationFrame(()=>{hideNonHomeStatusFilters();bindAddLoan()});
+        setTimeout(()=>{hideNonHomeStatusFilters();bindAddLoan()},0);
+        return result;
+      };
+      wrapped.__finalUiV110=true;
+      globalThis[name]=wrapped;
+    };
+    ['render','renderStats','renderInfo','renderLoansFinance','showView','openUtility','openSettings'].forEach(wrap);
+    hideNonHomeStatusFilters();
+    bindAddLoan();
+  }catch(error){console.warn('final ui wiring v110 skipped',error)}})();
+</script>
+<style>
+  /* v111 — status filter is a Home-only control, regardless of older render layers. */
+  body:not(.view-home) #statusFilter,
+  body.view-stats #statusFilter,
+  body.view-info #statusFilter,
+  body:not(.view-home) #carryWaiting,
+  body.view-stats #carryWaiting,
+  body.view-info #carryWaiting{
+    display:none!important;
+  }
+</style>
+<style>
+  /* v112 — finance page rhythm pass: one grid, one voice, no accidental offsets. */
+  #infoView.info-view{
+    display:grid!important;
+    grid-template-columns:1fr!important;
+    gap:16px!important;
+    padding-top:18px!important;
+  }
+  #infoView[hidden]{
+    display:none!important;
+  }
+  #infoView .info-head,
+  #infoView .finance-main,
+  #infoView>.info-card:not(.finance-main),
+  #infoView .loan-safe,
+  #infoView .loans-block,
+  #infoView .loans-empty,
+  #infoView #addLoan{
+    width:100%!important;
+    max-width:none!important;
+    box-sizing:border-box!important;
+    margin-left:0!important;
+    margin-right:0!important;
+  }
+  #infoView .info-head{
+    margin:0!important;
+    padding:0!important;
+  }
+  #infoView .info-head h2{
+    margin:0 0 6px!important;
+    font-size:34px!important;
+    font-weight:720!important;
+    line-height:.98!important;
+    letter-spacing:-.055em!important;
+  }
+  #infoView .info-head:after{
+    margin:0!important;
+    color:#848d84!important;
+    font-size:14px!important;
+    font-weight:430!important;
+    line-height:1.25!important;
+    letter-spacing:-.02em!important;
+  }
+  #infoView .finance-main{
+    display:grid!important;
+    gap:16px!important;
+    padding:0!important;
+    border:0!important;
+    border-radius:0!important;
+    background:transparent!important;
+    box-shadow:none!important;
+    overflow:visible!important;
+  }
+  #infoView .finance-main>h3,
+  #infoView .finance-main>p{
+    display:none!important;
+  }
+  #infoView .finance-main .loan-safe{
+    min-height:132px!important;
+    padding:22px 24px!important;
+    border:1px solid rgba(23,32,25,.075)!important;
+    border-radius:24px!important;
+    background:#fffefa!important;
+    color:#172019!important;
+    box-shadow:none!important;
+  }
+  #infoView .finance-main .finance-metric-label{
+    display:block!important;
+    margin:0 0 20px!important;
+    color:#435241!important;
+    font-size:17px!important;
+    font-weight:680!important;
+    line-height:1.05!important;
+    letter-spacing:-.035em!important;
+    text-transform:none!important;
+  }
+  #infoView .finance-main .finance-metric-label:after{
+    content:' · нажмите для изменения';
+    color:#879083!important;
+    font-size:15px!important;
+    font-weight:520!important;
+    letter-spacing:-.025em!important;
+  }
+  #infoView .finance-main .safe-edit{
+    display:inline-flex!important;
+    align-items:baseline!important;
+    justify-content:flex-start!important;
+    gap:9px!important;
+    width:auto!important;
+    max-width:100%!important;
+    margin:0!important;
+    padding:0!important;
+    background:transparent!important;
+  }
+  #infoView .finance-main .safe-edit{
+    position:relative!important;
+    isolation:isolate!important;
+  }
+  #infoView .finance-main .safe-edit:before,
+  #infoView .finance-main .safe-edit:after{
+    display:none!important;
+    content:none!important;
+  }
+  #infoView .finance-main .safe-metric-input{
+    flex:0 1 auto!important;
+    width:auto!important;
+    min-width:1.2ch!important;
+    max-width:calc(100vw - 180px)!important;
+    height:auto!important;
+    min-height:0!important;
+    margin:0!important;
+    padding:0!important;
+    border:0!important;
+    border-radius:0!important;
+    background:transparent!important;
+    box-shadow:none!important;
+    outline:0!important;
+    color:#172019!important;
+    font-size:36px!important;
+    font-weight:720!important;
+    line-height:.95!important;
+    letter-spacing:-.058em!important;
+    font-variant-numeric:tabular-nums!important;
+  }
+  #infoView .finance-main .safe-ruble{
+    position:static!important;
+    display:inline-block!important;
+    align-self:baseline!important;
+    margin:0!important;
+    transform:none!important;
+    color:#7f877f!important;
+    font-size:21px!important;
+    font-weight:680!important;
+    line-height:1!important;
+    letter-spacing:-.04em!important;
+  }
+  #infoView .finance-main .safe-measure{
+    position:absolute!important;
+    inset:auto!important;
+    left:-9999px!important;
+    top:-9999px!important;
+    visibility:hidden!important;
+    white-space:pre!important;
+    font-size:36px!important;
+    font-weight:720!important;
+    line-height:.95!important;
+    letter-spacing:-.058em!important;
+    font-variant-numeric:tabular-nums!important;
+  }
+  #infoView .loans-block{
+    display:grid!important;
+    gap:13px!important;
+    margin:0!important;
+    padding:0!important;
+  }
+  #infoView .loans-block>h4,
+  #infoView>.info-card:not(.finance-main)>h3{
+    margin:0!important;
+    color:#172019!important;
+    font-size:28px!important;
+    font-weight:690!important;
+    line-height:1!important;
+    letter-spacing:-.052em!important;
+  }
+  #infoView .loans-empty{
+    min-height:112px!important;
+    display:grid!important;
+    place-items:center!important;
+    padding:24px!important;
+    border:1px solid rgba(23,32,25,.075)!important;
+    border-radius:24px!important;
+    background:#fffefa!important;
+    box-shadow:none!important;
+    text-align:center!important;
+  }
+  #infoView .loans-empty b{
+    margin:0 0 10px!important;
+    color:#172019!important;
+    font-size:18px!important;
+    font-weight:680!important;
+    line-height:1.1!important;
+  }
+  #infoView .loans-empty span{
+    max-width:620px!important;
+    color:#7e887f!important;
+    font-size:15px!important;
+    font-weight:430!important;
+    line-height:1.35!important;
+    letter-spacing:-.018em!important;
+  }
+  #infoView #addLoan{
+    height:58px!important;
+    margin:0!important;
+    border-radius:20px!important;
+    font-size:18px!important;
+    font-weight:720!important;
+    letter-spacing:-.035em!important;
+  }
+  #infoView>.info-card:not(.finance-main){
+    display:grid!important;
+    gap:10px!important;
+    margin:0!important;
+    padding:0!important;
+    border:0!important;
+    border-radius:0!important;
+    background:transparent!important;
+    box-shadow:none!important;
+  }
+  #infoView>.info-card:not(.finance-main)>p{
+    margin:0!important;
+    color:#858e85!important;
+    font-size:15px!important;
+    font-weight:430!important;
+    line-height:1.25!important;
+    letter-spacing:-.025em!important;
+  }
+  #infoView .notes{
+    min-height:160px!important;
+    margin:8px 0 0!important;
+    padding:22px!important;
+    border:1px solid rgba(23,32,25,.075)!important;
+    border-radius:24px!important;
+    background:#fffefa!important;
+    box-shadow:none!important;
+    color:#172019!important;
+    font-size:18px!important;
+    font-weight:430!important;
+    line-height:1.3!important;
+    letter-spacing:-.035em!important;
+  }
+  #infoView .notes::placeholder{
+    color:#818781!important;
+  }
+  #infoView .save-note{
+    margin:0 0 0 4px!important;
+    color:#8a9289!important;
+    font-size:13px!important;
+    font-weight:430!important;
+  }
+</style>
+<style>
+  /* v113 — title scale aligned to the Home "Доходы" heading. */
+  #statsView .stats-head h2,
+  #infoView .info-head h2,
+  #infoView .loans-block>h4,
+  #infoView>.info-card:not(.finance-main)>h3{
+    margin:0 0 6px!important;
+    color:#172019!important;
+    font-size:24px!important;
+    font-weight:650!important;
+    line-height:1.12!important;
+    letter-spacing:-.045em!important;
+  }
+  #statsView .stats-head .kicker,
+  #infoView .info-head:after,
+  #infoView>.info-card:not(.finance-main)>p{
+    color:#858e85!important;
+    font-size:12px!important;
+    font-weight:450!important;
+    line-height:1.35!important;
+    letter-spacing:-.01em!important;
+  }
+  #infoView .loans-block{
+    gap:10px!important;
+  }
+  #infoView .loans-empty b{
+    font-size:15px!important;
+    font-weight:650!important;
+  }
+  #infoView .loans-empty span{
+    font-size:12px!important;
+    line-height:1.4!important;
+  }
+  #infoView #addLoan{
+    height:52px!important;
+    border-radius:18px!important;
+    font-size:15px!important;
+    font-weight:700!important;
+  }
+  #infoView .notes{
+    min-height:136px!important;
+    font-size:15px!important;
+  }
+</style>
+<style>
+  /* v114 — phone feel pass: instant press feedback, restrained motion, no decorative wobble. */
+  :root{
+    --press-scale:.972;
+    --press-ease:cubic-bezier(.23,1,.32,1);
+    --drawer-ease:cubic-bezier(.32,.72,0,1);
+  }
+  button,
+  .row-main,
+  .category-card,
+  .year-row,
+  .settings-row,
+  .safe-edit,
+  .loan-open{
+    -webkit-tap-highlight-color:transparent!important;
+    touch-action:manipulation!important;
+    transition:
+      transform 120ms var(--press-ease),
+      opacity 140ms ease,
+      background-color 160ms ease,
+      border-color 160ms ease,
+      color 140ms ease,
+      box-shadow 170ms ease!important;
+  }
+  button:active,
+  .row-main:active,
+  .category-card:active,
+  .year-row:active,
+  .settings-row:active,
+  .safe-edit:active,
+  .loan-open:active{
+    transform:scale(var(--press-scale))!important;
+  }
+  .month-nav button:active,
+  .close:active,
+  .utility-close:active,
+  .delete-row:active,
+  .edit-row:active{
+    transform:scale(.92)!important;
+  }
+  .segments button:active,
+  .period-switch button:active,
+  .status-filter button:active,
+  .nav button:active{
+    transform:scale(.965)!important;
+  }
+  .scrim,
+  .utility-scrim{
+    transition:opacity 180ms var(--press-ease),visibility 0s linear 180ms!important;
+  }
+  .scrim.open,
+  .utility-scrim.open{
+    transition:opacity 180ms var(--press-ease),visibility 0s!important;
+  }
+  .sheet,
+  .utility-sheet{
+    transition:
+      transform 260ms var(--drawer-ease),
+      opacity 160ms ease-out!important;
+    will-change:transform!important;
+  }
+  .toast{
+    transition:
+      opacity 160ms var(--press-ease),
+      transform 170ms var(--press-ease),
+      visibility 0s linear 160ms!important;
+  }
+  .toast.show{
+    transition:
+      opacity 160ms var(--press-ease),
+      transform 170ms var(--press-ease),
+      visibility 0s!important;
+  }
+  input:focus,
+  select:focus,
+  textarea:focus{
+    transition:border-color 140ms ease,box-shadow 160ms ease,background-color 160ms ease!important;
+  }
+  .row.done .check{
+    transition:transform 160ms var(--press-ease),background-color 160ms ease,border-color 160ms ease!important;
+  }
+  @media (prefers-reduced-motion: reduce){
+    button,
+    .row-main,
+    .category-card,
+    .year-row,
+    .settings-row,
+    .safe-edit,
+    .loan-open,
+    .sheet,
+    .utility-sheet,
+    .toast{
+      transition:opacity 120ms ease,background-color 120ms ease,color 120ms ease!important;
+      transform:none!important;
+    }
+    button:active,
+    .row-main:active,
+    .category-card:active,
+    .year-row:active,
+    .settings-row:active,
+    .safe-edit:active,
+    .loan-open:active{
+      transform:none!important;
+      opacity:.78!important;
+    }
+  }
+</style>
+<style>
+  /* v115 — synchronized sheet dimming: scrim and sheet move as one event. */
+  .scrim,
+  .utility-scrim,
+  .confirm-scrim{
+    opacity:0!important;
+    visibility:hidden!important;
+    pointer-events:none!important;
+    transition:
+      opacity 220ms cubic-bezier(.23,1,.32,1),
+      visibility 0s linear 220ms!important;
+  }
+  .scrim.open,
+  .utility-scrim.open,
+  .confirm-scrim.open{
+    opacity:1!important;
+    visibility:visible!important;
+    pointer-events:auto!important;
+    transition:
+      opacity 220ms cubic-bezier(.23,1,.32,1),
+      visibility 0s!important;
+  }
+  .sheet,
+  .utility-sheet{
+    opacity:1!important;
+    transform:translate3d(0,100%,0)!important;
+    transition:
+      transform 300ms cubic-bezier(.32,.72,0,1)!important;
+    will-change:transform!important;
+  }
+  .scrim.open .sheet,
+  .utility-scrim.open .utility-sheet{
+    transform:translate3d(0,0,0)!important;
+  }
+  .confirm-box{
+    opacity:0!important;
+    transform:translate3d(0,8px,0) scale(.97)!important;
+    transition:
+      opacity 200ms cubic-bezier(.23,1,.32,1),
+      transform 220ms cubic-bezier(.23,1,.32,1)!important;
+  }
+  .confirm-scrim.open .confirm-box{
+    opacity:1!important;
+    transform:translate3d(0,0,0) scale(1)!important;
+  }
+  .sheet.swiping,
+  .utility-sheet.swiping{
+    transition:none!important;
+  }
+  @media (prefers-reduced-motion: reduce){
+    .scrim,
+    .utility-scrim,
+    .confirm-scrim{
+      transition:opacity 160ms ease,visibility 0s linear 160ms!important;
+    }
+    .sheet,
+    .utility-sheet,
+    .confirm-box{
+      transform:none!important;
+      transition:opacity 160ms ease!important;
+    }
+  }
+</style>
+<script>
+  /* v114 — lightweight haptics for mobile browsers that support Vibration API. */
+  (()=>{try{
+    const canVibrate=()=>typeof navigator!=='undefined'&&typeof navigator.vibrate==='function'&&matchMedia('(hover: none), (pointer: coarse)').matches;
+    const pulse=(pattern=8)=>{
+      if(!canVibrate())return;
+      try{navigator.vibrate(pattern)}catch{}
+    };
+    const feedbackFor=target=>{
+      if(!target?.closest)return null;
+      if(target.closest('input,textarea,select,[contenteditable="true"]'))return null;
+      if(target.closest('#save,#saveLoan,#recordPrepayment,.utility-primary,.primary,.top-add,#addLoan,.loan-add,.add-credit'))return 14;
+      if(target.closest('.segments button,.period-switch button,.status-filter button,.nav button,#prevMonth,#nextMonth,#settingsButton,.settings-row'))return 8;
+      if(target.closest('.check,[data-loan-prepay],[data-loan-calc],.safe-edit'))return 10;
+      if(target.closest('.delete-row,.danger-action,.confirm-delete'))return [18,28,18];
+      return null;
+    };
+    document.addEventListener('pointerdown',event=>{
+      if(event.pointerType&&event.pointerType!=='touch')return;
+      const pattern=feedbackFor(event.target);
+      if(pattern)pulse(pattern);
+    },{capture:true,passive:true});
+    document.addEventListener('submit',event=>{
+      if(event.target?.id==='form')pulse(16);
+    },true);
+    const wrapToast=()=>{
+      if(typeof toast!=='function'||toast.__hapticV114)return;
+      const base=toast;
+      const wrapped=function(text,...args){
+        const result=base.call(this,text,...args);
+        if(/сохран|добав|получ|учт|готов|восстанов/i.test(String(text||'')))pulse(12);
+        return result;
+      };
+      wrapped.__hapticV114=true;
+      toast=wrapped;
+    };
+    wrapToast();
+  }catch(error){console.warn('phone feedback v114 skipped',error)}})();
+</script>
+<script>
+  /* v111 — final hard binding for primary actions after legacy layers. */
+  (()=>{try{
+    const parseIntAmount=value=>Number(String(value||'').replace(/[^\d]/g,''))||0;
+    const isHomeView=()=>currentView==='home'&&!$('statsView')?.hidden?false:currentView==='home';
+    const setBodyViewClass=()=>{
+      const home=currentView==='home'||(!$('homeTop')?.hidden&&$('statsView')?.hidden&&$('infoView')?.hidden);
+      document.body.classList.toggle('view-home',home);
+      document.body.classList.toggle('view-stats',currentView==='stats'||!$('statsView')?.hidden);
+      document.body.classList.toggle('view-info',currentView==='info'||!$('infoView')?.hidden);
+    };
+    const enforceHomeOnlyFilters=()=>{
+      setBodyViewClass();
+      const home=currentView==='home'&&!document.body.classList.contains('view-stats')&&!document.body.classList.contains('view-info');
+      const status=$('statusFilter'),carry=$('carryWaiting');
+      if(status){
+        status.hidden=!home;
+        status.style.setProperty('display',home?'':'none','important');
+        status.setAttribute('aria-hidden',home?'false':'true');
+      }
+      if(carry){
+        carry.hidden=!home;
+        if(home)carry.style.removeProperty('display');
+        else carry.style.setProperty('display','none','important');
+      }
+      document.querySelectorAll('#statsStatusTabs,.stats-status-tabs').forEach(node=>node.remove());
+    };
+
+    const finalValidateIncome=()=>{
+      const save=$('save'),amount=$('amount'),name=$('name');
+      if(!save||!amount||!name)return;
+      const ready=parseIntAmount(amount.value)>0&&name.value.trim().length>0;
+      save.disabled=!ready;
+      save.classList.toggle('is-ready',ready);
+    };
+    let submittingIncome=false;
+    const finalSubmitIncome=event=>{
+      event?.preventDefault?.();
+      event?.stopPropagation?.();
+      event?.stopImmediatePropagation?.();
+      if(submittingIncome)return false;
+      const amount=parseIntAmount($('amount')?.value);
+      const name=String($('name')?.value||'').trim();
+      finalValidateIncome();
+      if(!amount||!name){
+        toast?.('Заполните сумму и название');
+        return false;
+      }
+      submittingIncome=true;
+      try{
+        const existing=editingId?items.find(item=>item.id===editingId):null;
+        const status=newStatus||'waiting';
+        const stamp=typeof nowIso==='function'?nowIso():new Date().toISOString();
+        const entry={
+          id:editingId||Date.now(),
+          name,
+          category:$('category')?.value||'Прочее',
+          amount,
+          status,
+          date:status==='received'?(existing?.date||today()):(existing?.date||''),
+          month:existing?.month||currentMonth,
+          recurring:Boolean($('recurring')?.checked),
+          owner:typeof formOwner!=='undefined'?formOwner:(existing?.owner||'Антон'),
+          order:existing?.order??items.length,
+          createdAt:existing?.createdAt||stamp,
+          updatedAt:stamp,
+          highlightAt:existing?.highlightAt||stamp
+        };
+        if(editingId)items=items.map(item=>item.id===editingId?entry:item);
+        else items.push(entry);
+        const wasEditing=Boolean(editingId);
+        editingId=null;
+        persist();
+        $('scrim')?.classList.remove('open');
+        $('form')?.reset();
+        setStatus('waiting');
+        finalValidateIncome();
+        render();
+        toast(wasEditing?'Изменения сохранены':status==='received'?'Полученный доход добавлен':'Ожидаемый доход добавлен');
+      }finally{
+        setTimeout(()=>{submittingIncome=false},80);
+      }
+      return false;
+    };
+    const wireIncomeForm=()=>{
+      const form=$('form'),save=$('save');
+      if(form){
+        form.onsubmit=finalSubmitIncome;
+        if(!form.dataset.finalSubmitV111){
+          form.addEventListener('submit',finalSubmitIncome,true);
+          form.dataset.finalSubmitV111='1';
+        }
+      }
+      if(save){
+        save.type='submit';
+        save.onclick=event=>{
+          event.preventDefault();
+          event.stopPropagation();
+          finalSubmitIncome(event);
+        };
+      }
+      ['amount','name','category'].forEach(id=>{
+        const node=$(id);
+        if(node&&!node.dataset.finalValidateV111){
+          ['input','change','keyup','blur'].forEach(type=>node.addEventListener(type,finalValidateIncome));
+          node.dataset.finalValidateV111='1';
+        }
+      });
+      finalValidateIncome();
+    };
+
+    const callGlobal=name=>(...args)=>{
+      const fn=globalThis[name]||window[name];
+      if(typeof fn==='function')return fn(...args);
+    };
+    const bindActions=()=>{
+      enforceHomeOnlyFilters();
+      wireIncomeForm();
+      const safe=$('safeAmount');
+      if(safe){
+        const fitSafe=()=>{
+          let measure=document.getElementById('safeAmountMeasure');
+          if(!measure){
+            measure=document.createElement('span');
+            measure.id='safeAmountMeasure';
+            measure.className='safe-measure';
+            safe.closest('.safe-edit')?.appendChild(measure);
+          }
+          const text=String(safe.value||'0').replace(/\s?₽/g,'').trim()||'0';
+          measure.textContent=text;
+          const width=Math.ceil(measure.getBoundingClientRect().width)+4;
+          safe.style.setProperty('width',`${Math.max(24,Math.min(width,260))}px`,'important');
+        };
+        fitSafe();
+        if(!safe.dataset.fitSafeV112){
+          ['input','focus','blur'].forEach(type=>safe.addEventListener(type,fitSafe));
+          safe.dataset.fitSafeV112='1';
+        }
+      }
+      const open=$('open');
+      if(open){
+        open.disabled=false;
+        open.style.pointerEvents='auto';
+        open.onclick=event=>{
+          event.preventDefault();
+          event.stopPropagation();
+          callGlobal('openAdd')();
+          setTimeout(wireIncomeForm,0);
+        };
+      }
+      if($('prevMonth')){
+        $('prevMonth').disabled=false;
+        $('prevMonth').style.pointerEvents='auto';
+        $('prevMonth').onclick=event=>{
+          event.preventDefault();
+          event.stopPropagation();
+          if(typeof moveMonth==='function')moveMonth(-1);
+        };
+      }
+      if($('nextMonth')){
+        $('nextMonth').disabled=false;
+        $('nextMonth').style.pointerEvents='auto';
+        $('nextMonth').onclick=event=>{
+          event.preventDefault();
+          event.stopPropagation();
+          if(typeof moveMonth==='function')moveMonth(1);
+        };
+      }
+      const settings=$('settingsButton')||$('infoTab');
+      document.querySelectorAll('#settingsButton,.settings-button').forEach(button=>{
+        button.disabled=false;
+        button.style.pointerEvents='auto';
+        button.onclick=event=>{
+          event.preventDefault();
+          event.stopPropagation();
+          callGlobal('openSettings')();
+        };
+      });
+      document.querySelectorAll('#addLoan,.loan-add,.add-credit').forEach(button=>{
+        button.disabled=false;
+        button.style.pointerEvents='auto';
+        button.onclick=event=>{
+          event.preventDefault();
+          event.stopPropagation();
+          callGlobal('openLoanForm')();
+        };
+      });
+      if(settings&&settings.id==='infoTab'&&settings.classList.contains('summary-finance')){
+        settings.onclick=event=>{event.preventDefault();showView('info')};
+      }
+    };
+    const wrap=name=>{
+      const base=globalThis[name]||window[name];
+      if(typeof base!=='function'||base.__hardBindV111)return;
+      const wrapped=function(...args){
+        const result=base.apply(this,args);
+        setTimeout(bindActions,0);
+        requestAnimationFrame(bindActions);
+        return result;
+      };
+      wrapped.__hardBindV111=true;
+      globalThis[name]=wrapped;
+    };
+    ['render','renderStats','renderInfo','renderLoansFinance','showView','openAdd','openEdit','openSettings','openUtility','openLoanForm'].forEach(wrap);
+    document.addEventListener('click',event=>{
+      const prev=event.target.closest?.('#prevMonth');
+      if(prev){
+        event.preventDefault();
+        event.stopPropagation();
+        event.stopImmediatePropagation?.();
+        if(typeof moveMonth==='function')moveMonth(-1);
+        return;
+      }
+      const next=event.target.closest?.('#nextMonth');
+      if(next){
+        event.preventDefault();
+        event.stopPropagation();
+        event.stopImmediatePropagation?.();
+        if(typeof moveMonth==='function')moveMonth(1);
+        return;
+      }
+      const settingsButton=event.target.closest?.('#settingsButton,.settings-trigger');
+      if(settingsButton){
+        event.preventDefault();
+        event.stopPropagation();
+        event.stopImmediatePropagation?.();
+        callGlobal('openSettings')();
+        return;
+      }
+      const addLoan=event.target.closest?.('#addLoan,.loan-add,.add-credit');
+      if(addLoan){
+        event.preventDefault();
+        event.stopPropagation();
+        event.stopImmediatePropagation?.();
+        callGlobal('openLoanForm')();
+        return;
+      }
+      const save=event.target.closest?.('#save');
+      if(save){
+        event.preventDefault();
+        event.stopPropagation();
+        event.stopImmediatePropagation?.();
+        finalSubmitIncome(event);
+      }
+    },true);
+    bindActions();
+  }catch(error){console.warn('hard binding v111 skipped',error)}})();
 </script>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script src="supabase-sync.js?v=5"></script>

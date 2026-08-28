@@ -1,6 +1,6 @@
-const CACHE='moi-dohody-v61',FILES=['./','./index.html','./app.css?v=15','./supabase-sync.js?v=5','./manifest.webmanifest','./icon-192.png','./icon-512.png'];
-self.addEventListener('install',event=>event.waitUntil(caches.open(CACHE).then(cache=>cache.addAll(FILES)).then(()=>self.skipWaiting())));
-self.addEventListener('activate',event=>event.waitUntil(caches.keys().then(keys=>Promise.all(keys.filter(key=>key!==CACHE).map(key=>caches.delete(key)))).then(()=>self.clients.claim())));
+const CACHE='moi-dohody-v56',FILES=['./','./index.html','./app.css?v=12','./supabase-sync.js?v=2','./manifest.webmanifest','./apple-touch-icon.png','./icon-192.png','./icon-512.png'];
+self.addEventListener('install',event=>event.waitUntil(caches.open(CACHE).then(cache=>cache.addAll(FILES))));
+self.addEventListener('activate',event=>event.waitUntil(caches.keys().then(keys=>Promise.all(keys.filter(key=>key!==CACHE).map(key=>caches.delete(key))))));
 self.addEventListener('fetch',event=>{
   const request=event.request;
   if(request.mode==='navigate'||new URL(request.url).pathname.endsWith('/index.html')){

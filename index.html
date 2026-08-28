@@ -2314,7 +2314,7 @@ html,body{
 <body>
 <main class="app">
   <header class="top"><div><p class="kicker">МОИ ДОХОДЫ</p><button class="month-picker" aria-label="Выбрать месяц"><h1 id="monthTitle">Август <span>2026</span></h1><input id="monthPicker" type="month" aria-label="Месяц и год"></button></div><div class="month-nav"><button id="prevMonth" aria-label="Предыдущий месяц"><svg class="ui-icon" viewBox="0 0 24 24"><path d="m15 18-6-6 6-6"/></svg></button><button id="nextMonth" aria-label="Следующий месяц"><svg class="ui-icon" viewBox="0 0 24 24"><path d="m9 18 6-6-6-6"/></svg></button><button class="info-shortcut" id="infoTab" aria-label="Прочая информация"><svg class="ui-icon" viewBox="0 0 24 24"><path d="M12 16v-5"/><path d="M12 8h.01"/><circle cx="12" cy="12" r="9"/></svg></button></div></header>
-  <div id="homeTop"><section class="summary"><p>Получено в этом месяце</p><strong id="received">0 <small>₽</small></strong><div class="bar"><i id="progress"></i></div><div class="plan-note"><span>Не оплачено <b id="remaining">0 ₽</b></span><span>Ожидается <b id="total">0 ₽</b></span></div></section><div class="heading"><div><h2>Доходы</h2><p id="waitingCount"></p></div></div><button class="primary top-add" id="open"><svg class="ui-icon" viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></svg>Добавить доход</button></div>
+  <div id="homeTop"><section class="summary"><p>Получено в этом месяце</p><strong id="received">0 <small>₽</small></strong><div class="bar"><i id="progress"></i></div><div class="plan-note"><span>Ещё ожидается:<b id="remaining">0 ₽</b></span><span>Всего с учётом ожидаемого:<b id="total">0 ₽</b></span></div></section><div class="heading"><div><h2>Доходы</h2><p id="waitingCount"></p></div></div><button class="primary top-add" id="open"><svg class="ui-icon" viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></svg>Добавить доход</button></div>
   <nav class="nav"><button class="active" id="homeTab"><i><svg class="ui-icon" viewBox="0 0 24 24"><path d="m3 11 9-7 9 7"/><path d="M5 10v10h14V10M9 20v-6h6v6"/></svg></i>Главная</button><button id="statsTab"><i><svg class="ui-icon" viewBox="0 0 24 24"><path d="M5 20V10M12 20V4M19 20v-7"/></svg></i>Статистика</button></nav>
   <div class="status-filter" id="statusFilter"><button class="active" data-filter="all">Все <b id="allCount">0</b></button><button data-filter="waiting">Ожидаются <b id="filterWaitingCount">0</b></button><button data-filter="received">Получены <b id="filterReceivedCount">0</b></button></div>
   <button class="carry" id="carryWaiting"></button>
@@ -2894,7 +2894,7 @@ html,body{
       actions.append(repeat,remove,close);
       head.append(actions);
     }
-    const correctWaitingTotal=()=>{const totalEl=$('total');if(!totalEl||!Array.isArray(window.items)&&typeof items==='undefined')return;const all=monthItems(),waiting=all.filter(item=>item.status==='waiting').reduce((sum,item)=>sum+item.amount,0);totalEl.textContent=rub(waiting)};
+    const correctWaitingTotal=()=>{const totalEl=$('total');if(!totalEl||!Array.isArray(window.items)&&typeof items==='undefined')return;const all=monthItems(),total=all.reduce((sum,item)=>sum+item.amount,0);totalEl.textContent=rub(total)};
     const baseRender=render;render=function(){baseRender();correctWaitingTotal()};
     correctWaitingTotal();
     const tuneKeyboard=()=>{
@@ -4861,5 +4861,11 @@ html,body{
   sync();
 })();
 </script>
+<style>
+/* Шапка: два показателя в столбик, подпись слева — сумма справа */
+.summary .plan-note{flex-direction:column!important;gap:7px!important;margin-top:14px!important}
+.summary .plan-note span{display:flex!important;justify-content:space-between!important;align-items:baseline!important;gap:12px}
+.summary .plan-note b{margin-left:0!important;white-space:nowrap}
+</style>
 </body>
 </html>

@@ -589,8 +589,8 @@ button:active{transform:scale(.98)}
 
 /* v14 — temporary, silent highlight for unseen additions and edits */
 .row{position:relative;transition:background-color 900ms ease,box-shadow 900ms ease,opacity 180ms ease!important}
-.row.fresh-change{background:#f1f7f2!important;box-shadow:inset 3px 0 #6f9c7d!important}
-.row.fresh-change .copy b:after{content:'';display:inline-block;width:5px;height:5px;margin:0 0 2px 7px;border-radius:50%;background:#5c8d6c;opacity:.8}
+.row.fresh-change{background:linear-gradient(90deg,rgba(145,214,173,.18),rgba(255,255,252,.78) 42%,rgba(255,255,252,.92))!important;box-shadow:inset 0 0 0 1px rgba(35,107,69,.08),0 8px 24px rgba(35,107,69,.07)!important}
+.row.fresh-change .copy b:after{content:'новое';display:inline-flex;align-items:center;height:18px;margin:0 0 1px 8px;padding:0 7px;border-radius:999px;background:rgba(35,107,69,.1);color:#236b45;font-size:9px;font-weight:760;letter-spacing:.02em;vertical-align:middle;box-shadow:inset 0 0 0 1px rgba(35,107,69,.08)}
 .year-row.zero>span{background:#eceee9!important}.year-row.zero>span i{display:none!important}
 @media(prefers-reduced-motion:reduce){.row{transition:background-color 160ms ease,box-shadow 160ms ease!important}}
 
@@ -1127,6 +1127,227 @@ button:active,.sheet-link:active,.row-main:active,.settings-row:active,.category
 .row,.loan-card,.category-card,.stats-summary,.stats-breakdown,.finance-main .finance-section.single,.credit-card{transition:background-color 160ms ease,border-color 160ms ease,box-shadow 180ms ease,opacity 160ms ease!important}
 .row.fresh-change{transition:background-color 450ms ease,box-shadow 450ms ease!important}
 .category-bar i,.year-row>span i,.loan-progress i,.bar i{transition:transform 220ms var(--tap-ease),width 220ms var(--tap-ease),height 220ms var(--tap-ease),background-color 160ms ease!important;transform-origin:left bottom}
+.html-no-x,html,body{overflow-x:hidden}
+.scrim,.utility-scrim{touch-action:none;overscroll-behavior:none}
+.scrim .sheet,.utility-sheet{max-height:calc(100dvh - 8px)!important;overflow-y:auto;overflow-x:hidden!important;touch-action:pan-y;overscroll-behavior-y:contain;overscroll-behavior-x:none;-webkit-overflow-scrolling:touch}
+.scrim #form{padding-bottom:calc(104px + env(safe-area-inset-bottom))!important}
+.scrim #form .save{position:relative!important;bottom:auto!important;z-index:1!important;margin-top:18px!important;box-shadow:none!important}
+.toast{bottom:96px!important}
+.sheet-head{align-items:flex-start!important;gap:10px}
+.sheet-head-actions{display:flex;align-items:center;gap:7px;flex:0 0 auto}
+.sheet-head-actions .form-icon-action,.sheet-head-actions .close{display:grid!important;place-items:center!important;width:44px!important;height:44px!important;min-width:44px!important;min-height:44px!important;margin:0!important;border:0!important;border-radius:50%!important;background:#e9ede8!important;color:#5f6860!important;box-shadow:none!important}
+.sheet-head-actions .form-icon-action[hidden]{display:none!important}
+.sheet-head-actions .form-icon-action.danger{background:#f2e9e7!important;color:#925d57!important}
+.sheet-head-actions .form-icon-action .ui-icon{width:18px;height:18px;fill:none;stroke:currentColor;stroke-width:1.9;stroke-linecap:round;stroke-linejoin:round}
+.sheet-head-actions .close .ui-icon{width:20px;height:20px}
+/* v60 — Apple-style calmer sheets and inputs */
+.scrim .sheet{width:min(100%,480px)!important;max-height:calc(100dvh - 10px)!important;padding:8px 18px calc(24px + env(safe-area-inset-bottom))!important;border-radius:30px 30px 0 0!important;background:rgba(248,248,243,.96)!important;box-shadow:0 -28px 90px rgba(18,23,19,.26)!important}
+@supports ((backdrop-filter:blur(20px)) or (-webkit-backdrop-filter:blur(20px))){
+  .scrim .sheet{background:rgba(248,248,243,.9)!important;backdrop-filter:blur(24px) saturate(150%)!important;-webkit-backdrop-filter:blur(24px) saturate(150%)!important}
+}
+.scrim .grab,.utility-sheet .grab{width:42px!important;height:5px!important;margin:2px auto 16px!important;border-radius:999px!important;background:rgba(24,28,24,.18)!important}
+.scrim .sheet-head{position:sticky!important;top:0!important;z-index:6!important;margin:0 -2px 12px!important;padding:2px 0 14px!important;background:linear-gradient(180deg,rgba(248,248,243,.98),rgba(248,248,243,.88) 72%,rgba(248,248,243,0))!important}
+.scrim .sheet-head .kicker{margin:0 0 7px!important;color:rgba(73,82,74,.76)!important;font-size:12px!important;font-weight:750!important;letter-spacing:.22em!important;line-height:1.1!important}
+.scrim .sheet-head h2{margin:0!important;color:#151a16!important;font-size:30px!important;font-weight:680!important;line-height:1.02!important;letter-spacing:-.045em!important}
+.sheet-head-actions{padding-top:2px}
+.sheet-head-actions .form-icon-action,.sheet-head-actions .close{width:42px!important;height:42px!important;min-width:42px!important;min-height:42px!important;background:rgba(229,234,227,.82)!important;color:#5e675f!important;transition:transform 120ms ease,background-color 140ms ease,color 140ms ease!important}
+.sheet-head-actions .form-icon-action:active,.sheet-head-actions .close:active{transform:scale(.92)!important;background:rgba(215,222,214,.94)!important}
+.sheet-head-actions .form-icon-action.danger{background:rgba(244,232,229,.88)!important;color:#995d56!important}
+.scrim #form{display:grid!important;gap:14px!important;padding-bottom:calc(34px + env(safe-area-inset-bottom))!important}
+.scrim #form label,.scrim #form .seg-label{margin:0!important;color:#627066!important;font-size:15px!important;font-weight:680!important;line-height:1.2!important;letter-spacing:-.01em!important}
+.scrim #form label{display:grid!important;gap:8px!important}
+.scrim #form .segments,.scrim #form .owner-switch{height:58px!important;padding:5px!important;border-radius:20px!important;background:rgba(225,226,217,.82)!important;box-shadow:inset 0 0 0 1px rgba(20,29,20,.035)!important}
+.scrim #form .segments button,.scrim #form .owner-switch button{border-radius:16px!important;color:#778078!important;font-size:15px!important;font-weight:680!important;letter-spacing:-.01em!important;transition:transform 120ms ease,background-color 160ms ease,color 160ms ease,box-shadow 160ms ease!important}
+.scrim #form .segments button.active,.scrim #form .owner-switch button.active{background:rgba(255,255,252,.96)!important;color:#172019!important;box-shadow:0 8px 22px rgba(21,28,21,.08),inset 0 0 0 1px rgba(255,255,255,.72)!important}
+.scrim #form .segments button:active,.scrim #form .owner-switch button:active{transform:scale(.985)!important}
+.scrim #form input,.scrim #form select{height:58px!important;border:0!important;border-radius:18px!important;background:rgba(255,255,252,.84)!important;color:#171c18!important;font-size:18px!important;font-weight:590!important;letter-spacing:-.018em!important;box-shadow:inset 0 0 0 1px rgba(24,31,24,.08)!important;transition:background-color 140ms ease,box-shadow 140ms ease!important}
+.scrim #form input:focus,.scrim #form select:focus{background:#fff!important;box-shadow:inset 0 0 0 1.5px rgba(41,92,66,.34),0 0 0 5px rgba(41,92,66,.075)!important;outline:0!important}
+.scrim #form input::placeholder{color:rgba(88,96,89,.38)!important;font-weight:560!important}
+.scrim #form .amountbox{height:70px!important;border:0!important;border-radius:21px!important;background:rgba(255,255,252,.9)!important;box-shadow:inset 0 0 0 1px rgba(24,31,24,.08)!important}
+.scrim #form .amountbox:focus-within{background:#fff!important;box-shadow:inset 0 0 0 1.5px rgba(41,92,66,.34),0 0 0 5px rgba(41,92,66,.075)!important}
+.scrim #form .amountbox input{height:70px!important;background:transparent!important;box-shadow:none!important;font-size:31px!important;font-weight:690!important;letter-spacing:-.045em!important}
+.scrim #form .amountbox b{color:rgba(45,54,46,.46)!important;font-size:28px!important;font-weight:680!important}
+.scrim #form .hint{margin:2px 0 0!important;color:#9aa29b!important;font-size:14px!important;font-weight:560!important;line-height:1.32!important}
+.scrim #form .save{height:56px!important;margin-top:4px!important;border:0!important;border-radius:18px!important;background:#173b2a!important;color:#fff!important;font-size:18px!important;font-weight:720!important;letter-spacing:-.02em!important;box-shadow:0 14px 30px rgba(23,59,42,.18)!important;transition:transform 120ms ease,opacity 140ms ease,background-color 160ms ease!important}
+.scrim #form .save:active{transform:scale(.985)!important}
+.scrim #form .save:disabled{background:rgba(137,151,139,.48)!important;color:rgba(255,255,255,.72)!important;box-shadow:none!important}
+.utility-sheet{width:min(100%,480px)!important;border-radius:30px 30px 0 0!important;background:rgba(248,248,243,.96)!important;box-shadow:0 -28px 90px rgba(18,23,19,.24)!important}
+.utility-head{position:sticky!important;top:0!important;z-index:5!important;background:linear-gradient(180deg,rgba(248,248,243,.98),rgba(248,248,243,.88) 74%,rgba(248,248,243,0))!important}
+/* v61 — shared Apple-like control language */
+.primary,.top-add,.add-credit,.utility-primary,.confirm-primary{border:0!important;border-radius:18px!important;background:#173b2a!important;color:#fff!important;font-weight:720!important;letter-spacing:-.02em!important;box-shadow:0 12px 28px rgba(23,59,42,.16)!important;transition:transform 120ms ease,box-shadow 160ms ease,background-color 160ms ease!important}
+.primary:active,.top-add:active,.add-credit:active,.utility-primary:active,.confirm-primary:active{transform:scale(.985)!important;box-shadow:0 8px 18px rgba(23,59,42,.13)!important}
+.secondary-action,.danger-action,.utility-secondary,.confirm-secondary,.settings-row,.sheet-link,.category-sheet-list>button{border:0!important;border-radius:17px!important;background:rgba(255,255,252,.72)!important;color:#26312a!important;box-shadow:inset 0 0 0 1px rgba(24,31,24,.07)!important;transition:transform 120ms ease,background-color 150ms ease,color 150ms ease!important}
+.secondary-action:active,.danger-action:active,.utility-secondary:active,.confirm-secondary:active,.settings-row:active,.sheet-link:active,.category-sheet-list>button:active{transform:scale(.985)!important;background:rgba(238,242,236,.9)!important}
+.danger-action{color:#995d56!important;background:rgba(244,232,229,.86)!important}
+.row,.loan-card,.category-card,.stats-summary,.stats-breakdown,.finance-main .finance-section.single,.credit-card,.info-card{border-color:rgba(24,31,24,.06)!important;box-shadow:0 10px 28px rgba(18,23,19,.055)!important}
+.row-main,.loan-open{transition:transform 120ms ease,opacity 150ms ease!important}
+.row-main:active,.loan-open:active{transform:scale(.992)!important}
+.status-filter,.period-switch,.nav{background:rgba(237,239,232,.82)!important;box-shadow:inset 0 0 0 1px rgba(24,31,24,.045)!important}
+.status-filter button,.period-switch button,.nav button{transition:transform 120ms ease,background-color 160ms ease,color 160ms ease!important}
+.status-filter button:active,.period-switch button:active,.nav button:active{transform:scale(.975)!important}
+@keyframes freshMaterialSettle{0%{background-position:-120px 0;box-shadow:inset 0 0 0 1px rgba(35,107,69,.05),0 0 0 rgba(35,107,69,0)}45%{box-shadow:inset 0 0 0 1px rgba(35,107,69,.1),0 12px 28px rgba(35,107,69,.09)}100%{background-position:0 0;box-shadow:inset 0 0 0 1px rgba(35,107,69,.08),0 8px 24px rgba(35,107,69,.07)}}
+.row.fresh-change{background-size:180% 100%!important;animation:freshMaterialSettle 520ms var(--tap-ease) both!important}
+.top-add{background:linear-gradient(145deg,#b9ef87,#8fd95f)!important;color:#172014!important;box-shadow:0 12px 28px rgba(116,177,80,.2)!important}
+.top-add .ui-icon{color:#172014!important}
+.top-add:active{box-shadow:0 8px 18px rgba(116,177,80,.16)!important}
+/* v62 — Settings as a native-feeling iOS sheet */
+.utility-sheet:has(.settings-group){padding:8px 18px calc(24px + env(safe-area-inset-bottom))!important;border-radius:30px 30px 0 0!important;background:rgba(248,248,243,.94)!important;box-shadow:0 -28px 90px rgba(18,23,19,.24)!important}
+@supports ((backdrop-filter:blur(20px)) or (-webkit-backdrop-filter:blur(20px))){
+  .utility-sheet:has(.settings-group){background:rgba(248,248,243,.88)!important;backdrop-filter:blur(24px) saturate(150%)!important;-webkit-backdrop-filter:blur(24px) saturate(150%)!important}
+}
+.utility-sheet:has(.settings-group) .utility-head{position:sticky!important;top:0!important;z-index:6!important;display:flex!important;align-items:flex-start!important;justify-content:space-between!important;gap:12px!important;margin:0 -2px 12px!important;padding:2px 0 14px!important;background:linear-gradient(180deg,rgba(248,248,243,.98),rgba(248,248,243,.88) 72%,rgba(248,248,243,0))!important}
+.utility-sheet:has(.settings-group) .utility-head h2{margin:0!important;color:#151a16!important;font-size:30px!important;font-weight:680!important;line-height:1.02!important;letter-spacing:-.045em!important}
+.utility-close{display:grid!important;place-items:center!important;width:42px!important;height:42px!important;min-width:42px!important;min-height:42px!important;margin:0!important;border:0!important;border-radius:50%!important;background:rgba(229,234,227,.82)!important;color:#5e675f!important;box-shadow:none!important;transition:transform 120ms ease,background-color 140ms ease,color 140ms ease!important}
+.utility-close .ui-icon{width:20px!important;height:20px!important;fill:none!important;stroke:currentColor!important;stroke-width:1.9!important;stroke-linecap:round!important;stroke-linejoin:round!important}
+.utility-close:active{transform:scale(.92)!important;background:rgba(215,222,214,.94)!important}
+.utility-sheet:has(.settings-group) .utility-body{display:grid!important;gap:14px!important;padding-bottom:2px!important}
+.utility-sheet:has(.settings-group) .settings-status{display:flex!important;align-items:center!important;gap:12px!important;margin:0!important;padding:14px!important;border-radius:20px!important;background:linear-gradient(145deg,rgba(255,255,252,.86),rgba(239,244,236,.72))!important;color:#172019!important;box-shadow:inset 0 0 0 1px rgba(24,31,24,.07),0 8px 22px rgba(18,23,19,.045)!important}
+.utility-sheet:has(.settings-group) .settings-status-dot{width:9px!important;height:9px!important;border-radius:50%!important;background:#78bf78!important;box-shadow:0 0 0 5px rgba(120,191,120,.12)!important}
+.utility-sheet:has(.settings-group) .settings-status b{font-size:13px!important;font-weight:650!important;letter-spacing:-.01em!important}
+.utility-sheet:has(.settings-group) .settings-status small{color:#768078!important;font-size:11px!important;font-weight:460!important;line-height:1.32!important;white-space:normal!important}
+.utility-sheet:has(.settings-group) .settings-group{margin:0!important}
+.utility-sheet:has(.settings-group) .settings-group h3{margin:0 0 7px 3px!important;color:#858d86!important;font-size:10px!important;font-weight:650!important;letter-spacing:.14em!important;text-transform:uppercase!important}
+.utility-sheet:has(.settings-group) .settings-group .settings-row{grid-template-columns:36px minmax(0,1fr) 18px!important;gap:11px!important;min-height:62px!important;margin:0!important;padding:10px 12px!important;border:0!important;border-bottom:1px solid rgba(24,31,24,.065)!important;border-radius:0!important;background:rgba(255,255,252,.76)!important;color:#19211b!important;box-shadow:none!important}
+.utility-sheet:has(.settings-group) .settings-group .settings-row:first-of-type{border-radius:18px 18px 0 0!important}
+.utility-sheet:has(.settings-group) .settings-group .settings-row:last-child{border-bottom:0!important;border-radius:0 0 18px 18px!important}
+.utility-sheet:has(.settings-group) .settings-group .settings-row:only-of-type{border-radius:18px!important}
+.utility-sheet:has(.settings-group) .settings-row-icon{display:grid!important;place-items:center!important;width:36px!important;height:36px!important;border-radius:12px!important;background:rgba(233,238,231,.9)!important;color:#2f4c38!important;font-size:16px!important;font-weight:650!important}
+.utility-sheet:has(.settings-group) .settings-row b{font-size:13px!important;font-weight:650!important;letter-spacing:-.015em!important}
+.utility-sheet:has(.settings-group) .settings-row small{margin-top:3px!important;color:#7b857d!important;font-size:11px!important;font-weight:460!important;line-height:1.32!important;white-space:normal!important}
+.utility-sheet:has(.settings-group) .settings-chevron{stroke:#98a099!important}
+.utility-sheet:has(.settings-group) .settings-privacy{margin:1px 8px 0!important;color:#8b948d!important;font-size:10.5px!important;line-height:1.42!important;text-align:center!important}
+/* v63 — Emil pass: one visual language, less decoration, calmer hierarchy */
+:root{--brand:#a9e875;--brand-strong:#91d85e;--brand-ink:#162014;--surface:#fffefa;--surface-2:#f3f5ef;--stroke:rgba(24,31,24,.08);--stroke-strong:rgba(24,31,24,.13);--soft-shadow:0 8px 22px rgba(21,28,21,.055);--float-shadow:0 -18px 46px rgba(15,22,17,.18);--radius-xl:24px;--radius-lg:18px;--radius-md:14px;--emil-out:cubic-bezier(.23,1,.32,1);--emil-drawer:cubic-bezier(.32,.72,0,1)}
+body{background:#f5f7f2!important;color:#171b17!important}
+.app{background:#f5f7f2!important;box-shadow:none!important}
+.summary{background:linear-gradient(145deg,#24563d,#173d2b)!important;box-shadow:none!important}
+.row,.loan-card,.category-card,.stats-summary,.stats-breakdown,.finance-main .finance-section.single,.credit-card,.info-card,.data-tools,.loans-empty,.loan-scenario,.loan-facts span{border:1px solid var(--stroke)!important;background:var(--surface)!important;box-shadow:none!important}
+.row{border-right:0!important;border-left:0!important;border-radius:0!important}
+.list{border:1px solid var(--stroke)!important;border-radius:20px!important;background:var(--surface)!important;box-shadow:none!important}
+.row-main{background:transparent!important}
+.primary,.top-add,.add-credit,.utility-primary,.confirm-primary,.scrim #form .save{height:52px!important;border:0!important;border-radius:17px!important;background:linear-gradient(145deg,var(--brand),var(--brand-strong))!important;color:var(--brand-ink)!important;font-size:15px!important;font-weight:700!important;letter-spacing:-.015em!important;box-shadow:none!important;transition:transform 140ms var(--emil-out),opacity 140ms ease,background-color 140ms ease!important}
+.primary:active,.top-add:active,.add-credit:active,.utility-primary:active,.confirm-primary:active,.scrim #form .save:active{transform:scale(.972)!important;box-shadow:none!important}
+.scrim #form .save:disabled{background:#d8dfd3!important;color:#8a9388!important;opacity:1!important}
+.secondary-action,.danger-action,.utility-secondary,.confirm-secondary,.settings-row,.sheet-link,.category-sheet-list>button{background:var(--surface)!important;border:1px solid var(--stroke)!important;box-shadow:none!important;color:#26312a!important}
+.danger-action,.confirm-delete{background:#fff7f5!important;border-color:rgba(146,76,68,.13)!important;color:#925d57!important}
+.scrim,.utility-scrim,.confirm-scrim{background:rgba(17,24,18,.42)!important;backdrop-filter:none!important;-webkit-backdrop-filter:none!important}
+.sheet,.scrim .sheet,.utility-sheet,.utility-sheet:has(.settings-group){width:min(100%,460px)!important;max-height:calc(100dvh - 12px)!important;padding:8px 20px calc(22px + env(safe-area-inset-bottom))!important;border:0!important;border-radius:28px 28px 0 0!important;background:#fafbf7!important;box-shadow:var(--float-shadow)!important;overflow-x:hidden!important}
+.scrim .grab,.utility-sheet .grab{width:38px!important;height:4px!important;margin:2px auto 18px!important;background:#d4d9d0!important}
+.sheet-head,.scrim .sheet-head,.utility-head,.utility-sheet:has(.settings-group) .utility-head{position:sticky!important;top:0!important;z-index:6!important;display:flex!important;align-items:flex-start!important;justify-content:space-between!important;gap:12px!important;margin:0 -2px 16px!important;padding:0 0 12px!important;background:#fafbf7!important}
+.sheet-head h2,.scrim .sheet-head h2,.utility-head h2,.utility-sheet:has(.settings-group) .utility-head h2{margin:0!important;color:#171b17!important;font-size:27px!important;font-weight:650!important;line-height:1.05!important;letter-spacing:-.04em!important}
+.scrim .sheet-head .kicker{margin:0 0 6px!important;color:#858d86!important;font-size:10px!important;font-weight:650!important;letter-spacing:.16em!important}
+.close,.utility-close,.sheet-head-actions .form-icon-action,.sheet-head-actions .close{width:40px!important;height:40px!important;min-width:40px!important;min-height:40px!important;border:0!important;border-radius:50%!important;background:#ecefea!important;color:#616a62!important;box-shadow:none!important}
+.close:active,.utility-close:active,.sheet-head-actions .form-icon-action:active,.sheet-head-actions .close:active{transform:scale(.94)!important;background:#e1e6df!important}
+.sheet-head-actions{gap:6px!important;padding-top:0!important}
+.sheet-head-actions .form-icon-action.danger{background:#f4e9e7!important;color:#925d57!important}
+.scrim #form{gap:13px!important;padding-bottom:calc(22px + env(safe-area-inset-bottom))!important}
+.scrim #form label,.scrim #form .seg-label,.utility-body label{color:#667066!important;font-size:12px!important;font-weight:600!important;letter-spacing:0!important}
+.scrim #form .segments,.scrim #form .owner-switch,.prepay-choice,.period-switch,.status-filter{height:auto!important;padding:4px!important;border:1px solid var(--stroke)!important;border-radius:16px!important;background:#e9ede4!important;box-shadow:none!important}
+.scrim #form .segments button,.scrim #form .owner-switch button,.prepay-choice button,.period-switch button,.status-filter button{height:42px!important;border:0!important;border-radius:13px!important;background:transparent!important;color:#737c73!important;font-size:12px!important;font-weight:600!important;box-shadow:none!important}
+.scrim #form .segments button.active,.scrim #form .owner-switch button.active,.prepay-choice button.active,.period-switch button.active,.status-filter button.active{background:var(--surface)!important;color:#172019!important;box-shadow:none!important}
+.scrim #form input,.scrim #form select,.utility-body input,.utility-body select,.loan-form input,.loan-form select,.safe-metric-input{height:52px!important;border:1px solid var(--stroke)!important;border-radius:15px!important;background:var(--surface)!important;color:#171b17!important;font-size:16px!important;font-weight:520!important;letter-spacing:-.015em!important;box-shadow:none!important}
+.scrim #form input:focus,.scrim #form select:focus,.utility-body input:focus,.utility-body select:focus,.loan-form input:focus,.loan-form select:focus,.safe-metric-input:focus{border-color:rgba(35,107,69,.35)!important;box-shadow:0 0 0 3px rgba(169,232,117,.22)!important;background:#fff!important}
+.scrim #form .amountbox,.utility-body .amountbox{height:64px!important;border:1px solid var(--stroke)!important;border-radius:17px!important;background:var(--surface)!important;box-shadow:none!important}
+.scrim #form .amountbox input,.utility-body .amountbox input{height:62px!important;border:0!important;background:transparent!important;box-shadow:none!important;font-size:29px!important;font-weight:700!important}
+.scrim #form .hint{color:#8a938b!important;font-size:11.5px!important}
+.utility-sheet:has(.settings-group) .settings-status{background:var(--surface)!important;border:1px solid var(--stroke)!important;box-shadow:none!important}
+.utility-sheet:has(.settings-group) .settings-group .settings-row{background:var(--surface)!important;border-bottom:1px solid var(--stroke)!important;box-shadow:none!important}
+.utility-sheet:has(.settings-group) .settings-row-icon{background:#eef2eb!important;color:#375540!important}
+.finance-main,.loans-main{background:transparent!important;box-shadow:none!important}
+.loan-safe{background:var(--surface)!important;border:1px solid var(--stroke)!important;box-shadow:none!important}
+.safe-metric-input{min-height:48px!important;padding:0 12px!important;background:#f7f9f4!important}
+.loan-detail-hero{background:linear-gradient(145deg,#24563d,#173d2b)!important;box-shadow:none!important}
+.loan-progress,.bar{background:rgba(255,255,255,.18)!important}
+.loan-progress i,.bar i{background:var(--brand)!important}
+.nav{background:#172019!important;border:0!important;box-shadow:none!important}
+.nav button.active{background:#f6f7f2!important;box-shadow:none!important}
+.toast{background:#1f271f!important;box-shadow:none!important}
+.row.fresh-change{background:linear-gradient(90deg,rgba(169,232,117,.2),var(--surface) 44%)!important;box-shadow:inset 0 0 0 1px rgba(116,177,80,.13)!important}
+.row.fresh-change .copy b:after{background:rgba(169,232,117,.32)!important;color:#30511f!important;box-shadow:none!important}
+/* v64 — Safe card matches the signature Add Income color */
+.finance-main .loan-safe{position:relative!important;overflow:hidden!important;padding:17px 15px!important;border:1px solid rgba(116,177,80,.24)!important;border-radius:19px!important;background:linear-gradient(145deg,rgba(185,239,135,.34),rgba(255,254,250,.92) 52%,rgba(255,254,250,1))!important;box-shadow:none!important}
+.finance-main .loan-safe:before{content:'';position:absolute;inset:0 auto 0 0;width:4px;background:linear-gradient(180deg,var(--brand),var(--brand-strong));opacity:.9}
+.finance-main .loan-safe .finance-metric-label{margin-left:6px!important;color:#405339!important;font-size:12px!important;font-weight:650!important;letter-spacing:.01em!important}
+.finance-main .loan-safe .safe-edit{margin:0 0 0 6px!important}
+.finance-main .loan-safe .safe-edit:after{content:'редактируется';position:absolute;right:16px;top:17px;padding:3px 7px;border-radius:999px;background:rgba(169,232,117,.34);color:#315120;font-size:9px;font-weight:650;letter-spacing:.01em}
+.finance-main .loan-safe .safe-metric-input{height:52px!important;min-height:52px!important;padding:0 12px!important;border:1px solid rgba(116,177,80,.24)!important;border-radius:15px!important;background:rgba(255,254,250,.72)!important;color:#172014!important;font-size:28px!important;font-weight:680!important;letter-spacing:-.045em!important;box-shadow:none!important}
+.finance-main .loan-safe .safe-metric-input:focus{border-color:rgba(116,177,80,.58)!important;background:#fff!important;box-shadow:0 0 0 4px rgba(169,232,117,.24)!important}
+.finance-main .add-credit,.finance-main .loan-add{background:#172019!important;color:#fff!important;box-shadow:none!important}
+.finance-main .add-credit .ui-icon,.finance-main .loan-add .ui-icon{color:#fff!important}
+.finance-main .add-credit:active,.finance-main .loan-add:active{background:#243026!important;transform:scale(.972)!important}
+/* v65 — final semantic color hierarchy */
+.top-add,.scrim #form .save{background:linear-gradient(145deg,var(--brand),var(--brand-strong))!important;color:var(--brand-ink)!important}
+.top-add .ui-icon,.scrim #form .save .ui-icon{color:var(--brand-ink)!important;stroke:currentColor!important}
+.utility-primary,.confirm-primary,.add-credit,.loan-add{background:#172019!important;color:#fff!important}
+.utility-primary .ui-icon,.confirm-primary .ui-icon,.add-credit .ui-icon,.loan-add .ui-icon{color:#fff!important;stroke:currentColor!important}
+.utility-primary:active,.confirm-primary:active,.add-credit:active,.loan-add:active{background:#243026!important}
+.save:not(#save),.primary:not(.top-add){background:#172019!important;color:#fff!important}
+.summary,.loan-detail-hero{background:linear-gradient(145deg,#243f30,#172019)!important;color:#fff!important}
+.summary .bar i,.loan-progress i{background:var(--brand)!important}
+.check{border-color:#d9ded6!important;background:#fff!important;color:#fff!important}
+.row.done .check{border-color:#236b45!important;background:#236b45!important;color:#fff!important}
+.status-filter button.active:after{background:#172019!important}
+.nav button.active{color:#172019!important}
+.nav button:not(.active){color:#9da59e!important}
+.finance-main .loan-safe{background:linear-gradient(145deg,rgba(169,232,117,.22),#fffefa 48%)!important}
+.finance-main .loan-safe:before{background:linear-gradient(180deg,var(--brand),var(--brand-strong))!important}
+.finance-main .loan-safe .safe-metric-input,.scrim #form input,.scrim #form select,.utility-body input,.utility-body select,.loan-form input,.loan-form select{background:#fffefa!important}
+.finance-main .loan-safe .safe-metric-input:focus,.scrim #form input:focus,.scrim #form select:focus,.utility-body input:focus,.utility-body select:focus,.loan-form input:focus,.loan-form select:focus{box-shadow:0 0 0 3px rgba(169,232,117,.22)!important;border-color:rgba(116,177,80,.48)!important}
+.row,.loan-card,.category-card,.stats-summary,.stats-breakdown,.credit-card,.info-card,.data-tools,.settings-row,.category-sheet-list>button{background:#fffefa!important;border-color:var(--stroke)!important;box-shadow:none!important}
+/* v66 — main page becomes the source of truth for the whole app */
+.status-filter{display:grid!important;grid-template-columns:repeat(3,1fr)!important;gap:4px!important;margin:2px 0 13px!important;padding:4px!important;border:1px solid rgba(24,31,24,.07)!important;border-radius:17px!important;background:#e8ede4!important;box-shadow:none!important}
+.status-filter button{position:relative!important;height:38px!important;min-height:38px!important;padding:0 6px!important;border:0!important;border-radius:13px!important;background:transparent!important;color:#687268!important;font-size:11px!important;font-weight:590!important;white-space:nowrap!important;box-shadow:none!important}
+.status-filter button:after{display:none!important}
+.status-filter button.active{background:#fffefa!important;color:#172019!important;font-weight:690!important;box-shadow:none!important}
+.status-filter button b{color:inherit!important;opacity:.56!important;font-weight:680!important}
+.nav{position:fixed!important;right:auto!important;left:50%!important;bottom:max(10px,env(safe-area-inset-bottom))!important;width:min(calc(100% - 40px),420px)!important;padding:5px!important;border:0!important;border-radius:24px!important;background:linear-gradient(145deg,#24563d,#143927)!important;color:#d8e5dc!important;box-shadow:0 14px 34px rgba(20,40,28,.2)!important;backdrop-filter:none!important;-webkit-backdrop-filter:none!important;transform:translate3d(-50%,0,0)!important}
+.nav button{height:54px!important;border-radius:19px!important;background:transparent!important;color:rgba(229,240,232,.66)!important;font-size:11px!important;font-weight:560!important;letter-spacing:-.01em!important}
+.nav button.active{background:rgba(255,255,250,.95)!important;color:#172019!important;font-weight:690!important;box-shadow:none!important}
+.nav .ui-icon{stroke-width:1.9!important}
+.top,.stats-head,.info-head{padding-right:2px!important;padding-left:2px!important}
+.stats-view,.info-view{padding-top:2px!important}
+.stats-head,.info-head{margin-bottom:14px!important}
+.stats-head .kicker,.info-head .kicker{color:#858d86!important;font-size:10px!important;font-weight:650!important;letter-spacing:.16em!important}
+.stats-head h2,.info-head h2,.finance-main h3{color:#171b17!important;font-size:33px!important;font-weight:650!important;line-height:1.02!important;letter-spacing:-.045em!important}
+.stats-head p,#statsHint,.finance-main>p,.info-card>p{color:#7c867e!important;font-size:12px!important;line-height:1.4!important}
+.stats-summary{padding:21px 20px!important;border:0!important;border-radius:25px!important;background:linear-gradient(145deg,#24563d,#143927)!important;color:#fff!important}
+.stats-summary i{color:#bfd0c5!important;font-size:12px!important;font-weight:520!important}
+.stats-summary b{color:#fff!important;font-size:32px!important;font-weight:680!important;letter-spacing:-.05em!important}
+.stats-breakdown,.year-chart,.years-overview,.category-card,.finance-main .loan-safe,.loan-card,.loans-empty,.data-tools{border-radius:20px!important;background:#fffefa!important;border:1px solid rgba(24,31,24,.075)!important;box-shadow:none!important}
+.category-card{padding:14px!important}
+.category-card.active{border-color:rgba(116,177,80,.44)!important;background:linear-gradient(145deg,rgba(169,232,117,.18),#fffefa 54%)!important}
+.category-bar{background:#edf1e9!important}
+.category-bar i,.year-row>span i{background:var(--brand-strong)!important}
+.finance-main h3{margin-bottom:4px!important}
+.finance-main>p{margin-bottom:16px!important}
+.loan-card{overflow:hidden!important}
+.loan-card-top b,.loans-block>h4,.loan-subtitle{color:#171b17!important;font-weight:650!important}
+.loan-open p,.loan-facts span,.loan-scenario span{color:#7c867e!important}
+.finance-main .add-credit,.finance-main .loan-add{height:52px!important;border-radius:17px!important;background:linear-gradient(145deg,#24563d,#143927)!important;color:#fff!important}
+/* v67 — fix form craft regressions from the screenshots */
+.scrim .sheet{width:min(calc(100% - 28px),420px)!important;padding:8px 18px calc(22px + env(safe-area-inset-bottom))!important;border-radius:28px 28px 0 0!important;background:#fbfcf8!important}
+.scrim .sheet-head{margin-bottom:18px!important;background:#fbfcf8!important}
+.scrim .sheet-head h2{font-size:28px!important;font-weight:650!important}
+.scrim #form{gap:15px!important}
+.scrim #form label,.scrim #form .seg-label{font-size:12px!important;color:#667066!important}
+.scrim #form .segments,.scrim #form .owner-switch{padding:4px!important;border:1px solid #dfe5dc!important;border-radius:18px!important;background:#eef2eb!important}
+.scrim #form .segments button,.scrim #form .owner-switch button{height:40px!important;border-radius:14px!important;font-size:12px!important}
+.scrim #form .segments button.active,.scrim #form .owner-switch button.active{background:#fffefa!important;color:#172019!important}
+.scrim #form .amountbox{height:62px!important;margin-top:0!important;padding:0 13px!important;border:1px solid #dfe5dc!important;border-radius:18px!important;background:#fffefa!important;box-shadow:none!important}
+.scrim #form .amountbox:focus-within{border-color:rgba(116,177,80,.6)!important;box-shadow:0 0 0 3px rgba(169,232,117,.22)!important}
+.scrim #form .amountbox input{height:60px!important;padding:0!important;border:0!important;background:transparent!important;font-size:30px!important;font-weight:720!important;box-shadow:none!important;outline:0!important}
+.scrim #form .amountbox input:focus{border:0!important;box-shadow:none!important;background:transparent!important}
+.scrim #form input,.scrim #form select{height:50px!important;margin-top:0!important;border:1px solid #e2e6df!important;border-radius:16px!important;background:#fffefa!important;font-size:16px!important;font-weight:520!important;box-shadow:none!important}
+.scrim #form input:focus,.scrim #form select:focus{border-color:rgba(116,177,80,.55)!important;box-shadow:0 0 0 3px rgba(169,232,117,.2)!important}
+.scrim #form .date-field[hidden]{display:none!important}
+.scrim #form .hint{margin:-3px 0 0!important;color:#8a938b!important;font-size:11.5px!important}
+.scrim #form .recurring-field{display:flex!important;align-items:center!important;justify-content:space-between!important;gap:12px!important;min-height:52px!important;margin:0!important;padding:0 14px!important;border:1px solid #e2e6df!important;border-radius:16px!important;background:#fffefa!important;color:#667066!important}
+.scrim #form .recurring-field span{font-size:13px!important;font-weight:620!important}
+.scrim #form .recurring-field input{flex:0 0 22px!important;width:22px!important;height:22px!important;min-width:22px!important;margin:0!important;padding:0!important;border:1.5px solid #8d968e!important;border-radius:6px!important;box-shadow:none!important}
+.scrim #form .save{height:52px!important;margin-top:1px!important;border-radius:17px!important;background:linear-gradient(145deg,var(--brand),var(--brand-strong))!important;color:#172014!important;font-size:15px!important;font-weight:720!important}
+.scrim #form .save:disabled{background:#dfe6da!important;color:#879087!important;opacity:1!important}
+.row.fresh-change{background:linear-gradient(90deg,rgba(169,232,117,.12),#fffefa 34%)!important;box-shadow:inset 0 0 0 1px rgba(116,177,80,.12)!important}
+.row.fresh-change .copy b:after{height:17px;margin-left:7px;padding:0 6px;background:rgba(169,232,117,.28)!important;color:#315120!important;font-size:9px!important}
 @media(prefers-reduced-motion:reduce){
   #homeTop,#homeView,#statusFilter,#carryWaiting,.stats-view,.info-view{transform:none!important}
   .view-enter,.view-enter.view-ready{opacity:1!important;transition:none!important}
@@ -1134,6 +1355,795 @@ button:active,.sheet-link:active,.row-main:active,.settings-row:active,.category
   button,.sheet-link,.row-main,.check,.delete-row,.settings-row,.category-card,.donut-legend-row,.category-sheet-list>button,.loan-open,.loan-actions button{transition:background-color 120ms ease,color 120ms ease,opacity 120ms ease!important;transform:none!important}
 }
 
+/* v68 — hard cleanup: one background, one spacing rhythm, Safe is truly signature green */
+html,body,.app{background:#f7f8f4!important}
+.app{width:min(100%,460px)!important;padding-right:18px!important;padding-left:18px!important}
+.stats-view,.info-view,#homeTop,#homeView{background:transparent!important}
+.stats-view{margin:0!important;padding:0 0 24px!important}
+.stats-view:before,.stats-view:after,.info-view:before,.info-view:after{display:none!important;content:none!important}
+.stats-head,.info-head{margin:24px 2px 16px!important;padding:0!important;background:transparent!important}
+.stats-head h2,.info-head h2,.finance-main h3{margin:0 0 7px!important;color:#171b17!important;font-size:32px!important;font-weight:680!important;line-height:1!important;letter-spacing:-.05em!important}
+.stats-head .kicker,.info-head .kicker{margin:0 0 8px!important;color:#8a928a!important;font-size:10px!important;font-weight:670!important;letter-spacing:.18em!important;text-transform:uppercase!important}
+.stats-head #statsHint,.finance-main>p,.info-head+p,.info-card>p{margin:0!important;color:#818a82!important;font-size:13px!important;line-height:1.35!important}
+.period-switch{margin:16px 0 18px!important;padding:4px!important;border:1px solid rgba(24,31,24,.075)!important;border-radius:18px!important;background:#e9ede4!important;box-shadow:none!important}
+.period-switch button{height:42px!important;border-radius:14px!important}
+.stats-summary{margin:0 0 12px!important;padding:22px 18px!important;border:0!important;border-radius:24px!important;background:linear-gradient(145deg,#24563d,#143927)!important;color:#fff!important;box-shadow:none!important}
+.stats-summary i{color:#bfd0c5!important;font-size:12px!important;font-weight:520!important}
+.stats-summary b{color:#fff!important;font-size:32px!important;font-weight:680!important;letter-spacing:-.05em!important}
+.stats-summary+.stats-breakdown,.stats-breakdown{margin:0 0 14px!important;border:1px solid rgba(24,31,24,.075)!important;border-radius:24px!important;background:#fffefa!important;box-shadow:none!important}
+.category-stats{display:grid!important;gap:10px!important}
+.category-card,.year-chart,.years-overview,.data-tools{margin:0!important;border:1px solid rgba(24,31,24,.075)!important;border-radius:20px!important;background:#fffefa!important;box-shadow:none!important}
+.finance-main{margin:0!important;padding:0!important;background:transparent!important}
+.finance-main .loan-safe{position:relative!important;display:grid!important;gap:8px!important;margin:0 0 18px!important;padding:19px 18px 18px!important;border:0!important;border-radius:24px!important;background:linear-gradient(145deg,var(--brand),var(--brand-strong))!important;color:#172014!important;box-shadow:none!important}
+.finance-main .loan-safe:before{display:none!important}
+.finance-main .loan-safe .finance-metric-label{margin:0!important;color:rgba(22,32,20,.72)!important;font-size:13px!important;font-weight:700!important;letter-spacing:-.01em!important}
+.finance-main .loan-safe .safe-edit{position:relative!important;margin:0!important}
+.finance-main .loan-safe .safe-edit:after{content:'можно изменить';position:absolute!important;right:12px!important;top:50%!important;transform:translateY(-50%)!important;padding:0!important;background:transparent!important;color:rgba(22,32,20,.48)!important;font-size:10px!important;font-weight:650!important;letter-spacing:.01em!important}
+.finance-main .loan-safe .safe-metric-input{height:56px!important;min-height:56px!important;padding:0 118px 0 0!important;border:0!important;border-radius:0!important;background:transparent!important;color:#172014!important;font-size:36px!important;font-weight:760!important;letter-spacing:-.06em!important;box-shadow:none!important}
+.finance-main .loan-safe .safe-metric-input:focus{border:0!important;background:transparent!important;box-shadow:none!important;outline:0!important}
+.loans-block{display:grid!important;gap:12px!important;margin:0 0 18px!important}
+.loans-block>h4,.info-card h3{margin:0!important;color:#171b17!important;font-size:22px!important;font-weight:680!important;letter-spacing:-.035em!important}
+.loans-empty,.loan-card{margin:0!important;padding:18px!important;border:1px solid rgba(24,31,24,.075)!important;border-radius:22px!important;background:#fffefa!important;box-shadow:none!important}
+.finance-main .add-credit,.finance-main .loan-add{height:52px!important;margin:0!important;border-radius:18px!important;background:linear-gradient(145deg,#24563d,#143927)!important;color:#fff!important;box-shadow:none!important}
+.info-card{margin:18px 0 0!important;padding:0!important;border:0!important;border-radius:0!important;background:transparent!important;box-shadow:none!important}
+.info-card .notes{min-height:150px!important;margin-top:12px!important;padding:18px!important;border:1px solid rgba(24,31,24,.075)!important;border-radius:22px!important;background:#fffefa!important;box-shadow:none!important;color:#171b17!important}
+.save-note{margin:8px 2px 0!important;color:#8a938b!important;font-size:11px!important}
+.nav{bottom:max(12px,env(safe-area-inset-bottom))!important}
+/* v69 — no gradient for newly added income; same row shape, quiet badge only */
+.list .row.fresh-change{background:#fffefa!important;background-image:none!important;background-size:auto!important;animation:none!important;box-shadow:none!important}
+.list .row.fresh-change .row-main{background:#fffefa!important}
+.list .row.fresh-change:before{content:'';position:absolute;inset:0;border:1px solid rgba(169,232,117,.42);border-radius:inherit;pointer-events:none}
+.list .row.fresh-change .copy b:after{content:'новое';display:inline-flex;align-items:center;height:16px;margin:0 0 1px 7px;padding:0 6px;border-radius:999px;background:#e7f8d5!important;color:#315120!important;font-size:8.5px!important;font-weight:680!important;letter-spacing:.01em;vertical-align:middle;box-shadow:none!important}
+/* v70 — income status filter belongs only to the main income page */
+body.view-stats #statusFilter,body.view-info #statusFilter,body.view-stats #carryWaiting,body.view-info #carryWaiting{display:none!important}
+/* v71 — all confirmation questions in the current design system */
+.confirm-scrim{display:grid!important;place-items:center!important;padding:22px!important;background:rgba(17,24,18,.44)!important;backdrop-filter:none!important;-webkit-backdrop-filter:none!important}
+.confirm-box{width:min(100%,342px)!important;padding:18px!important;border:0!important;border-radius:24px!important;background:#fbfcf8!important;color:#171b17!important;box-shadow:0 18px 48px rgba(15,22,17,.2)!important;transform:scale(.97)!important;transition:opacity 170ms var(--emil-out),transform 190ms var(--emil-out)!important}
+.confirm-scrim.open .confirm-box{transform:scale(1)!important}
+.confirm-box h3{margin:0 0 7px!important;color:#171b17!important;font-size:21px!important;font-weight:680!important;line-height:1.08!important;letter-spacing:-.035em!important}
+.confirm-box p{margin:0!important;color:#7d867e!important;font-size:13px!important;line-height:1.42!important}
+.confirm-actions{display:grid!important;grid-template-columns:1fr 1fr!important;gap:8px!important;margin-top:18px!important}
+.confirm-actions button{height:46px!important;border-radius:16px!important;border:0!important;font-size:13px!important;font-weight:690!important;letter-spacing:-.01em!important;transition:transform 130ms var(--emil-out),background-color 150ms ease,color 150ms ease!important}
+.confirm-actions button:active{transform:scale(.97)!important}
+.confirm-cancel{background:#eef2eb!important;color:#253028!important}
+.confirm-delete{background:#172019!important;color:#fff!important;border:0!important}
+.confirm-delete:active{background:#243026!important}
+.confirm-delete.danger,.confirm-actions .danger{background:#fff0ec!important;color:#9a5a52!important}
+/* v72 — polished custom dropdown sheets */
+.pretty-select-sheet{display:grid!important;gap:7px!important;margin-top:4px!important}
+.pretty-select-option{display:grid!important;grid-template-columns:minmax(0,1fr) 24px!important;align-items:center!important;gap:12px!important;width:100%!important;min-height:52px!important;padding:0 14px!important;border:1px solid rgba(24,31,24,.075)!important;border-radius:16px!important;background:#fffefa!important;color:#172019!important;text-align:left!important;box-shadow:none!important;transition:transform 130ms var(--emil-out),background-color 150ms ease,border-color 150ms ease!important}
+.pretty-select-option:active{transform:scale(.985)!important;background:#f2f6ed!important}
+.pretty-select-option span{overflow:hidden!important;text-overflow:ellipsis!important;white-space:nowrap!important;font-size:14px!important;font-weight:610!important;letter-spacing:-.015em!important}
+.pretty-select-option svg{width:18px!important;height:18px!important;fill:none!important;stroke:#236b45!important;stroke-width:2!important;stroke-linecap:round!important;stroke-linejoin:round!important;opacity:0!important}
+.pretty-select-option.active{border-color:rgba(116,177,80,.34)!important;background:#f0f6ea!important}
+.pretty-select-option.active svg{opacity:1!important}
+.scrim #form select,.utility-body select,.loan-form select{appearance:none!important;-webkit-appearance:none!important;padding-right:42px!important;background-image:linear-gradient(45deg,transparent 50%,#6d766d 50%),linear-gradient(135deg,#6d766d 50%,transparent 50%)!important;background-position:calc(100% - 22px) 50%,calc(100% - 16px) 50%!important;background-size:6px 6px,6px 6px!important;background-repeat:no-repeat!important}
+/* v73 — keep native select behavior, custom calm appearance only */
+.scrim #form select,.utility-body select,.loan-form select{height:50px!important;border:1px solid #e2e6df!important;border-radius:16px!important;background-color:#fffefa!important;background-image:none!important;color:#171b17!important;font-size:16px!important;font-weight:560!important;box-shadow:none!important}
+.scrim #form label:has(select),.utility-body label:has(select),.loan-form label:has(select){position:relative!important}
+.scrim #form label:has(select):after,.utility-body label:has(select):after,.loan-form label:has(select):after{content:'';position:absolute;right:17px;bottom:19px;width:8px;height:8px;border-right:1.8px solid #6d766d;border-bottom:1.8px solid #6d766d;pointer-events:none;transform:rotate(45deg)}
+.scrim #form select:focus,.utility-body select:focus,.loan-form select:focus{border-color:rgba(116,177,80,.48)!important;box-shadow:0 0 0 3px rgba(169,232,117,.18)!important;background:#fffefa!important}
+/* v74 — sheets cover the app edge-to-edge, no green halo around rounded sides */
+.scrim,.utility-scrim{align-items:flex-end!important;justify-content:center!important;background:rgba(17,24,18,.46)!important}
+.sheet,.scrim .sheet,.utility-sheet{width:100%!important;max-width:460px!important;margin:0!important;border-radius:28px 28px 0 0!important;box-shadow:0 -18px 46px rgba(15,22,17,.22)!important}
+@media(min-width:520px){.sheet,.scrim .sheet,.utility-sheet{max-width:460px!important;border-radius:28px!important;margin-bottom:18px!important}}
+/* v75 — no manual income dates; credit CTA matches income CTA */
+#dateWrap{display:none!important}
+.finance-main .add-credit,.finance-main .loan-add,#addCredit,#addLoan{background:linear-gradient(145deg,var(--brand),var(--brand-strong))!important;color:var(--brand-ink)!important;box-shadow:none!important}
+.finance-main .add-credit .ui-icon,.finance-main .loan-add .ui-icon,#addCredit .ui-icon,#addLoan .ui-icon{color:var(--brand-ink)!important;stroke:currentColor!important}
+.finance-main .add-credit:active,.finance-main .loan-add:active,#addCredit:active,#addLoan:active{background:linear-gradient(145deg,#b5ea7f,#86cc58)!important;transform:scale(.972)!important}
+/* v78 — compact loan editor + readable money typing */
+.utility-sheet:has(.loan-form){max-height:min(760px,calc(100dvh - 10px))!important;padding:8px 16px calc(16px + env(safe-area-inset-bottom))!important}
+.utility-sheet:has(.loan-form) .utility-head{margin-bottom:10px!important;padding-bottom:8px!important}
+.utility-sheet:has(.loan-form) .utility-head h2{font-size:24px!important;letter-spacing:-.045em!important}
+.loan-form{display:grid!important;grid-template-columns:1fr 1fr!important;gap:10px 9px!important;padding-bottom:2px!important}
+.loan-form label{display:grid!important;gap:5px!important;min-width:0!important;margin:0!important}
+.loan-form label:first-child,.loan-form label:has(#loanType),.loan-form .utility-actions,.loan-form .sync-status{grid-column:1/-1!important}
+.loan-form input,.loan-form select{height:44px!important;min-height:44px!important;padding:0 13px!important;border-radius:14px!important;font-size:15px!important}
+.loan-form input[id="loanBalance"],.loan-form input[id="loanPayment"],.loan-form input[id="loanInitial"]{font-size:18px!important;font-weight:680!important;letter-spacing:-.025em!important;font-variant-numeric:tabular-nums!important}
+.loan-form .utility-actions{position:sticky!important;bottom:0!important;z-index:4!important;margin:4px -2px 0!important;padding-top:8px!important;background:linear-gradient(180deg,rgba(250,251,247,0),#fafbf7 34%)!important}
+.loan-form .utility-actions button{height:48px!important;border-radius:17px!important}
+.loan-form .sync-status{margin:0 2px!important;font-size:10.5px!important}
+@media(max-width:370px){.loan-form{grid-template-columns:1fr!important}}
+/* v80 — UI/UX stabilization pass: one visual language, one motion system */
+:root{
+  --ui-ink:#171b17;
+  --ui-muted:#747d74;
+  --ui-soft:#eef3ea;
+  --ui-paper:#f7f8f3;
+  --ui-surface:#fffefa;
+  --ui-line:rgba(25,34,26,.095);
+  --ui-line-strong:rgba(25,34,26,.145);
+  --ui-brand:#a9e875;
+  --ui-brand-strong:#82cc54;
+  --ui-green:#184f34;
+  --ui-radius-sm:13px;
+  --ui-radius-md:17px;
+  --ui-radius-lg:22px;
+  --ui-radius-xl:28px;
+  --ui-shadow-card:0 8px 24px rgba(18,28,20,.055);
+  --ui-shadow-float:0 -22px 68px rgba(17,24,18,.24);
+  --ui-ease-out:cubic-bezier(.23,1,.32,1);
+  --ui-ease-drawer:cubic-bezier(.32,.72,0,1);
+}
+html,body{overflow-x:hidden!important;text-rendering:optimizeLegibility;-webkit-font-smoothing:antialiased}
+.app{background:var(--ui-paper)!important;color:var(--ui-ink)!important}
+.top,.info-head,.stats-head{contain:layout style}
+.top h1,.info-head h2,.stats-head h2,.finance-main>h3,.loans-main>h3{font-weight:720!important;line-height:1.02!important;letter-spacing:-.052em!important}
+.kicker,.info-head .kicker,.dialog-kicker,.finance-metric-label{font-size:11px!important;font-weight:720!important;letter-spacing:.16em!important;color:#7d877e!important}
+button,.row-main,.category-card,.year-row,.loan-open,.settings-row{touch-action:manipulation;-webkit-tap-highlight-color:transparent}
+button,.primary,.save,.utility-primary,.utility-secondary,.confirm-actions button,.add-credit,.loan-add,.status-filter button,.period-switch button,.segments button,.nav button{
+  transition:transform 130ms var(--ui-ease-out),background-color 160ms ease,border-color 160ms ease,color 160ms ease,opacity 160ms ease!important;
+}
+button:active,.primary:active,.save:active,.utility-primary:active,.utility-secondary:active,.confirm-actions button:active,.add-credit:active,.loan-add:active,.category-card:active,.loan-open:active{
+  transform:scale(.975)!important;
+}
+.row:active{transform:none!important}
+.row-main:active{transform:scale(.992)!important}
+.status-filter,.period-switch,.segments,.prepay-choice,.nav{
+  background:var(--ui-soft)!important;
+  border:1px solid var(--ui-line)!important;
+  border-radius:var(--ui-radius-md)!important;
+  box-shadow:none!important;
+}
+.status-filter{padding:4px!important;border-bottom:0!important}
+.status-filter button,.period-switch button,.segments button,.prepay-choice button{
+  height:42px!important;
+  border-radius:13px!important;
+  font-size:13px!important;
+  font-weight:650!important;
+}
+.status-filter button:after{display:none!important}
+.status-filter button.active,.period-switch button.active,.segments button.active,.prepay-choice button.active{
+  background:var(--ui-surface)!important;
+  color:var(--ui-ink)!important;
+  box-shadow:0 4px 14px rgba(18,28,20,.055)!important;
+}
+.summary,.stats-summary,.loan-detail-hero{
+  border-radius:var(--ui-radius-xl)!important;
+  background:linear-gradient(145deg,#215d3f,#123d29)!important;
+  box-shadow:0 18px 42px rgba(20,64,40,.20)!important;
+}
+.list,.category-card,.stats-details,.years-overview,.finance-main .finance-section.single,.finance-main .loan-safe,.loan-card,.loans-empty,.loan-scenario,.loan-target,.loan-mini-chart,.loan-schedule,.confirm-box{
+  border:1px solid var(--ui-line)!important;
+  border-radius:var(--ui-radius-lg)!important;
+  background:var(--ui-surface)!important;
+  box-shadow:var(--ui-shadow-card)!important;
+}
+.row,.row .row-main{background:var(--ui-surface)!important}
+.row{border-bottom:1px solid var(--ui-line)!important}
+.row:last-child{border-bottom:0!important}
+.check{border-radius:11px!important}
+.copy b,.row>strong,.row-main>strong,.loan-card-top b,.loan-open>strong,.loan-facts b,.loan-operation b,.loan-operation strong{font-variant-numeric:tabular-nums!important}
+.owner-chip,.loan-card-top small,.settings-status-dot+span small,.archive-credit{
+  border-radius:999px!important;
+  background:#eef3ea!important;
+  color:#657064!important;
+}
+.scrim,.utility-scrim,.confirm-scrim{
+  background:rgba(16,22,17,.48)!important;
+  backdrop-filter:none!important;
+  -webkit-backdrop-filter:none!important;
+  transition:opacity 180ms var(--ui-ease-out),visibility 0s linear 180ms!important;
+}
+.scrim.open,.utility-scrim.open,.confirm-scrim.open{transition:opacity 180ms var(--ui-ease-out),visibility 0s!important}
+.sheet,.scrim .sheet,.utility-sheet{
+  max-height:calc(100dvh - 8px)!important;
+  background:var(--ui-surface)!important;
+  border:0!important;
+  border-radius:var(--ui-radius-xl) var(--ui-radius-xl) 0 0!important;
+  box-shadow:var(--ui-shadow-float)!important;
+  animation:none!important;
+  transform:translate3d(0,100%,0)!important;
+  transition:transform 280ms var(--ui-ease-drawer)!important;
+  will-change:transform;
+  contain:layout paint;
+}
+.scrim.open .sheet,.utility-scrim.open .utility-sheet{transform:translate3d(0,0,0)!important}
+@media(min-width:520px){.sheet,.scrim .sheet,.utility-sheet{border-radius:var(--ui-radius-xl)!important;margin-bottom:18px!important}}
+.sheet-head,.utility-head{
+  background:linear-gradient(180deg,var(--ui-surface) 72%,rgba(255,254,250,0))!important;
+  border:0!important;
+}
+.close,.utility-close{
+  width:42px!important;
+  height:42px!important;
+  min-width:42px!important;
+  min-height:42px!important;
+  border-radius:50%!important;
+  background:#eef1ec!important;
+  color:#626b63!important;
+  box-shadow:none!important;
+}
+.close svg,.utility-close svg,.ui-icon{display:block;stroke-width:2!important;vector-effect:non-scaling-stroke}
+input,select,textarea,.amountbox,.loan-amountbox,.safe-metric-input{
+  border:1px solid var(--ui-line-strong)!important;
+  border-radius:var(--ui-radius-md)!important;
+  background:var(--ui-surface)!important;
+  box-shadow:none!important;
+  font-variant-numeric:tabular-nums!important;
+  transition:border-color 150ms ease,box-shadow 150ms ease,background-color 150ms ease!important;
+}
+input:focus,select:focus,textarea:focus,.amountbox:focus-within,.loan-amountbox:focus-within,.safe-metric-input:focus{
+  border-color:rgba(130,204,84,.56)!important;
+  box-shadow:0 0 0 3px rgba(169,232,117,.20)!important;
+  background:#fff!important;
+}
+.amountbox input,.loan-amountbox input{border:0!important;box-shadow:none!important;background:transparent!important}
+.save,.utility-primary,.finance-main .add-credit,.finance-main .loan-add,#addCredit,#addLoan{
+  border:0!important;
+  border-radius:18px!important;
+  background:linear-gradient(145deg,var(--ui-brand),var(--ui-brand-strong))!important;
+  color:#132015!important;
+  font-weight:760!important;
+  box-shadow:none!important;
+}
+.utility-secondary,.confirm-cancel{
+  border:1px solid var(--ui-line)!important;
+  background:var(--ui-surface)!important;
+  color:var(--ui-green)!important;
+  box-shadow:none!important;
+}
+.confirm-delete,.danger-action,.confirm-delete.danger{
+  border:0!important;
+  background:#f3e9e6!important;
+  color:#934e45!important;
+  box-shadow:none!important;
+}
+.confirm-scrim{display:flex!important;align-items:center!important;justify-content:center!important;visibility:hidden!important;opacity:0!important;pointer-events:none!important}
+.confirm-scrim.open{visibility:visible!important;opacity:1!important;pointer-events:auto!important}
+.confirm-box{
+  width:min(calc(100% - 32px),390px)!important;
+  padding:18px!important;
+  transform:translate3d(0,8px,0) scale(.985)!important;
+  opacity:0!important;
+  transition:transform 190ms var(--ui-ease-out),opacity 160ms ease!important;
+}
+.confirm-scrim.open .confirm-box{transform:translate3d(0,0,0) scale(1)!important;opacity:1!important}
+.toast{
+  display:flex!important;
+  opacity:0!important;
+  visibility:hidden!important;
+  transform:translate3d(-50%,8px,0)!important;
+  transition:opacity 180ms var(--ui-ease-out),transform 180ms var(--ui-ease-out),visibility 0s linear 180ms!important;
+  animation:none!important;
+}
+.toast.show{opacity:1!important;visibility:visible!important;transform:translate3d(-50%,0,0)!important;transition:opacity 180ms var(--ui-ease-out),transform 180ms var(--ui-ease-out),visibility 0s!important}
+.nav{
+  position:fixed!important;
+  left:50%!important;
+  right:auto!important;
+  bottom:max(12px,env(safe-area-inset-bottom))!important;
+  width:min(calc(100% - 40px),380px)!important;
+  transform:translateX(-50%)!important;
+  grid-template-columns:repeat(3,1fr)!important;
+  padding:5px!important;
+  background:#184f34!important;
+  border:0!important;
+  border-radius:28px!important;
+  box-shadow:0 18px 42px rgba(13,43,27,.22)!important;
+}
+.nav button{height:58px!important;border-radius:23px!important;color:rgba(255,255,255,.62)!important;font-size:12px!important;font-weight:650!important}
+.nav button.active{background:var(--ui-surface)!important;color:var(--ui-ink)!important;box-shadow:none!important}
+.nav i{opacity:.9!important}
+.app{padding-bottom:104px!important}
+.finance-main,.stats-view,.info-view{min-height:560px;contain:layout style}
+.finance-main>h3,.stats-head h2{margin-top:0!important}
+.finance-main .loan-safe{
+  background:linear-gradient(145deg,var(--ui-brand),var(--ui-brand-strong))!important;
+  color:#132015!important;
+}
+.finance-main .loan-safe .finance-metric-label{color:rgba(19,32,21,.78)!important}
+.finance-main .loan-safe .safe-metric-input{background:rgba(255,255,255,.48)!important;border-color:rgba(19,32,21,.12)!important;color:#132015!important}
+.loan-actions{background:var(--ui-line)!important}
+.loan-actions button{background:var(--ui-surface)!important;color:var(--ui-green)!important}
+.loan-scenarios{align-items:stretch!important}
+.loan-scenario span,.loan-target span{align-items:flex-start!important}
+.loan-scenario b,.loan-target b{font-variant-numeric:tabular-nums!important}
+.new-item-highlight,.row.new,.row.highlight,.row[data-new="true"]{
+  background:var(--ui-surface)!important;
+  box-shadow:inset 3px 0 0 rgba(169,232,117,.9)!important;
+}
+@media(prefers-reduced-motion:reduce){
+  .sheet,.utility-sheet,.confirm-box,.toast,button,.row-main{transition:opacity 120ms ease!important;transform:none!important}
+  .scrim.open .sheet,.utility-scrim.open .utility-sheet{transform:none!important}
+}
+/* v81 — fix finance notes spacing and restore nav width */
+.finance-main{min-height:0!important}
+.stats-view,.info-view{min-height:auto!important}
+.info-view>.info-card:not(.finance-main){margin-top:14px!important}
+.loans-block{margin-bottom:14px!important}
+.nav{
+  width:min(calc(100% - 36px),424px)!important;
+  max-width:calc(460px - 36px)!important;
+}
+/* v82 — restore near-black brand surfaces */
+.summary,.stats-summary,.loan-detail-hero{
+  background:linear-gradient(145deg,#172019,#0f1711)!important;
+  box-shadow:0 18px 42px rgba(15,23,17,.22)!important;
+}
+.nav{
+  background:linear-gradient(145deg,#172019,#0f1711)!important;
+  box-shadow:0 18px 42px rgba(15,23,17,.24)!important;
+}
+.nav button:not(.active){color:rgba(246,248,241,.58)!important}
+.nav button.active{background:#fffefa!important;color:#172019!important}
+.loan-actions button,.utility-secondary,.confirm-cancel{color:#172019!important}
+/* v83 — remove side shadow stripes from content surfaces */
+.app{box-shadow:none!important}
+.list,.row,.row-main,.category-card,.stats-details,.years-overview,.year-chart,.stats-breakdown,.finance-main .finance-section.single,.finance-main .loan-safe,.loan-card,.loans-empty,.loan-scenario,.loan-target,.loan-mini-chart,.loan-schedule,.info-card,.data-tools{
+  box-shadow:none!important;
+}
+.list,.category-card,.stats-details,.years-overview,.year-chart,.stats-breakdown,.finance-main .finance-section.single,.finance-main .loan-safe,.loan-card,.loans-empty,.loan-scenario,.loan-target,.loan-mini-chart,.loan-schedule,.info-card,.data-tools{
+  border-color:rgba(24,31,24,.075)!important;
+}
+.row.dragging{box-shadow:0 8px 22px rgba(24,31,24,.16)!important}
+.summary,.stats-summary,.nav{box-shadow:none!important}
+/* v84 — small ruble sign for large money figures */
+.money-ruble-small{font-size:.58em!important;font-weight:560!important;letter-spacing:-.02em!important;opacity:.72!important}
+.stats-summary b .money-ruble-small,.category-sheet-amount .money-ruble-small{font-size:.55em!important}
+.finance-main .loan-safe .safe-edit:before{
+  content:'₽';
+  position:absolute!important;
+  right:12px!important;
+  top:50%!important;
+  transform:translateY(-50%)!important;
+  color:rgba(22,32,20,.55)!important;
+  font-size:19px!important;
+  font-weight:650!important;
+  pointer-events:none!important;
+}
+.finance-main .loan-safe .safe-edit:after{right:42px!important}
+.finance-main .loan-safe .safe-metric-input{padding-right:96px!important}
+/* v87 — simpler sync sheet */
+.sync-simple{display:flex!important;align-items:center!important;gap:12px!important;margin:0 0 12px!important;padding:14px!important;border:1px solid rgba(24,31,24,.075)!important;border-radius:18px!important;background:#fffefa!important;color:#172019!important}
+.sync-simple>span:last-child{display:grid!important;gap:3px!important;min-width:0!important}
+.sync-simple b{font-size:14px!important;font-weight:680!important;letter-spacing:-.015em!important}
+.sync-simple small{overflow:hidden!important;color:#747d74!important;font-size:12px!important;text-overflow:ellipsis!important;white-space:nowrap!important}
+.sync-actions{gap:8px!important}
+.sync-signout{height:34px!important;border:0!important;border-radius:12px!important;background:transparent!important;color:#8a635e!important;font-size:12px!important;font-weight:620!important;box-shadow:none!important}
+.sync-signout:active{background:#f4eeeb!important;transform:scale(.985)!important}
+/* v88 — concise Safe card layout */
+.finance-main .loan-safe{
+  display:block!important;
+  padding:19px 20px 20px!important;
+  border-radius:24px!important;
+  background:#fffefa!important;
+}
+.finance-main .loan-safe .finance-metric-label{
+  display:block!important;
+  margin:0 0 8px!important;
+  color:#415042!important;
+  font-size:17px!important;
+  font-weight:720!important;
+  letter-spacing:-.025em!important;
+}
+.finance-main .loan-safe .finance-metric-label:after{
+  content:' · нажмите, чтобы изменить';
+  color:#929a90!important;
+  font-size:11px!important;
+  font-weight:560!important;
+  letter-spacing:0!important;
+}
+.finance-main .loan-safe .safe-edit{
+  position:relative!important;
+  display:inline-flex!important;
+  align-items:baseline!important;
+  width:auto!important;
+  max-width:100%!important;
+  margin:0!important;
+}
+.finance-main .loan-safe .safe-edit:after{display:none!important}
+.finance-main .loan-safe .safe-edit:before{
+  position:static!important;
+  display:inline-block!important;
+  transform:none!important;
+  margin-left:7px!important;
+  color:rgba(22,32,20,.58)!important;
+  font-size:20px!important;
+  font-weight:650!important;
+  line-height:1!important;
+}
+.finance-main .loan-safe .safe-metric-input{
+  width:auto!important;
+  min-width:0!important;
+  max-width:calc(100vw - 150px)!important;
+  height:48px!important;
+  min-height:48px!important;
+  padding:0!important;
+  border:0!important;
+  border-radius:0!important;
+  background:transparent!important;
+  color:#172014!important;
+  font-size:34px!important;
+  font-weight:760!important;
+  line-height:1!important;
+  letter-spacing:-.055em!important;
+  box-shadow:none!important;
+}
+.finance-main .loan-safe .safe-metric-input:focus{
+  border:0!important;
+  background:transparent!important;
+  box-shadow:none!important;
+  outline:0!important;
+}
+/* v89 — calm sync block inside Settings */
+.utility-sheet:has(.settings-group) .settings-status{
+  display:grid!important;
+  grid-template-columns:32px minmax(0,1fr)!important;
+  gap:11px!important;
+  align-items:center!important;
+  margin:0!important;
+  padding:12px 12px!important;
+  border:0!important;
+  border-bottom:1px solid rgba(24,31,24,.065)!important;
+  border-radius:18px 18px 0 0!important;
+  background:#fffefa!important;
+  box-shadow:none!important;
+}
+.utility-sheet:has(.settings-group) .settings-status-dot{
+  display:grid!important;
+  place-items:center!important;
+  width:32px!important;
+  height:32px!important;
+  border-radius:12px!important;
+  background:#eef3ea!important;
+  box-shadow:none!important;
+}
+.utility-sheet:has(.settings-group) .settings-status-dot:after{
+  content:''!important;
+  width:8px!important;
+  height:8px!important;
+  border-radius:50%!important;
+  background:#78bf78!important;
+}
+.utility-sheet:has(.settings-group) .settings-status b{font-size:13.5px!important;font-weight:680!important}
+.utility-sheet:has(.settings-group) .settings-status small{
+  display:block!important;
+  max-width:100%!important;
+  margin-top:3px!important;
+  background:transparent!important;
+  color:#778178!important;
+  font-size:11.5px!important;
+  line-height:1.3!important;
+  white-space:normal!important;
+}
+.utility-sheet:has(.settings-group) .settings-group:has(.settings-status) .settings-row{
+  border-radius:0 0 18px 18px!important;
+}
+.utility-sheet:has(.settings-group) .settings-privacy{
+  max-width:330px!important;
+  margin:16px auto 0!important;
+  color:#8a938b!important;
+  font-size:11.5px!important;
+  line-height:1.45!important;
+}
+/* v90 — calmer settings rows, especially categories */
+.utility-sheet:has(.settings-group) .settings-row{
+  min-height:56px!important;
+  padding:9px 11px!important;
+}
+.utility-sheet:has(.settings-group) .settings-row-icon{
+  width:32px!important;
+  height:32px!important;
+  border-radius:11px!important;
+  font-size:14px!important;
+  font-weight:600!important;
+}
+.utility-sheet:has(.settings-group) .settings-row b{
+  font-size:13px!important;
+  font-weight:620!important;
+  letter-spacing:-.012em!important;
+}
+.utility-sheet:has(.settings-group) .settings-row small{
+  margin-top:2px!important;
+  font-size:11px!important;
+  font-weight:450!important;
+  line-height:1.25!important;
+}
+/* v91 — minimal close buttons across all sheets/dialogs */
+.close,.utility-close{
+  width:34px!important;
+  height:34px!important;
+  min-width:34px!important;
+  min-height:34px!important;
+  border:0!important;
+  border-radius:50%!important;
+  background:transparent!important;
+  color:rgba(23,27,23,.58)!important;
+  box-shadow:none!important;
+}
+.close:hover,.utility-close:hover{background:rgba(23,27,23,.045)!important;color:rgba(23,27,23,.72)!important}
+.close:active,.utility-close:active{background:rgba(23,27,23,.07)!important;transform:scale(.94)!important}
+.close svg,.utility-close svg{
+  width:18px!important;
+  height:18px!important;
+  stroke-width:1.65!important;
+}
+.close:not(:has(svg)){
+  font-size:0!important;
+  line-height:0!important;
+}
+.close:not(:has(svg))::before,.close:not(:has(svg))::after{
+  content:''!important;
+  position:absolute!important;
+  left:50%!important;
+  top:50%!important;
+  width:15px!important;
+  height:1.7px!important;
+  border-radius:999px!important;
+  background:currentColor!important;
+  transform-origin:center!important;
+}
+.close:not(:has(svg))::before{transform:translate(-50%,-50%) rotate(45deg)!important}
+.close:not(:has(svg))::after{transform:translate(-50%,-50%) rotate(-45deg)!important}
+/* v92 — sync status is informational, not a fake button */
+.utility-sheet:has(.settings-group) .settings-group:has(.settings-status){
+  display:grid!important;
+  gap:0!important;
+}
+.utility-sheet:has(.settings-group) .settings-status{
+  grid-template-columns:10px minmax(0,1fr)!important;
+  gap:9px!important;
+  min-height:0!important;
+  padding:2px 3px 10px!important;
+  border:0!important;
+  border-radius:0!important;
+  background:transparent!important;
+  cursor:default!important;
+}
+.utility-sheet:has(.settings-group) .settings-status-dot{
+  width:8px!important;
+  height:8px!important;
+  margin-top:5px!important;
+  border-radius:50%!important;
+  background:#78bf78!important;
+}
+.utility-sheet:has(.settings-group) .settings-status-dot:after{display:none!important}
+.utility-sheet:has(.settings-group) .settings-status b{
+  font-size:12px!important;
+  font-weight:620!important;
+}
+.utility-sheet:has(.settings-group) .settings-status small{
+  margin-top:1px!important;
+  color:#828b83!important;
+  font-size:10.8px!important;
+}
+.utility-sheet:has(.settings-group) .settings-group:has(.settings-status) .settings-row{
+  border-radius:18px!important;
+}
+/* v93 — hard override: truly minimal close + compact categories manager */
+.utility-sheet .utility-close,.utility-sheet:has(.settings-group) .utility-close,.sheet .close,.scrim .close{
+  width:30px!important;
+  height:30px!important;
+  min-width:30px!important;
+  min-height:30px!important;
+  padding:0!important;
+  border:0!important;
+  border-radius:50%!important;
+  background:transparent!important;
+  color:rgba(23,27,23,.52)!important;
+  box-shadow:none!important;
+}
+.utility-sheet .utility-close .ui-icon,.utility-sheet:has(.settings-group) .utility-close .ui-icon,.sheet .close svg,.scrim .close svg{
+  width:16px!important;
+  height:16px!important;
+  stroke-width:1.55!important;
+}
+.utility-sheet .utility-close:active,.sheet .close:active{background:rgba(23,27,23,.055)!important;transform:scale(.94)!important}
+.utility-sheet:has(.category-manage-list){
+  padding:8px 16px calc(16px + env(safe-area-inset-bottom))!important;
+}
+.utility-sheet:has(.category-manage-list) .utility-head{
+  margin-bottom:12px!important;
+  padding-bottom:8px!important;
+}
+.utility-sheet:has(.category-manage-list) .utility-head h2{
+  font-size:27px!important;
+  font-weight:660!important;
+  letter-spacing:-.045em!important;
+}
+.utility-sheet:has(.category-manage-list) .sync-status{
+  margin:0 2px 12px!important;
+  font-size:12px!important;
+  line-height:1.35!important;
+}
+.category-manage-list{
+  display:grid!important;
+  gap:7px!important;
+  margin:10px 0 12px!important;
+}
+.category-manage-row{
+  display:grid!important;
+  grid-template-columns:minmax(0,1fr) 42px!important;
+  gap:7px!important;
+  align-items:center!important;
+}
+.category-manage-row input{
+  height:44px!important;
+  min-height:44px!important;
+  margin:0!important;
+  padding:0 13px!important;
+  border:1px solid rgba(24,31,24,.075)!important;
+  border-radius:15px!important;
+  background:#fffefa!important;
+  color:#172019!important;
+  font-size:15px!important;
+  font-weight:520!important;
+  letter-spacing:-.018em!important;
+  box-shadow:none!important;
+}
+.category-manage-row button{
+  width:42px!important;
+  height:44px!important;
+  min-width:42px!important;
+  min-height:44px!important;
+  margin:0!important;
+  padding:0!important;
+  border:0!important;
+  border-radius:15px!important;
+  background:#f6eeee!important;
+  color:#9b625c!important;
+  font-size:18px!important;
+  font-weight:400!important;
+  line-height:1!important;
+  box-shadow:none!important;
+}
+.category-manage-row button:active{transform:scale(.96)!important;background:#f1e5e3!important}
+
+/* v94 — categories must fit inside the viewport with breathing room */
+.utility-sheet:has(.category-manage-list){
+  width:calc(100vw - 24px)!important;
+  max-width:430px!important;
+  padding:8px 12px calc(14px + env(safe-area-inset-bottom))!important;
+  box-sizing:border-box!important;
+}
+.utility-sheet:has(.category-manage-list) .utility-head{
+  margin:0 0 10px!important;
+  padding-bottom:6px!important;
+}
+.utility-sheet:has(.category-manage-list) .utility-head h2{
+  font-size:25px!important;
+  font-weight:650!important;
+}
+.utility-sheet:has(.category-manage-list) .sync-status{
+  margin:0 2px 10px!important;
+  font-size:11.5px!important;
+}
+.category-manage-list{
+  gap:6px!important;
+  margin:8px 0 10px!important;
+}
+.category-manage-row{
+  grid-template-columns:minmax(0,1fr) 34px!important;
+  gap:5px!important;
+  width:100%!important;
+  box-sizing:border-box!important;
+}
+.category-manage-row input{
+  height:38px!important;
+  min-height:38px!important;
+  padding:0 11px!important;
+  border-radius:13px!important;
+  font-size:13.5px!important;
+  font-weight:500!important;
+}
+.category-manage-row button{
+  width:34px!important;
+  height:38px!important;
+  min-width:34px!important;
+  min-height:38px!important;
+  border-radius:13px!important;
+  font-size:16px!important;
+}
+.utility-sheet:has(.category-manage-list) .utility-actions{
+  gap:6px!important;
+  margin-top:8px!important;
+}
+.utility-sheet:has(.category-manage-list) .utility-actions button{
+  height:40px!important;
+  border-radius:14px!important;
+  font-size:12px!important;
+}
+
+/* v95 — Safe amount mirrors main-page money: number first, small ₽ after it */
+.finance-main .loan-safe{
+  padding:18px 18px 19px!important;
+  border:1px solid rgba(24,31,24,.075)!important;
+  border-radius:22px!important;
+  background:#fffefa!important;
+  color:#172019!important;
+}
+.finance-main .loan-safe .finance-metric-label{
+  margin:0 0 14px!important;
+  color:#415042!important;
+  font-size:14px!important;
+  font-weight:690!important;
+  letter-spacing:-.015em!important;
+}
+.finance-main .loan-safe .finance-metric-label:after{
+  content:' · нажмите для изменения'!important;
+  color:#8d958d!important;
+  font-size:11px!important;
+  font-weight:520!important;
+}
+.finance-main .loan-safe .safe-edit{
+  display:inline-flex!important;
+  align-items:baseline!important;
+  gap:6px!important;
+  max-width:100%!important;
+}
+.finance-main .loan-safe .safe-edit:before{
+  display:none!important;
+  content:none!important;
+}
+.finance-main .loan-safe .safe-edit:after{
+  content:'₽'!important;
+  position:static!important;
+  display:inline-block!important;
+  transform:none!important;
+  margin:0!important;
+  padding:0!important;
+  background:transparent!important;
+  color:rgba(23,27,23,.62)!important;
+  font-size:20px!important;
+  font-weight:560!important;
+  line-height:1!important;
+  letter-spacing:-.02em!important;
+  pointer-events:none!important;
+}
+.finance-main .loan-safe .safe-metric-input{
+  width:auto!important;
+  max-width:calc(100vw - 150px)!important;
+  height:auto!important;
+  min-height:0!important;
+  padding:0!important;
+  border:0!important;
+  border-radius:0!important;
+  background:transparent!important;
+  color:#172019!important;
+  font-size:34px!important;
+  font-weight:740!important;
+  line-height:1!important;
+  letter-spacing:-.055em!important;
+  box-shadow:none!important;
+}
+.finance-main .loan-safe .safe-metric-input:focus{
+  border:0!important;
+  background:transparent!important;
+  box-shadow:none!important;
+  outline:0!important;
+}
+
+/* v97 — real inline ruble element for Safe, not a pseudo element */
+.finance-main .loan-safe .safe-edit{
+  display:inline-flex!important;
+  align-items:baseline!important;
+  gap:5px!important;
+  width:auto!important;
+  max-width:100%!important;
+}
+.finance-main .loan-safe .safe-edit:before,
+.finance-main .loan-safe .safe-edit:after{
+  display:none!important;
+  content:none!important;
+}
+.finance-main .loan-safe .safe-ruble{
+  display:inline-block!important;
+  flex:0 0 auto!important;
+  color:rgba(23,27,23,.66)!important;
+  font-size:20px!important;
+  font-weight:560!important;
+  line-height:1!important;
+  letter-spacing:-.02em!important;
+  transform:translateY(-1px)!important;
+}
+.finance-main .loan-safe .safe-metric-input{
+  flex:0 1 auto!important;
+  width:1ch!important;
+  min-width:1ch!important;
+  max-width:calc(100vw - 170px)!important;
+}
 </style>
   <title>Мои доходы</title>
 </head>
@@ -1155,7 +2165,7 @@ button:active,.sheet-link:active,.row-main:active,.settings-row:active,.category
       <span class="seg-label">Статус дохода</span><div class="segments"><button type="button" class="active" data-status="waiting">Ожидается</button><button type="button" data-status="received">Уже получен</button></div>
       <label>Сумма<div class="amountbox"><input id="amount" inputmode="numeric" autocomplete="off" placeholder="0"><b>₽</b></div></label>
       <label>Название<input id="name" placeholder="Например, обзор автомобиля"></label>
-      <label>Категория<select id="category"><option>Обзор</option><option>Статья на Дзен</option><option>Интеграция PRO АВТО</option><option>Продажа Авито</option><option>Продажа напрямую</option><option>Контракт</option><option>Доход Алёны</option><option>Монетизация YouTube</option><option>Монетизация RuTube</option><option>Монетизация VK</option><option>Участие в рейтинге</option><option>Съёмка под заказ</option><option>Кешбек сервисы</option><option>Прочее</option></select></label>
+      <label>Категория<select id="category"><option>Обзор</option><option>Статья на Дзен</option><option>Интеграция PRO АВТО</option><option>Продажа Авито</option><option>Продажа напрямую</option><option>Контракт</option><option>Монетизация YouTube</option><option>Монетизация RuTube</option><option>Монетизация VK</option><option>Участие в рейтинге</option><option>Съёмка под заказ</option><option>Кешбек сервисы</option><option>Прочее</option></select></label>
       <label class="date-field" id="dateWrap" hidden>Дата получения<input id="date" type="date"></label>
       <p class="hint" id="hint"><span>○</span><span>Дату добавим, когда доход будет получен</span></p>
       <button class="save" id="save" disabled>Добавить ожидаемый доход</button>
@@ -1191,7 +2201,7 @@ button:active,.sheet-link:active,.row-main:active,.settings-row:active,.category
   function removeIncome(id){const index=items.findIndex(item=>item.id===id);if(index<0)return false;const item=items[index];if(!window.confirm(`Удалить доход «${item.name}» на сумму ${rub(item.amount)}?`))return false;lastDeleted={item,index};items.splice(index,1);persist();render();toast('Доход удалён',true);return true}
   $('undo').onclick=()=>{if(lastMoved){items=items.map(item=>lastMoved.ids.includes(item.id)?{...item,month:lastMoved.from}:item);lastMoved=null}else if(lastDeleted){items.splice(lastDeleted.index,0,lastDeleted.item);lastDeleted=null}else return;persist();render();clearTimeout(toast.t);$('toast').classList.remove('show');$('undo').hidden=true};
   function escapeHtml(value){const d=document.createElement('div');d.textContent=value;return d.innerHTML} function toggle(id){items=items.map(x=>x.id===id?{...x,status:x.status==='received'?'waiting':'received',date:x.status==='received'?'':today()}:x);persist();render();toast(items.find(x=>x.id===id).status==='received'?'Доход получен':'Доход снова ожидается')}
-  function setStatus(status){newStatus=status;document.querySelectorAll('[data-status]').forEach(b=>b.classList.toggle('active',b.dataset.status===status));$('dateWrap').hidden=status!=='received';$('hint').style.display=status==='received'?'none':'flex';$('save').textContent=editingId?'Сохранить изменения':status==='received'?'Добавить полученный доход':'Добавить ожидаемый доход';if(status==='received'&&!$('date').value)$('date').value=today()}
+  function setStatus(status){newStatus=status;document.querySelectorAll('[data-status]').forEach(b=>b.classList.toggle('active',b.dataset.status===status));$('dateWrap').hidden=true;$('hint').style.display=status==='received'?'none':'flex';$('hint').querySelector('span:last-child').textContent='Дата появится автоматически, когда доход будет получен';$('save').textContent=editingId?'Сохранить изменения':status==='received'?'Добавить полученный доход':'Добавить ожидаемый доход';if(status==='received')$('date').value=today()}
   function validate(){$('save').disabled=!Number($('amount').value)||!$('name').value.trim()}
   function openAdd(){editingId=null;$('repeatNext').hidden=true;$('deleteInEdit').hidden=true;$('form').reset();$('dialogKicker').textContent='НОВАЯ ЗАПИСЬ';$('dialogTitle').textContent='Добавить доход';setStatus('waiting');validate();$('scrim').classList.add('open');setTimeout(()=>$('amount').focus(),80)}
   function openEdit(id){const item=items.find(entry=>entry.id===id);if(!item)return;editingId=id;$('repeatNext').hidden=false;$('deleteInEdit').hidden=false;$('dialogKicker').textContent='РЕДАКТИРОВАНИЕ';$('dialogTitle').textContent='Изменить доход';$('amount').value=item.amount;$('name').value=item.name;$('category').value=item.category;$('date').value=item.date||'';setStatus(item.status);validate();$('scrim').classList.add('open');setTimeout(()=>$('amount').focus(),80)}
@@ -1206,7 +2216,7 @@ button:active,.sheet-link:active,.row-main:active,.settings-row:active,.category
   $('exportData').onclick=()=>{const blob=new Blob([JSON.stringify({version:6,exportedAt:new Date().toISOString(),items,finance,categories,history,historyTotals},null,2)],{type:'application/json'}),a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download=`moi-dohody-${today()}.json`;a.click();URL.revokeObjectURL(a.href);toast('Резервная копия сохранена')};
   $('importData').onclick=()=>$('importFile').click();
   $('importFile').onchange=async e=>{try{const data=JSON.parse(await e.target.files[0].text());let changed=false;if(Array.isArray(data.items)){items=data.items.filter(x=>x.amount>0&&x.name&&x.month);changed=true}if(data.finance){finance=data.finance;persistFinance();changed=true}if(Array.isArray(data.categories)){categories=[...new Set(data.categories.filter(Boolean))];localStorage.setItem('income-categories-v1',JSON.stringify(categories));changed=true}if(data.history){Object.keys(history).forEach(k=>delete history[k]);Object.assign(history,data.history);localStorage.setItem('income-history-v1',JSON.stringify(history));changed=true}if(data.historyTotals){Object.keys(historyTotals).forEach(k=>delete historyTotals[k]);Object.assign(historyTotals,data.historyTotals);localStorage.setItem('income-history-totals-v1',JSON.stringify(historyTotals));changed=true}if(!changed)throw new Error();persist();render();toast('Данные восстановлены')}catch{toast('Не удалось прочитать копию')}e.target.value=''};
-  const syncVisualHeight=()=>{const vv=window.visualViewport;const r=document.documentElement.style,layoutHeight=window.innerHeight,visibleHeight=vv?.height||layoutHeight,offsetTop=vv?.offsetTop||0,keyboardInset=Math.max(0,layoutHeight-visibleHeight-offsetTop);r.setProperty('--vvh',`${visibleHeight}px`);r.setProperty('--vvo',`${offsetTop}px`);r.setProperty('--keyboard-inset',`${keyboardInset}px`)};syncVisualHeight();window.visualViewport?.addEventListener('resize',syncVisualHeight);window.visualViewport?.addEventListener('scroll',syncVisualHeight);
+  const syncVisualHeight=()=>{const r=document.documentElement.style;r.setProperty('--vvh','100dvh');r.setProperty('--vvo','0px');r.setProperty('--keyboard-inset','0px')};syncVisualHeight();
   if('serviceWorker'in navigator&&location.protocol!=='file:')navigator.serviceWorker.register('sw.js').then(registration=>registration.update()).catch(()=>{});render();
   $('monthPicker').onclick=e=>{if(currentView!=='home'){e.preventDefault();showView('home')}};
   const financeShortcut=$('infoTab');financeShortcut.className='summary-finance';financeShortcut.innerHTML='Финансы <svg class="ui-icon small" viewBox="0 0 24 24"><path d="m9 18 6-6-6-6"/></svg>';document.querySelector('.summary').prepend(financeShortcut);
@@ -1214,7 +2224,7 @@ button:active,.sheet-link:active,.row-main:active,.settings-row:active,.category
   const financeCard=document.querySelector('.info-view .info-card');financeCard.classList.add('finance-main');const financeSections=financeCard.querySelectorAll('.finance-section');financeSections[1]?.classList.add('debt-card');financeSections[2]?.classList.add('debt-card');
   document.querySelector('.info-head h2').textContent='Финансы';document.querySelector('.info-head .kicker').textContent='ФИНАНСЫ';
   document.body.insertAdjacentHTML('beforeend',`<div class="confirm-scrim" id="confirmScrim"><section class="confirm-box" role="alertdialog" aria-modal="true" aria-labelledby="confirmTitle"><h3 id="confirmTitle">Подтвердите удаление</h3><p id="confirmText"></p><div class="confirm-actions"><button class="confirm-cancel" id="confirmCancel">Отмена</button><button class="confirm-delete" id="confirmDelete">Удалить</button></div></section></div>`);
-  function askConfirm(title,text){return new Promise(resolve=>{const layer=$('confirmScrim');$('confirmTitle').textContent=title;$('confirmText').textContent=text;layer.classList.add('open');const finish=value=>{layer.classList.remove('open');$('confirmCancel').onclick=null;$('confirmDelete').onclick=null;resolve(value)};$('confirmCancel').onclick=()=>finish(false);$('confirmDelete').onclick=()=>finish(true);layer.onclick=e=>{if(e.target===layer)finish(false)};document.addEventListener('keydown',function esc(e){if(e.key==='Escape'){document.removeEventListener('keydown',esc);finish(false)}},{once:true})})}
+  function askConfirm(title,text){return new Promise(resolve=>{const layer=$('confirmScrim'),deleteButton=$('confirmDelete'),copy=(title+' '+text).toLowerCase();$('confirmTitle').textContent=title;$('confirmText').textContent=text;deleteButton.textContent=copy.includes('восстанов')?'Восстановить':copy.includes('замен')?'Заменить':'Удалить';deleteButton.classList.toggle('danger',/удал|корзин|замен/i.test(copy));layer.classList.add('open');const finish=value=>{layer.classList.remove('open');$('confirmCancel').onclick=null;deleteButton.onclick=null;resolve(value)};$('confirmCancel').onclick=()=>finish(false);deleteButton.onclick=()=>finish(true);layer.onclick=e=>{if(e.target===layer)finish(false)};document.addEventListener('keydown',function esc(e){if(e.key==='Escape'){document.removeEventListener('keydown',esc);finish(false)}},{once:true})})}
 
   if(!Array.isArray(finance.credits)){finance.credits=[{id:Date.now()-20,name:'Кредит',debt:Number(finance.sberDebt)||0,earlyPayments:finance.sberEarlyPayments||[]}];persistFinance()}
   financeSections[2]?.setAttribute('hidden','');financeSections[2]?.classList.add('legacy-credit');financeCard.insertAdjacentHTML('beforeend',`<p class="finance-section-title">Кредиты</p><div id="creditsList"></div><button class="add-credit" id="addCredit"><svg class="ui-icon small" viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></svg>Добавить кредит</button>`);
@@ -1228,11 +2238,11 @@ button:active,.sheet-link:active,.row-main:active,.settings-row:active,.category
   $('deleteInEdit').onclick=async()=>{if(!editingId)return;const id=editingId;if(await removeIncome(id)){$('scrim').classList.remove('open');editingId=null}};
 
   /* Unified enhancements */
-  const defaultCategories=['Обзор','Статья на Дзен','Интеграция PRO АВТО','Продажа Авито','Продажа напрямую','Контракт','Доход Алёны','Монетизация YouTube','Монетизация RuTube','Монетизация VK','Участие в рейтинге','Съёмка под заказ','Кешбек сервисы','Прочее'];
+  const defaultCategories=['Обзор','Статья на Дзен','Интеграция PRO АВТО','Продажа Авито','Продажа напрямую','Контракт','Монетизация YouTube','Монетизация RuTube','Монетизация VK','Участие в рейтинге','Съёмка под заказ','Кешбек сервисы','Прочее'];
   let categories=JSON.parse(localStorage.getItem('income-categories-v1')||'null')||defaultCategories;
   const searchMarkup=`<div class="search-box" id="searchBox"><svg class="ui-icon" viewBox="0 0 24 24"><circle cx="11" cy="11" r="6"/><path d="m16 16 4 4"/></svg><input id="incomeSearch" type="search" placeholder="Найти доход" aria-label="Поиск доходов"><button class="search-clear" id="searchClear" aria-label="Очистить поиск">×</button></div>`;
   $('homeView').insertAdjacentHTML('beforebegin',searchMarkup);$('form').querySelector('.hint').insertAdjacentHTML('afterend','<label class="recurring-field"><span>Повторять каждый месяц</span><input id="recurring" type="checkbox"></label>');document.querySelector('.stats-summary').insertAdjacentHTML('afterend','<div class="stats-compare" id="statsCompare"></div>');
-  document.body.insertAdjacentHTML('beforeend',`<div class="utility-scrim" id="utilityScrim"><section class="utility-sheet"><div class="grab"></div><div class="utility-head"><h2 id="utilityTitle"></h2><button class="utility-close" id="utilityClose" aria-label="Закрыть">×</button></div><div class="utility-body" id="utilityBody"></div></section></div>`);
+  document.body.insertAdjacentHTML('beforeend',`<div class="utility-scrim" id="utilityScrim"><section class="utility-sheet"><div class="grab"></div><div class="utility-head"><h2 id="utilityTitle"></h2><button class="utility-close" id="utilityClose" aria-label="Закрыть"><svg class="ui-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="m7 7 10 10M17 7 7 17"/></svg></button></div><div class="utility-body" id="utilityBody"></div></section></div>`);
   let utilityLocked=false;const closeUtility=()=>{utilityLocked=false;$('utilityScrim').classList.remove('open','locked')};function openUtility(title,html,options={}){utilityLocked=Boolean(options.lockClose);$('utilityTitle').textContent=title;$('utilityBody').innerHTML=html;$('utilityScrim').classList.toggle('locked',utilityLocked);$('utilityScrim').classList.add('open')}$('utilityClose').onclick=closeUtility;$('utilityScrim').onclick=e=>{if(e.target===$('utilityScrim')&&!utilityLocked)closeUtility()};
   document.querySelector('.tool-grid').insertAdjacentHTML('beforeend','<button id="manageCategories">Категории</button><button id="restoreAuto">Автокопии</button>');document.querySelector('.data-tools').insertAdjacentHTML('beforeend','<div class="backup-note" id="backupNote">Автоматические копии включены</div>');
 
@@ -1306,7 +2316,7 @@ button:active,.sheet-link:active,.row-main:active,.settings-row:active,.category
 
   $('form').onsubmit=event=>{
     event.preventDefault();const stamp=nowIso(),existing=editingId?items.find(item=>item.id===editingId):null,wasEditing=Boolean(existing);
-    const entry={id:editingId||Date.now(),name:$('name').value.trim(),category:$('category').value,amount:Number($('amount').value),status:newStatus,date:newStatus==='received'?$('date').value:'',month:existing?.month||currentMonth,recurring:$('recurring').checked,owner:formOwner,order:existing?.order??items.length,createdAt:existing?.createdAt||stamp,updatedAt:stamp,highlightAt:stamp};
+    const entry={id:editingId||Date.now(),name:$('name').value.trim(),category:$('category').value,amount:Number($('amount').value),status:newStatus,date:newStatus==='received'?(existing?.date||today()):'',month:existing?.month||currentMonth,recurring:$('recurring').checked,owner:formOwner,order:existing?.order??items.length,createdAt:existing?.createdAt||stamp,updatedAt:stamp,highlightAt:stamp};
     items=wasEditing?items.map(item=>item.id===entry.id?entry:item):[...items,entry];addActivity(wasEditing?'Изменён доход':'Добавлен доход',entry);
     editingId=null;persist();
     const scrim=$('scrim'),sheet=scrim.querySelector('.sheet'),saveButton=$('save');let finished=false;
@@ -1335,7 +2345,7 @@ button:active,.sheet-link:active,.row-main:active,.settings-row:active,.category
   $('templatesButton').onclick=()=>{const recurring=items.filter(item=>item.recurring);openUtility('Регулярные доходы',recurring.map(item=>`<div class="template-row" data-template="${item.id}"><span><b>${escapeHtml(item.name)}</b><small>${escapeHtml(item.owner)} · ${rub(item.amount)}</small></span><button>Отключить</button></div>`).join('')||'<p class="sync-status">Регулярных доходов пока нет.</p>');document.querySelectorAll('[data-template] button').forEach(button=>button.onclick=()=>{const item=items.find(item=>String(item.id)===button.closest('[data-template]').dataset.template);if(!item)return;item.recurring=false;item.updatedAt=nowIso();persist();closeUtility();toast('Регулярное повторение выключено')})};
 
   if(!localStorage.getItem('income-edit-hint-seen')){setTimeout(()=>toast('Совет: дважды нажмите на доход для редактирования'),900);localStorage.setItem('income-edit-hint-seen','1')}
-  const showViewThemeBase=showView;showView=function(view){showViewThemeBase(view);$('searchBox').hidden=view!=='home'};$('searchBox').hidden=currentView!=='home';
+  const showViewThemeBase=showView;showView=function(view){showViewThemeBase(view);$('searchBox').hidden=view!=='home';document.body.classList.toggle('view-home',view==='home');document.body.classList.toggle('view-stats',view==='stats');document.body.classList.toggle('view-info',view==='info')};$('searchBox').hidden=currentView!=='home';document.body.classList.toggle('view-home',currentView==='home');document.body.classList.toggle('view-stats',currentView==='stats');document.body.classList.toggle('view-info',currentView==='info');
   setSyncState('','Подключение');
 </script>
 <script>
@@ -1576,8 +2586,8 @@ button:active,.sheet-link:active,.row-main:active,.settings-row:active,.category
     card.classList.add('finance-main','loans-main');
     const active=finance.loans.filter(loan=>loan.status!=='archived'),archived=finance.loans.filter(loan=>loan.status==='archived');
     const debt=active.reduce((sum,loan)=>sum+Number(loan.currentBalance||0),0),prepaid=active.reduce((sum,loan)=>sum+loanTransactionsSum(loan),0);
-    card.innerHTML=`<h3>Финансы</h3><p>Сейф, кредиты и досрочные платежи</p><div class="finance-section single loan-safe"><small class="finance-metric-label">Сейф</small><label class="safe-edit"><input class="money-input safe-metric-input" id="safeAmount" inputmode="numeric" value="${moneyText(finance.safe)}"></label></div><section class="loans-block"><h4>Кредиты</h4><div class="loans-list">${active.length?active.map(loanCard).join(''):`<div class="loans-empty"><b>Кредитов пока нет</b><span>Добавьте ипотеку, кредит или рассрочку — приложение будет считать остаток, досрочные платежи и экономию.</span></div>`}</div><button class="add-credit loan-add" id="addLoan"><svg class="ui-icon small" viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></svg>Добавить кредит</button>${archived.length?`<details class="archived-credits loan-archive"><summary>Архив · ${archived.length}</summary>${archived.map(loan=>`<div class="archived-row"><span>${escapeHtml(loan.name)} · ${moneyText(loan.currentBalance)}</span><button data-loan-restore="${loan.id}">Вернуть</button><button data-loan-delete="${loan.id}">Удалить</button></div>`).join('')}</details>`:''}</section>`;
-    const safe=$('safeAmount');safe.onfocus=()=>safe.value=finance.safe||'';safe.oninput=e=>{e.target.value=e.target.value.replace(/\D/g,'');finance.safe=Number(e.target.value);persistFinance()};safe.onblur=()=>safe.value=moneyText(finance.safe);
+    card.innerHTML=`<h3>Финансы</h3><p>Сейф, кредиты и досрочные платежи</p><div class="finance-section single loan-safe"><small class="finance-metric-label">Сейф</small><label class="safe-edit"><input class="money-input safe-metric-input" id="safeAmount" inputmode="numeric" value="${(Number(finance.safe)||0).toLocaleString('ru-RU')}"><span class="safe-ruble" aria-hidden="true">₽</span></label></div><section class="loans-block"><h4>Кредиты</h4><div class="loans-list">${active.length?active.map(loanCard).join(''):`<div class="loans-empty"><b>Кредитов пока нет</b><span>Добавьте ипотеку, кредит или рассрочку — приложение будет считать остаток, досрочные платежи и экономию.</span></div>`}</div><button class="add-credit loan-add" id="addLoan"><svg class="ui-icon small" viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></svg>Добавить кредит</button>${archived.length?`<details class="archived-credits loan-archive"><summary>Архив · ${archived.length}</summary>${archived.map(loan=>`<div class="archived-row"><span>${escapeHtml(loan.name)} · ${moneyText(loan.currentBalance)}</span><button data-loan-restore="${loan.id}">Вернуть</button><button data-loan-delete="${loan.id}">Удалить</button></div>`).join('')}</details>`:''}</section>`;
+    const safe=$('safeAmount');safe.onfocus=()=>safe.value=finance.safe||'';safe.oninput=e=>{e.target.value=e.target.value.replace(/\D/g,'').replace(/\B(?=(\d{3})+(?!\d))/g,' ');finance.safe=Number(e.target.value.replace(/\D/g,''));persistFinance()};safe.onblur=()=>safe.value=(Number(finance.safe)||0).toLocaleString('ru-RU');
     $('addLoan').onclick=()=>openLoanForm();
     document.querySelectorAll('[data-loan] .loan-open').forEach(button=>button.onclick=()=>openLoanDetail(button.closest('[data-loan]').dataset.loan));
     document.querySelectorAll('[data-loan-prepay]').forEach(button=>button.onclick=()=>openLoanPrepayment(button.dataset.loanPrepay));
@@ -1616,9 +2626,10 @@ button:active,.sheet-link:active,.row-main:active,.settings-row:active,.category
   function openLoanDetail(id){
     const loan=findLoan(id);if(!loan)return;
     const progress=loanProgress(loan),paid=loan.initialAmount?Math.max(0,loan.initialAmount-loan.currentBalance):0,prepaid=loanTransactionsSum(loan);
-    openUtility(loan.name,`<div class="loan-detail-hero"><small>${escapeHtml(loanTypes[loan.type]||'Кредит')}</small><strong>${moneyText(loan.currentBalance)}</strong><span>остаток долга</span>${progress==null?'':`<div class="loan-progress"><i style="width:${progress}%"></i></div><em>${progress}% выплачено</em>`}</div><div class="loan-facts"><span>Ежемесячный платёж<b>${Number(loan.monthlyPayment)>0?moneyText(loan.monthlyPayment):'Не указан'}</b></span><span>Ставка<b>${Number(loan.annualRate)>0?String(loan.annualRate).replace('.',',')+'%':'Не указана'}</b></span><span>Ближайший платёж<b>${niceDate(loan.nextPaymentDate)}</b></span><span>Плановая дата<b>${niceDate(loan.originalEndDate,{month:'long',year:'numeric'})}</b></span><span>Первоначально<b>${loan.initialAmount?moneyText(loan.initialAmount):'Не указано'}</b></span><span>Уже выплачено<b>${moneyText(paid)}</b></span><span>Досрочно внесено<b>${moneyText(prepaid)}</b></span></div><div class="utility-actions"><button class="utility-primary" id="detailPrepay">Досрочно</button><button class="utility-secondary" id="detailCalc">Калькулятор</button></div><h3 class="loan-subtitle">Последние операции</h3><div>${operationRows(loan)}</div>`);
+    openUtility(loan.name,`<div class="loan-detail-hero"><small>${escapeHtml(loanTypes[loan.type]||'Кредит')}</small><strong>${moneyText(loan.currentBalance)}</strong><span>остаток долга</span>${progress==null?'':`<div class="loan-progress"><i style="width:${progress}%"></i></div><em>${progress}% выплачено</em>`}</div><div class="loan-facts"><span>Ежемесячный платёж<b>${Number(loan.monthlyPayment)>0?moneyText(loan.monthlyPayment):'Не указан'}</b></span><span>Ставка<b>${Number(loan.annualRate)>0?String(loan.annualRate).replace('.',',')+'%':'Не указана'}</b></span><span>Ближайший платёж<b>${niceDate(loan.nextPaymentDate)}</b></span><span>Плановая дата<b>${niceDate(loan.originalEndDate,{month:'long',year:'numeric'})}</b></span><span>Первоначально<b>${loan.initialAmount?moneyText(loan.initialAmount):'Не указано'}</b></span><span>Уже выплачено<b>${moneyText(paid)}</b></span><span>Досрочно внесено<b>${moneyText(prepaid)}</b></span></div><div class="utility-actions"><button class="utility-primary" id="detailPrepay">Досрочно</button><button class="utility-secondary" id="detailCalc">Калькулятор</button><button class="utility-secondary" id="detailEdit">Редактировать</button></div><h3 class="loan-subtitle">Последние операции</h3><div>${operationRows(loan)}</div>`);
     $('detailPrepay').onclick=()=>openLoanPrepayment(id);
     $('detailCalc').onclick=()=>openLoanCalculator(id);
+    $('detailEdit').onclick=()=>openLoanForm(id);
   }
   function scenarioCard(title,result,base,extra=''){
     if(result?.error)return`<section class="loan-scenario"><h4>${title}</h4><p>${escapeHtml(result.error)}</p></section>`;
@@ -1668,39 +2679,619 @@ button:active,.sheet-link:active,.row-main:active,.settings-row:active,.category
 <script>
   /* Direct, interruptible swipe-to-dismiss for bottom sheets. */
   function enableSheetSwipe(scrim,sheet,canDismiss,dismiss){
-    const handle=sheet.querySelector('.grab');if(!handle)return;
+    const handles=[sheet.querySelector('.grab'),sheet.querySelector('.sheet-head,.utility-head')].filter(Boolean);if(!handles.length)return;
     let pointerId=null,startX=0,startY=0,lastY=0,lastTime=0,velocity=0,dragging=false;
     const setTransform=value=>sheet.style.setProperty('transform',value,'important');
     const setTransition=value=>sheet.style.setProperty('transition',value,'important');
     const reset=()=>{pointerId=null;dragging=false;sheet.style.removeProperty('transition');sheet.style.removeProperty('transform');scrim.style.removeProperty('opacity')};
     const settle=()=>{setTransition('transform 280ms var(--ease-drawer)');setTransform('translate3d(0,0,0)');scrim.style.opacity='1';setTimeout(reset,290)};
     const close=()=>{setTransition('transform 220ms var(--ease-out)');setTransform('translate3d(0,100%,0)');scrim.style.opacity='0';setTimeout(()=>{dismiss();reset()},220)};
-    handle.addEventListener('pointerdown',event=>{
-      if(pointerId!==null||event.button!==0||!canDismiss())return;
+    const interactive=event=>event.target.closest?.('button,input,select,textarea,a,label');
+    const down=event=>{
+      if(interactive(event)||pointerId!==null||(event.button!==0&&event.button!==undefined)||!canDismiss())return;
       pointerId=event.pointerId;startX=event.clientX;startY=lastY=event.clientY;lastTime=performance.now();velocity=0;dragging=false;
-      handle.setPointerCapture(pointerId);setTransition('none');
-    });
-    handle.addEventListener('pointermove',event=>{
+      event.currentTarget.setPointerCapture(pointerId);setTransition('none');
+    };
+    const move=event=>{
       if(event.pointerId!==pointerId)return;
       const dx=event.clientX-startX,dy=event.clientY-startY;
       if(!dragging&&Math.hypot(dx,dy)<8)return;
       if(!dragging&&Math.abs(dx)>Math.abs(dy)){reset();return}
-      dragging=true;const now=performance.now(),elapsed=Math.max(1,now-lastTime);velocity=(event.clientY-lastY)/elapsed;lastY=event.clientY;lastTime=now;
+      dragging=true;event.preventDefault();const now=performance.now(),elapsed=Math.max(1,now-lastTime);velocity=(event.clientY-lastY)/elapsed;lastY=event.clientY;lastTime=now;
       const distance=dy<0?dy*.16:dy;
       if(!matchMedia('(prefers-reduced-motion: reduce)').matches)setTransform(`translate3d(0,${distance}px,0)`);
       scrim.style.opacity=String(Math.max(.28,1-Math.max(0,dy)/(sheet.offsetHeight*.9)));
-    });
+    };
     const finish=event=>{
       if(event.pointerId!==pointerId)return;
       const distance=Math.max(0,event.clientY-startY),projected=distance+Math.max(0,velocity)*99,threshold=Math.min(120,sheet.offsetHeight*.25);
       if(dragging&&(projected>=threshold||velocity>.65))close();else settle();
     };
-    handle.addEventListener('pointerup',finish);handle.addEventListener('pointercancel',finish);
+    handles.forEach(handle=>{handle.addEventListener('pointerdown',down);handle.addEventListener('pointermove',move,{passive:false});handle.addEventListener('pointerup',finish);handle.addEventListener('pointercancel',finish)});
   }
   enableSheetSwipe($('scrim'),document.querySelector('.sheet'),()=>true,()=>{$('scrim').classList.remove('open')});
-  enableSheetSwipe($('utilityScrim'),document.querySelector('.utility-sheet'),()=>!utilityLocked,closeUtility);
+  enableSheetSwipe($('utilityScrim'),document.querySelector('.utility-sheet'),()=>true,closeUtility);
+</script>
+<script>
+  (()=>{try{
+    document.documentElement.classList.add('html-no-x');
+    const haptic=(pattern=8)=>navigator.vibrate?.(pattern);
+    const repeat=$('repeatNext'),remove=$('deleteInEdit'),close=$('close'),head=document.querySelector('.sheet-head');
+    if(repeat&&remove&&close&&head&&!head.querySelector('.sheet-head-actions')){
+      const actions=document.createElement('div');
+      actions.className='sheet-head-actions';
+      repeat.classList.add('form-icon-action');
+      repeat.innerHTML='<svg class="ui-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M17 2v5h-5"/><path d="M7 22v-5h5"/><path d="M20 11a8 8 0 0 0-13.66-5.66L12 7"/><path d="M4 13a8 8 0 0 0 13.66 5.66L12 17"/></svg>';
+      repeat.setAttribute('aria-label','Повторить в следующем месяце');
+      remove.classList.add('form-icon-action','danger');
+      remove.innerHTML='<svg class="ui-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 7h16"/><path d="M9 7V4h6v3"/><path d="m7 7 .7 13h8.6L17 7"/><path d="M10 11v5M14 11v5"/></svg>';
+      remove.setAttribute('aria-label','Удалить доход');
+      actions.append(repeat,remove,close);
+      head.append(actions);
+    }
+    const correctWaitingTotal=()=>{const totalEl=$('total');if(!totalEl||!Array.isArray(window.items)&&typeof items==='undefined')return;const all=monthItems(),waiting=all.filter(item=>item.status==='waiting').reduce((sum,item)=>sum+item.amount,0);totalEl.textContent=rub(waiting)};
+    const baseRender=render;render=function(){baseRender();correctWaitingTotal()};
+    correctWaitingTotal();
+    const tuneKeyboard=()=>{
+      [['amount','numeric','next'],['name','text','next'],['safeAmount','decimal','done'],['mortgageDebt','decimal','done'],['mortgageEarlyAdd','decimal','done'],['sberDebt','decimal','done'],['sberEarlyAdd','decimal','done']].forEach(([id,mode,hint])=>{
+        const input=$(id);if(!input)return;input.setAttribute('inputmode',mode);input.setAttribute('enterkeyhint',hint);input.setAttribute('autocomplete','off');input.setAttribute('autocapitalize','sentences');
+      });
+    };
+    tuneKeyboard();
+    const baseRenderInfo=typeof renderInfo==='function'?renderInfo:null;
+    if(baseRenderInfo){renderInfo=function(){baseRenderInfo();tuneKeyboard()}};
+    document.addEventListener('focusin',event=>{if(event.target.matches?.('input,select,textarea'))haptic(5)},{capture:true});
+    document.addEventListener('pointerup',event=>{if(event.target.closest?.('button,.check,.row-main'))haptic(6)},{passive:true});
+  }catch(error){}})();
 </script>
 <script>(()=>{try{const fmt=new Intl.DateTimeFormat('ru-RU',{timeZone:'Europe/Samara',weekday:'long',day:'numeric'});const set=()=>{const k=document.querySelector('.top .kicker');if(k)k.textContent=fmt.format(new Date()).toUpperCase()};set();document.addEventListener('visibilitychange',()=>{if(document.visibilityState==='visible')set()});}catch(e){}})();</script>
+<script>
+  /* v76 — deterministic loan engine: cents, calendar dates, idempotent monthly accounting. */
+  (()=>{try{
+    const RUB=100,MAX_MONTHS=720;
+    const pad=n=>String(n).padStart(2,'0');
+    const cents=value=>Math.max(0,Math.round((Number(value)||0)*RUB));
+    const rubles=value=>Math.round((Number(value)||0)/RUB);
+    const fromInput=value=>cents(Number(String(value||'').replace(/\s/g,'').replace(',','.').replace(/[^\d.]/g,''))||0);
+    const rateOf=value=>Math.max(0,Number(String(value||'').replace(',','.'))||0)/100/12;
+    const ymd=value=>{const d=String(value||today()).slice(0,10);return /^\d{4}-\d{2}-\d{2}$/.test(d)?d:today()};
+    const parts=date=>{const [y,m,d]=ymd(date).split('-').map(Number);return{y,m,d}};
+    const daysInMonth=(y,m)=>new Date(y,m,0,12).getDate();
+    const addCalMonths=(date,count,anchorDay)=>{
+      const p=parts(date),anchor=anchorDay||p.d,total=p.y*12+(p.m-1)+count,y=Math.floor(total/12),m=total%12+1,d=Math.min(anchor,daysInMonth(y,m));
+      return `${y}-${pad(m)}-${pad(d)}`;
+    };
+    const cmpDate=(a,b)=>ymd(a).localeCompare(ymd(b));
+    const periodKey=date=>ymd(date).slice(0,7);
+    const money=value=>moneyText(rubles(value));
+    const normalizeLoan=loan=>{
+      loan.transactions=Array.isArray(loan.transactions)?loan.transactions:[];
+      loan.currentBalance=Number(loan.currentBalance)||0;
+      loan.initialAmount=Number(loan.initialAmount)||loan.currentBalance||null;
+      loan.monthlyPayment=Number(loan.monthlyPayment)||0;
+      loan.annualRate=Number(loan.annualRate)||0;
+      loan.startDate=loan.startDate||loan.nextPaymentDate||today();
+      loan.nextPaymentDate=loan.nextPaymentDate||loan.startDate||today();
+      loan.paymentDay=Number(loan.paymentDay)||parts(loan.nextPaymentDate).d;
+      loan.defaultPrepaymentStrategy=loan.defaultPrepaymentStrategy||'term';
+      loan.paymentType=loan.paymentType||'annuity';
+      loan.status=loan.status||'active';
+      return loan;
+    };
+    const regularPaymentOp=(loan,date,balanceBefore,interest,principal,payment)=>({
+      id:`regular-${loan.id}-${periodKey(date)}`,
+      type:'regular_payment',
+      date,
+      period:periodKey(date),
+      amount:rubles(payment),
+      interest:rubles(interest),
+      principal:rubles(principal),
+      balanceBefore:rubles(balanceBefore),
+      balanceAfter:rubles(Math.max(0,balanceBefore-principal)),
+      note:'Учтённый ежемесячный платёж'
+    });
+    const annuityCents=(balance,annualRate,months)=>{
+      balance=Math.max(0,Number(balance)||0);months=Math.max(1,Math.floor(Number(months)||1));
+      const r=rateOf(annualRate);
+      if(!r)return Math.ceil(balance/months);
+      const pow=Math.pow(1+r,months);
+      return Math.ceil(balance*r*pow/(pow-1));
+    };
+    const amortizeCents=({balance,annualRate,monthlyPayment,startDate,anchorDay,maxMonths=MAX_MONTHS})=>{
+      balance=Math.max(0,Number(balance)||0);monthlyPayment=Math.max(0,Number(monthlyPayment)||0);
+      const r=rateOf(annualRate),schedule=[];let totalInterest=0,date=ymd(startDate),day=anchorDay||parts(date).d;
+      if(balance<=0)return{months:0,totalInterest:0,endDate:date,schedule:[],error:''};
+      if(monthlyPayment<=0)return{error:'Укажите ежемесячный платёж.',months:0,totalInterest:0,endDate:date,schedule:[]};
+      if(r>0&&monthlyPayment<=Math.round(balance*r))return{error:'При таком платеже кредит не погашается. Проверьте сумму платежа или процентную ставку.',months:0,totalInterest:0,endDate:date,schedule:[]};
+      for(let month=1;month<=maxMonths&&balance>0;month++){
+        const before=balance,interest=Math.round(before*r),payment=Math.min(monthlyPayment,before+interest),principal=Math.min(before,Math.max(0,payment-interest));
+        balance=Math.max(0,before-principal);totalInterest+=interest;
+        schedule.push({month,date,balance,interest,principal,payment,balanceBefore:before});
+        date=addCalMonths(date,1,day);
+      }
+      if(balance>0)return{error:'Слишком длинный срок расчёта. Проверьте параметры кредита.',months:schedule.length,totalInterest,endDate:schedule.at(-1)?.date||date,schedule};
+      return{months:schedule.length,totalInterest,endDate:schedule.at(-1)?.date||date,schedule,error:''};
+    };
+    const rebuildLoanState=(loan,until=today(),mutate=false)=>{
+      loan=normalizeLoan(loan);
+      let balance=cents(loan.initialAmount||loan.currentBalance),payment=cents(loan.monthlyPayment),r=rateOf(loan.annualRate),date=ymd(loan.nextPaymentDate||loan.startDate),anchor=loan.paymentDay||parts(date).d,totalInterest=0;
+      const existing=(loan.transactions||[]).filter(tx=>tx.type!=='regular_payment').map(tx=>({...tx,date:ymd(tx.date),amountCents:cents(tx.amount),strategy:tx.strategy||loan.defaultPrepaymentStrategy||'term'}));
+      const recordedRegular=new Set((loan.transactions||[]).filter(tx=>tx.type==='regular_payment').map(tx=>tx.period||periodKey(tx.date)));
+      const synthetic=[];
+      for(let guard=0;guard<MAX_MONTHS&&balance>0&&cmpDate(date,until)<=0;guard++){
+        const duePre=existing.filter(tx=>tx.type==='prepayment'&&cmpDate(tx.date,date)<0&&!tx._used);
+        duePre.sort((a,b)=>cmpDate(a.date,b.date));
+        duePre.forEach(tx=>{tx._used=true;balance=Math.max(0,balance-tx.amountCents);if(tx.strategy==='payment'){const base=amortizeCents({balance,annualRate:loan.annualRate,monthlyPayment:payment,startDate:date,anchorDay:anchor});payment=annuityCents(balance,loan.annualRate,base.months||1)}});
+        if(balance<=0)break;
+        if(!recordedRegular.has(periodKey(date))){
+          const before=balance,interest=Math.round(before*r),paid=Math.min(payment,before+interest),principal=Math.min(before,Math.max(0,paid-interest));
+          balance=Math.max(0,before-principal);totalInterest+=interest;
+          synthetic.push(regularPaymentOp(loan,date,before,interest,principal,paid));
+        }
+        existing.filter(tx=>tx.type==='prepayment'&&tx.date===date&&!tx._used).forEach(tx=>{tx._used=true;balance=Math.max(0,balance-tx.amountCents);if(tx.strategy==='payment'){const base=amortizeCents({balance,annualRate:loan.annualRate,monthlyPayment:payment,startDate:addCalMonths(date,1,anchor),anchorDay:anchor});payment=annuityCents(balance,loan.annualRate,base.months||1)}});
+        date=addCalMonths(date,1,anchor);
+      }
+      existing.filter(tx=>tx.type==='prepayment'&&!tx._used&&cmpDate(tx.date,until)<=0).sort((a,b)=>cmpDate(a.date,b.date)).forEach(tx=>{balance=Math.max(0,balance-tx.amountCents)});
+      if(mutate&&synthetic.length){
+        loan.transactions=[...(loan.transactions||[]),...synthetic].sort((a,b)=>cmpDate(a.date,b.date)||(a.type==='regular_payment'?-1:1));
+        loan.currentBalance=rubles(balance);loan.monthlyPayment=rubles(payment);loan.nextPaymentDate=date;loan.status=balance<=0?'archived':'active';loan.actualEndDate=balance<=0?until:null;loan.updatedAt=nowIso();
+      }
+      return{balance,payment,nextPaymentDate:date,synthetic,totalInterest,status:balance<=0?'closed':'active'};
+    };
+    const oldRenderLoansFinance=renderLoansFinance;
+    renderLoansFinance=function(){
+      migrateLoans();
+      let changed=false;
+      (finance.loans||[]).forEach(loan=>{const before=(loan.transactions||[]).length;rebuildLoanState(loan,today(),true);if((loan.transactions||[]).length!==before)changed=true});
+      if(changed)persistFinance();
+      oldRenderLoansFinance();
+    };
+    annuityPayment=(balance,annualRate,months)=>rubles(annuityCents(cents(balance),annualRate,months));
+    amortize=({balance,annualRate,monthlyPayment,startDate,maxMonths=MAX_MONTHS})=>{
+      const out=amortizeCents({balance:cents(balance),annualRate,monthlyPayment:cents(monthlyPayment),startDate,anchorDay:parts(startDate||today()).d,maxMonths});
+      return{...out,totalInterest:rubles(out.totalInterest),schedule:out.schedule.map(row=>({...row,balance:rubles(row.balance),interest:rubles(row.interest),principal:rubles(row.principal),payment:rubles(row.payment)}))};
+    };
+    prepaymentScenarios=function(loan,amount,date=today()){
+      const state=rebuildLoanState({...loan,transactions:[...(loan.transactions||[])]},date,false),anchor=loan.paymentDay||parts(loan.nextPaymentDate||date).d;
+      const balance=state.balance,payment=state.payment,prepay=Math.min(Math.max(0,cents(amount)),balance);
+      const base=amortizeCents({balance,annualRate:loan.annualRate,monthlyPayment:payment,startDate:state.nextPaymentDate,anchorDay:anchor});
+      if(base.error)return{base:{...base,totalInterest:rubles(base.totalInterest)},error:base.error};
+      if(prepay>=balance)return{base:{...base,totalInterest:rubles(base.totalInterest)},closed:true,prepay:rubles(prepay)};
+      const shortened=amortizeCents({balance:balance-prepay,annualRate:loan.annualRate,monthlyPayment:payment,startDate:state.nextPaymentDate,anchorDay:anchor});
+      const newPayment=annuityCents(balance-prepay,loan.annualRate,base.months);
+      const lowered=amortizeCents({balance:balance-prepay,annualRate:loan.annualRate,monthlyPayment:newPayment,startDate:state.nextPaymentDate,anchorDay:anchor,maxMonths:base.months+2});
+      const map=o=>({...o,totalInterest:rubles(o.totalInterest),schedule:o.schedule.map(row=>({...row,balance:rubles(row.balance),interest:rubles(row.interest),principal:rubles(row.principal),payment:rubles(row.payment)}))});
+      return{base:map(base),shortened:map(shortened),lowered:map(lowered),newPayment:rubles(newPayment),prepay:rubles(prepay),error:shortened.error||lowered.error||''};
+    };
+    operationRows=function(loan){
+      const rows=(loan.transactions||[]).slice().sort((a,b)=>cmpDate(a.date,b.date)).reverse().slice(0,6);
+      return rows.length?rows.map(row=>`<div class="loan-operation"><span><b>${row.type==='regular_payment'?'Ежемесячный платёж':(row.note?escapeHtml(row.note):'Досрочное погашение')}</b><small>${niceDate(row.date||today(),{day:'numeric',month:'long',year:'numeric'})}${row.interest?` · проценты ${moneyText(row.interest)}`:''}</small></span><strong>${row.type==='prepayment'?'+':''}${moneyText(row.amount)}</strong></div>`).join(''):'<p class="loan-empty-note">Операций пока нет.</p>';
+    };
+    const oldLoanFormValues=loanFormValues;
+    loanFormValues=function(loan={}){
+      const html=oldLoanFormValues(loan);
+      return html.replace('<label>Плановое закрытие',`<label>День платежа<input id="loanPaymentDay" inputmode="numeric" value="${loan.paymentDay||''}" placeholder="Например, 15"></label><label>Плановое закрытие`).replace('</div><p class="sync-status" id="loanFormStatus"></p>',`</div><p class="sync-status">Платежи отражаются в приложении автоматически, когда наступает расчётная дата. Это не банковское списание.</p><p class="sync-status" id="loanFormStatus"></p>`);
+    };
+    const oldOpenLoanForm=openLoanForm;
+    openLoanForm=function(id){
+      oldOpenLoanForm(id);
+      const save=$('saveLoan'),loan=id?findLoan(id):null;if(!save)return;
+      ['loanBalance','loanPayment','loanInitial','loanPaymentDay'].forEach(inputId=>{const el=$(inputId);if(el)el.oninput=e=>e.target.value=e.target.value.replace(/\D/g,'')});
+      save.onclick=()=>{
+        const name=$('loanName').value.trim(),balance=rubles(fromInput($('loanBalance').value)),payment=rubles(fromInput($('loanPayment').value)),rate=parseRate($('loanRate').value),day=Math.max(1,Math.min(31,Number($('loanPaymentDay')?.value)||parts($('loanNextDate').value||today()).d));
+        if(!name||balance<=0||payment<=0||rate<0){$('loanFormStatus').textContent='Проверьте название, остаток, ставку и ежемесячный платёж.';return}
+        const stamp=nowIso(),payload={name,type:$('loanType').value,currentBalance:balance,annualRate:rate,monthlyPayment:payment,nextPaymentDate:$('loanNextDate').value||today(),paymentDay:day,defaultPrepaymentStrategy:'term',initialAmount:rubles(fromInput($('loanInitial').value))||balance,startDate:$('loanStart').value||$('loanNextDate').value||today(),originalEndDate:$('loanEnd').value||null,paymentType:'annuity',updatedAt:stamp};
+        if(loan)Object.assign(loan,payload);else finance.loans.push({id:loanId(),status:'active',createdAt:stamp,transactions:[],...payload});
+        persistFinance();closeUtility();renderInfo();toast(loan?'Кредит сохранён':'Кредит добавлен');
+      };
+    };
+    renderLoanCalc=function(id){
+      const loan=findLoan(id),amount=rubles(fromInput($('prepayAmount')?.value)),date=$('prepayDate')?.value||today(),out=$('loanCalcResult');if(!loan||!out)return;
+      if(amount<=0){out.innerHTML='<p class="sync-status">Введите сумму — покажу два варианта экономии.</p>';return}
+      const data=prepaymentScenarios(loan,amount,date);
+      if(data.error){out.innerHTML=`<p class="loan-error">${escapeHtml(data.error)}</p>`;return}
+      if(data.closed){out.innerHTML=`<p class="loan-good">Этой суммы хватит, чтобы закрыть кредит полностью: ${moneyText(loan.currentBalance)}</p>`;return}
+      out.innerHTML=`<div class="loan-scenarios simple">${scenarioCard('Сократить срок',data.shortened,data.base,`<span>Было<b>${niceDate(data.base.endDate,{month:'long',year:'numeric'})}</b></span><span>Быстрее на<b>${Math.max(0,data.base.months-data.shortened.months)} мес.</b></span><span>Проценты без досрочки<b>${moneyText(data.base.totalInterest)}</b></span><span>Проценты после<b>${moneyText(data.shortened.totalInterest)}</b></span>`)}${scenarioCard('Уменьшить платёж',data.lowered,data.base,`<span>Было<b>${moneyText(loan.monthlyPayment)}</b></span><span>Новый платёж<b>${moneyText(data.newPayment)}</b></span><span>Меньше на<b>${moneyText(Math.max(0,loan.monthlyPayment-data.newPayment))}/мес.</b></span><span>Проценты после<b>${moneyText(data.lowered.totalInterest)}</b></span>`)}</div><p class="sync-status">Это прогноз в модели приложения. Банк может считать иначе из-за внутренних правил дат и округления.</p>`;
+    };
+    openLoanCalculator=function(id){
+      const loan=findLoan(id);if(!loan)return;
+      openUtility('Калькулятор экономии',`<p class="sync-status">${escapeHtml(loan.name)} · остаток ${moneyText(loan.currentBalance)}</p><label class="loan-amount-label">Сумма досрочного платежа<div class="amountbox loan-amountbox"><input id="prepayAmount" inputmode="decimal" placeholder="0"><b>₽</b></div></label><label>Дата досрочного платежа<input id="prepayDate" class="thin-date" type="date" value="${today()}"></label><div id="loanCalcResult"></div>`,{lockClose:true});
+      $('prepayAmount').oninput=()=>renderLoanCalc(loan.id);$('prepayDate').oninput=()=>renderLoanCalc(loan.id);renderLoanCalc(id);
+    };
+    renderPrepayPreview=function(id){
+      const loan=findLoan(id),amount=rubles(fromInput($('prepayAmount')?.value)),date=$('prepayDate')?.value||today(),mode=document.querySelector('[data-prepay-mode].active')?.dataset.prepayMode||'term',out=$('prepayPreview');if(!loan||!out)return;
+      if(amount<=0){out.textContent='Введите сумму платежа.';return}
+      const data=prepaymentScenarios(loan,amount,date);
+      if(data.error){out.textContent=data.error;return}
+      if(data.closed){out.textContent='Кредит будет закрыт полностью.';return}
+      out.textContent=mode==='term'?`Срок короче на ${Math.max(0,data.base.months-data.shortened.months)} мес. Экономия: ${moneyText(Math.max(0,data.base.totalInterest-data.shortened.totalInterest))}`:`Новый платёж: ${moneyText(data.newPayment)}. Экономия: ${moneyText(Math.max(0,data.base.totalInterest-data.lowered.totalInterest))}`;
+    };
+    openLoanPrepayment=function(id){
+      const loan=findLoan(id);if(!loan)return;
+      openUtility('Досрочный платёж',`<p class="sync-status">${escapeHtml(loan.name)} · остаток ${moneyText(loan.currentBalance)}</p><label class="loan-amount-label">Сумма<div class="amountbox loan-amountbox"><input id="prepayAmount" inputmode="decimal" placeholder="0"><b>₽</b></div></label><label>Дата платежа<input id="prepayDate" class="thin-date" type="date" value="${today()}"></label><div class="prepay-choice"><button class="active" data-prepay-mode="term">Сократить срок</button><button data-prepay-mode="payment">Уменьшить платёж</button></div><p class="prepay-preview" id="prepayPreview">Введите сумму платежа.</p><div class="utility-actions"><button class="utility-primary" id="recordPrepayment">Внести досрочный платёж</button></div>`,{lockClose:true});
+      $('prepayAmount').oninput=()=>renderPrepayPreview(id);$('prepayDate').oninput=()=>renderPrepayPreview(id);
+      document.querySelectorAll('[data-prepay-mode]').forEach(button=>button.onclick=()=>{document.querySelectorAll('[data-prepay-mode]').forEach(x=>x.classList.remove('active'));button.classList.add('active');renderPrepayPreview(id)});
+      $('recordPrepayment').onclick=()=>{
+        const date=$('prepayDate').value||today(),amount=Math.min(rubles(fromInput($('prepayAmount').value)),loan.currentBalance),mode=document.querySelector('[data-prepay-mode].active')?.dataset.prepayMode||'term';if(amount<=0)return;
+        const data=prepaymentScenarios(loan,amount,date);loan.transactions||=[];loan.transactions.push({id:loanId(),type:'prepayment',amount,date,note:mode==='term'?'Сокращение срока':'Уменьшение платежа',strategy:mode});
+        loan.currentBalance=Math.max(0,loan.currentBalance-amount);if(mode==='payment'&&data.newPayment)loan.monthlyPayment=data.newPayment;if(loan.currentBalance===0){loan.status='archived';loan.actualEndDate=date}loan.updatedAt=nowIso();persistFinance();closeUtility();renderInfo();toast('Досрочный платёж учтён');
+      };
+    };
+    window.__loanEngineSelfTest=()=>{
+      const l={id:'test',name:'Тест',type:'consumer',initialAmount:100000,currentBalance:100000,annualRate:12,monthlyPayment:8885,startDate:'2026-01-31',nextPaymentDate:'2026-01-31',paymentDay:31,status:'active',transactions:[]};
+      const base=amortizeCents({balance:cents(l.currentBalance),annualRate:l.annualRate,monthlyPayment:cents(l.monthlyPayment),startDate:l.nextPaymentDate,anchorDay:l.paymentDay});
+      const feb=base.schedule[1]?.date;
+      const preview=prepaymentScenarios(l,10000,'2026-02-15');
+      const before=JSON.stringify(l);
+      if(base.error||base.schedule.at(-1).balance!==0)throw new Error('График не закрывает кредит до нуля');
+      if(feb!=='2026-02-28')throw new Error('Дата 31 числа не переносится на конец февраля');
+      if(preview.shortened.months>=preview.base.months)throw new Error('Сокращение срока не уменьшило срок');
+      if(JSON.stringify(l)!==before)throw new Error('Калькулятор изменил реальные данные');
+      const due={...l,id:'due',transactions:[]};rebuildLoanState(due,'2026-04-30',true);const once=due.transactions.length;rebuildLoanState(due,'2026-04-30',true);if(due.transactions.length!==once)throw new Error('Регулярный платёж отражается повторно');
+      return true;
+    };
+    if(currentView==='info')renderInfo();
+  }catch(error){console.warn('loan engine v76 skipped',error)}})();
+</script>
+<script>
+  /* v79 — real prepayment calculator fallback: balance + rate + term/payment, two scenarios. */
+  (()=>{try{
+    const RUB=100,MAX_MONTHS=720;
+    const pad=n=>String(n).padStart(2,'0');
+    const digits=value=>String(value||'').replace(/[^\d]/g,'');
+    const parseRub=value=>Number(digits(value))||0;
+    const cents=value=>Math.max(0,Math.round((Number(value)||0)*RUB));
+    const rub=value=>Math.round((Number(value)||0)/RUB);
+    const rate=value=>Math.max(0,Number(String(value||'').replace(',','.'))||0)/100/12;
+    const ymd=value=>{const d=String(value||today()).slice(0,10);return /^\d{4}-\d{2}-\d{2}$/.test(d)?d:today()};
+    const p=date=>{const [y,m,d]=ymd(date).split('-').map(Number);return{y,m,d}};
+    const days=(y,m)=>new Date(y,m,0,12).getDate();
+    const addMonths=(date,count,anchorDay)=>{const base=p(date),anchor=anchorDay||base.d,total=base.y*12+(base.m-1)+count,y=Math.floor(total/12),m=total%12+1,d=Math.min(anchor,days(y,m));return`${y}-${pad(m)}-${pad(d)}`};
+    const monthDiff=(from,to)=>{const a=p(from),b=p(to);return Math.max(1,(b.y-a.y)*12+(b.m-a.m)+(b.d>=a.d?1:0))};
+    const money=n=>moneyText(Number(n)||0);
+    const annuity=(balanceCents,annualRate,months)=>{
+      const r=rate(annualRate);months=Math.max(1,Math.min(MAX_MONTHS,Math.floor(Number(months)||1)));
+      if(!r)return Math.ceil(balanceCents/months);
+      const pow=Math.pow(1+r,months);
+      return Math.ceil(balanceCents*r*pow/(pow-1));
+    };
+    const schedule=({balanceCents,annualRate,paymentCents,startDate,anchorDay,maxMonths=MAX_MONTHS})=>{
+      let balance=Math.max(0,balanceCents),payment=Math.max(0,paymentCents),date=ymd(startDate),totalInterest=0;
+      const r=rate(annualRate),rows=[];
+      if(balance<=0)return{rows,months:0,totalInterest:0,endDate:date,error:''};
+      if(payment<=0)return{rows,months:0,totalInterest:0,endDate:date,error:'Не хватает ежемесячного платежа или плановой даты закрытия.'};
+      if(r&&payment<=Math.round(balance*r))return{rows,months:0,totalInterest:0,endDate:date,error:'Ежемесячный платёж меньше процентов за месяц. Проверьте ставку, платёж или срок кредита.'};
+      for(let i=1;i<=maxMonths&&balance>0;i++){
+        const before=balance,interest=Math.round(before*r),paid=Math.min(payment,before+interest),principal=Math.min(before,Math.max(0,paid-interest));
+        balance=Math.max(0,before-principal);totalInterest+=interest;rows.push({month:i,date,balance,interest,payment:paid,principal});
+        date=addMonths(date,1,anchorDay);
+      }
+      if(balance>0)return{rows,months:rows.length,totalInterest,endDate:rows.at(-1)?.date||date,error:'Срок расчёта получился больше 60 лет. Проверьте данные кредита.'};
+      return{rows,months:rows.length,totalInterest,endDate:rows.at(-1)?.date||date,error:''};
+    };
+    const resolveLoanCalc=(loan,calcDate=today())=>{
+      const balanceCents=cents(loan.currentBalance),annualRate=Number(loan.annualRate)||0,start=ymd(loan.nextPaymentDate||calcDate),anchor=Number(loan.paymentDay)||p(start).d;
+      let paymentCents=cents(loan.monthlyPayment),source='платёж из кредита';
+      const monthsByEnd=loan.originalEndDate?monthDiff(start,loan.originalEndDate):0;
+      if((!paymentCents||schedule({balanceCents,annualRate,paymentCents,startDate:start,anchorDay:anchor,maxMonths:2}).error)&&monthsByEnd>0){
+        paymentCents=annuity(balanceCents,annualRate,monthsByEnd);source='платёж рассчитан от плановой даты закрытия';
+      }
+      return{balanceCents,annualRate,paymentCents,start,anchor,source,monthsByEnd};
+    };
+    const calcScenarios=(loan,amount,date=today())=>{
+      const resolved=resolveLoanCalc(loan,date),prepay=Math.min(cents(amount),resolved.balanceCents);
+      const base=schedule({balanceCents:resolved.balanceCents,annualRate:resolved.annualRate,paymentCents:resolved.paymentCents,startDate:resolved.start,anchorDay:resolved.anchor});
+      if(base.error)return{error:base.error,resolved,base};
+      if(prepay>=resolved.balanceCents)return{closed:true,resolved,base,prepay:rub(prepay)};
+      const after=resolved.balanceCents-prepay;
+      const shortened=schedule({balanceCents:after,annualRate:resolved.annualRate,paymentCents:resolved.paymentCents,startDate:resolved.start,anchorDay:resolved.anchor});
+      const keepMonths=base.months;
+      const newPayment=annuity(after,resolved.annualRate,keepMonths);
+      const lowered=schedule({balanceCents:after,annualRate:resolved.annualRate,paymentCents:newPayment,startDate:resolved.start,anchorDay:resolved.anchor,maxMonths:keepMonths+2});
+      if(shortened.error||lowered.error)return{error:shortened.error||lowered.error,resolved,base};
+      return{resolved,base,shortened,lowered,newPayment:rub(newPayment),prepay:rub(prepay)};
+    };
+    const scenario=(title,body)=>`<section class="loan-scenario"><h4>${title}</h4>${body}</section>`;
+    renderLoanCalc=function(id){
+      const loan=findLoan(id),out=$('loanCalcResult');if(!loan||!out)return;
+      const amount=parseRub($('prepayAmount')?.value),date=$('prepayDate')?.value||today();
+      if(amount<=0){out.innerHTML='<p class="sync-status">Введите сумму — покажу сокращение срока и уменьшение платежа.</p>';return}
+      const data=calcScenarios(loan,amount,date);
+      if(data.error){out.innerHTML=`<p class="loan-error">${escapeHtml(data.error)}</p>`;return}
+      if(data.closed){out.innerHTML=`<p class="loan-good">Этой суммы хватит, чтобы закрыть кредит полностью: ${money(loan.currentBalance)}</p>`;return}
+      const baseInterest=rub(data.base.totalInterest),termInterest=rub(data.shortened.totalInterest),payInterest=rub(data.lowered.totalInterest);
+      out.innerHTML=`<div class="loan-target"><small>Расчёт от текущего остатка</small><strong>${money(loan.currentBalance)}</strong><span>Ставка<b>${String(loan.annualRate||0).replace('.',',')}%</b></span><span>Текущий платёж<b>${money(rub(data.resolved.paymentCents))}</b></span><span>Базовое закрытие<b>${niceDate(data.base.endDate,{month:'long',year:'numeric'})}</b></span></div><div class="loan-scenarios simple">${scenario('Сократить срок',`<span>Было<b>${niceDate(data.base.endDate,{month:'long',year:'numeric'})}</b></span><span>Станет<b>${niceDate(data.shortened.endDate,{month:'long',year:'numeric'})}</b></span><span>Срок меньше<b>${Math.max(0,data.base.months-data.shortened.months)} мес.</b></span><span>Проценты без досрочки<b>${money(baseInterest)}</b></span><span>Проценты после<b>${money(termInterest)}</b></span><span>Экономия<b>${money(Math.max(0,baseInterest-termInterest))}</b></span>`)}${scenario('Уменьшить платёж',`<span>Было<b>${money(rub(data.resolved.paymentCents))}</b></span><span>Станет<b>${money(data.newPayment)}</b></span><span>Меньше на<b>${money(Math.max(0,rub(data.resolved.paymentCents)-data.newPayment))}/мес.</b></span><span>Дата закрытия<b>${niceDate(data.lowered.endDate,{month:'long',year:'numeric'})}</b></span><span>Проценты после<b>${money(payInterest)}</b></span><span>Экономия<b>${money(Math.max(0,baseInterest-payInterest))}</b></span>`)}</div><p class="sync-status">${data.resolved.source}. Расчёт ориентировочный: банк может округлять и учитывать даты иначе.</p>`;
+    };
+    openLoanCalculator=function(id){
+      const loan=findLoan(id);if(!loan)return;
+      openUtility('Калькулятор экономии',`<p class="sync-status">${escapeHtml(loan.name)} · остаток ${moneyText(loan.currentBalance)} · ставка ${String(loan.annualRate||0).replace('.',',')}%</p><label class="loan-amount-label">Сумма досрочного платежа<div class="amountbox loan-amountbox"><input id="prepayAmount" inputmode="numeric" placeholder="0"><b>₽</b></div></label><label>Дата досрочного платежа<input id="prepayDate" class="thin-date" type="date" value="${today()}"></label><div id="loanCalcResult"></div>`,{lockClose:true});
+      $('prepayAmount').oninput=()=>{const raw=$('prepayAmount').value.replace(/[^\d]/g,'').replace(/\B(?=(\d{3})+(?!\d))/g,' ');$('prepayAmount').value=raw;renderLoanCalc(id)};
+      $('prepayDate').oninput=()=>renderLoanCalc(id);renderLoanCalc(id);
+    };
+  }catch(error){console.warn('loan calculator v79 skipped',error)}})();
+</script>
+<script>
+  /* v77 — readable money inputs everywhere: 1 000 / 10 000 / 100 000 while typing. */
+  (()=>{try{
+    const moneyIds=new Set(['amount','mortgageDebt','mortgageEarlyAdd','sberDebt','sberEarlyAdd','loanBalance','loanPayment','loanInitial','prepayAmount']);
+    const digits=value=>String(value||'').replace(/[^\d]/g,'').replace(/^0+(?=\d)/,'');
+    const pretty=value=>digits(value).replace(/\B(?=(\d{3})+(?!\d))/g,' ');
+    const number=value=>Number(digits(value))||0;
+    const isMoneyInput=input=>input&&moneyIds.has(input.id);
+    const formatInput=input=>{
+      if(!isMoneyInput(input))return;
+      const value=pretty(input.value);
+      if(input.value!==value){
+        input.value=value;
+        try{input.setSelectionRange(value.length,value.length)}catch{}
+      }
+    };
+    const formatAll=()=>document.querySelectorAll('input').forEach(formatInput);
+    document.addEventListener('input',event=>{
+      if(!isMoneyInput(event.target))return;
+      requestAnimationFrame(()=>formatInput(event.target));
+    },true);
+    document.addEventListener('focusin',event=>{
+      if(isMoneyInput(event.target))requestAnimationFrame(()=>formatInput(event.target));
+    });
+    const oldValidate=validate;
+    validate=function(){
+      const save=$('save'),amount=$('amount'),name=$('name');
+      if(save&&amount&&name)save.disabled=!number(amount.value)||!name.value.trim();
+      else oldValidate?.();
+    };
+    const oldOpenEdit=openEdit;
+    openEdit=function(id){oldOpenEdit(id);formatInput($('amount'));validate()};
+    const oldOpenAdd=openAdd;
+    openAdd=function(){oldOpenAdd();formatInput($('amount'));validate()};
+    $('open').onclick=openAdd;
+    const oldRenderInfo=renderInfo;
+    renderInfo=function(){oldRenderInfo();formatAll()};
+    const oldRenderLoansFinance=typeof renderLoansFinance==='function'?renderLoansFinance:null;
+    if(oldRenderLoansFinance){
+      renderLoansFinance=function(){oldRenderLoansFinance();formatAll()};
+      if(currentView==='info')renderLoansFinance();
+    }
+    $('form').onsubmit=event=>{
+      event.preventDefault();const stamp=nowIso(),existing=editingId?items.find(item=>item.id===editingId):null,wasEditing=Boolean(existing),amount=number($('amount').value);
+      const entry={id:editingId||Date.now(),name:$('name').value.trim(),category:$('category').value,amount,status:newStatus,date:newStatus==='received'?(existing?.date||today()):'',month:existing?.month||currentMonth,recurring:$('recurring').checked,owner:formOwner,order:existing?.order??items.length,createdAt:existing?.createdAt||stamp,updatedAt:stamp,highlightAt:stamp};
+      items=wasEditing?items.map(item=>item.id===entry.id?entry:item):[...items,entry];addActivity(wasEditing?'Изменён доход':'Добавлен доход',entry);
+      editingId=null;persist();
+      const scrim=$('scrim'),sheet=scrim.querySelector('.sheet'),saveButton=$('save');let finished=false;
+      saveButton.disabled=true;
+      const finish=()=>{if(finished)return;finished=true;sheet.removeEventListener('transitionend',onClose);render();$('form').reset();setStatus('waiting');validate();toast(wasEditing?'Изменения сохранены':'Доход добавлен')};
+      const onClose=event=>{if(event.propertyName==='transform')finish()};
+      sheet.addEventListener('transitionend',onClose);scrim.classList.remove('open');setTimeout(finish,320);
+    };
+    const rewireLegacyMoney=()=>{
+      [['safeAmount','safe'],['mortgageDebt','mortgageDebt'],['sberDebt','sberDebt']].forEach(([id,field])=>{
+        const input=$(id);if(!input)return;
+        input.onfocus=()=>{input.value=pretty(finance[field]||'')};
+        input.oninput=event=>{finance[field]=number(event.target.value);persistFinance();requestAnimationFrame(()=>formatInput(event.target))};
+        input.onblur=()=>input.value=moneyText(finance[field]);
+      });
+      const addEarly=(type,inputId)=>{const input=$(inputId),value=number(input?.value);if(!value)return;finance[type]||=[];finance[type].push({id:Date.now(),amount:value,date:today()});input.value='';persistFinance();renderInfo();toast('Досрочка добавлена')};
+      const mortgage=$('mortgageEarlyAdd'),sber=$('sberEarlyAdd'),addMortgage=$('addMortgageEarly'),addSber=$('addSberEarly');
+      if(mortgage)mortgage.oninput=e=>requestAnimationFrame(()=>formatInput(e.target));
+      if(sber)sber.oninput=e=>requestAnimationFrame(()=>formatInput(e.target));
+      if(addMortgage)addMortgage.onclick=()=>addEarly('mortgageEarlyPayments','mortgageEarlyAdd');
+      if(addSber)addSber.onclick=()=>addEarly('sberEarlyPayments','sberEarlyAdd');
+    };
+    rewireLegacyMoney();formatAll();
+  }catch(error){console.warn('money input format v77 skipped',error)}})();
+</script>
+<script>
+  /* v84 — keep ruble sign small in large money displays. */
+  (()=>{try{
+    const compactRuble=element=>{
+      if(!element)return;
+      const text=element.textContent||'';
+      if(!text.includes('₽'))return;
+      element.innerHTML=text.replace(/₽/g,'<small class="money-ruble-small">₽</small>');
+    };
+    const normalizeSafe=()=>{
+      const safe=$('safeAmount');
+      if(!safe)return;
+      if(document.activeElement!==safe)safe.value=String(safe.value||'').replace(/\s?₽/g,'').trim();
+    };
+    const decorate=()=>{
+      ['statsTotal','statsReceived','received'].forEach(id=>compactRuble($(id)));
+      document.querySelectorAll('.category-card-head b:last-child,.stat-income b,.year-row b:last-child,.loan-open>strong,.loan-detail-hero strong,.loan-facts b,.loan-operation strong,.loan-target strong,.loan-scenario b').forEach(compactRuble);
+      normalizeSafe();
+    };
+    const renderBase=render;
+    render=function(){renderBase();decorate()};
+    const renderStatsBase=renderStats;
+    renderStats=function(){renderStatsBase();decorate()};
+    const renderInfoBase=renderInfo;
+    renderInfo=function(){renderInfoBase();decorate()};
+    const renderLoansBase=typeof renderLoansFinance==='function'?renderLoansFinance:null;
+    if(renderLoansBase)renderLoansFinance=function(){renderLoansBase();decorate()};
+    const safe=$('safeAmount');
+    if(safe){
+      safe.addEventListener('focus',()=>{safe.value=String(safe.value||'').replace(/\s?₽/g,'').trim()});
+      safe.addEventListener('blur',normalizeSafe);
+    }
+    decorate();
+  }catch(error){console.warn('small ruble v84 skipped',error)}})();
+</script>
+<script>
+  /* v85 — settings order + reliable swipe-down dismiss. */
+  (()=>{try{
+    const attachUtilitySwipe=()=>{
+      const scrim=$('utilityScrim'),sheet=document.querySelector('.utility-sheet');
+      if(!scrim||!sheet||sheet.dataset.swipeV85)return;
+      sheet.dataset.swipeV85='1';
+      let pointerId=null,startX=0,startY=0,lastY=0,lastTime=0,velocity=0,dragging=false;
+      const handles=[sheet.querySelector('.grab'),sheet.querySelector('.utility-head')].filter(Boolean);
+      const reset=()=>{pointerId=null;dragging=false;sheet.style.removeProperty('transition');sheet.style.removeProperty('transform');scrim.style.removeProperty('opacity')};
+      const close=()=>{sheet.style.setProperty('transition','transform 220ms cubic-bezier(.23,1,.32,1)','important');sheet.style.setProperty('transform','translate3d(0,100%,0)','important');scrim.style.opacity='0';setTimeout(()=>{closeUtility();reset()},220)};
+      const settle=()=>{sheet.style.setProperty('transition','transform 260ms cubic-bezier(.32,.72,0,1)','important');sheet.style.setProperty('transform','translate3d(0,0,0)','important');scrim.style.opacity='1';setTimeout(reset,270)};
+      const down=event=>{
+        if(event.target.closest?.('button,input,select,textarea,a,label')||pointerId!==null)return;
+        pointerId=event.pointerId;startX=event.clientX;startY=lastY=event.clientY;lastTime=performance.now();velocity=0;dragging=false;
+        event.currentTarget.setPointerCapture?.(pointerId);sheet.style.setProperty('transition','none','important');
+      };
+      const move=event=>{
+        if(event.pointerId!==pointerId)return;
+        const dx=event.clientX-startX,dy=event.clientY-startY;
+        if(!dragging&&Math.hypot(dx,dy)<7)return;
+        if(!dragging&&Math.abs(dx)>Math.abs(dy)){reset();return}
+        dragging=true;event.preventDefault();
+        const now=performance.now(),elapsed=Math.max(1,now-lastTime);velocity=(event.clientY-lastY)/elapsed;lastY=event.clientY;lastTime=now;
+        const y=dy<0?dy*.14:dy;
+        sheet.style.setProperty('transform',`translate3d(0,${y}px,0)`,'important');
+        scrim.style.opacity=String(Math.max(.25,1-Math.max(0,dy)/(sheet.offsetHeight*.85)));
+      };
+      const up=event=>{
+        if(event.pointerId!==pointerId)return;
+        const dy=event.clientY-startY,projected=dy+Math.max(0,velocity)*120;
+        dragging&&(projected>90||velocity>.55)?close():settle();
+      };
+      handles.forEach(handle=>{handle.addEventListener('pointerdown',down);handle.addEventListener('pointermove',move,{passive:false});handle.addEventListener('pointerup',up);handle.addEventListener('pointercancel',up)});
+    };
+    const row=(id,icon,title,note)=>settingsRow(id,icon,title,note);
+    openSettings=function(){
+      const syncText=$('syncPill')?.textContent||'Синхронизация';
+      openUtility('Настройки',`
+        <section class="settings-group"><h3>Управление</h3>
+          ${row('manageCategories','≡','Категории доходов','Добавить, переименовать или удалить')}
+          ${row('templatesButton','↺','Регулярные доходы','Управление ежемесячными записями')}
+          ${row('activityButton','⌁','История действий','Последние изменения приложения')}
+          ${row('trashButton','⌫','Корзина','Удалённые доходы за 30 дней')}
+        </section>
+        <section class="settings-group"><h3>Данные и копии</h3>
+          ${row('exportData','↓','Скачать копию','Сохранить резервный файл на устройство')}
+          ${row('importData','↑','Восстановить из файла','Заменить данные выбранной копией')}
+          ${row('restoreAuto','◷','Автоматические копии','Последние 10 состояний на устройстве')}
+        </section>
+        <section class="settings-group"><h3>Синхронизация</h3>
+          <div class="settings-status"><span class="settings-status-dot"></span><span><b>Синхронизация</b><small>${escapeHtml(syncText)} · Supabase, вход по паролю</small></span></div>
+          ${row('supabaseSettings','↻','Синхронизация (Supabase)','Вход и второй телефон')}
+        </section>
+        <p class="settings-privacy">Данные хранятся в Supabase под защитой RLS. Вход по паролю, посторонние ваши записи не видят.</p>`);
+      document.querySelectorAll('[data-settings-action]').forEach(button=>button.onclick=()=>$(button.dataset.settingsAction)?.click());
+      attachUtilitySwipe();
+    };
+    if($('settingsButton'))$('settingsButton').onclick=openSettings;
+    if($('syncPill'))$('syncPill').onclick=openSettings;
+  }catch(error){console.warn('settings v85 skipped',error)}})();
+</script>
+<script>
+  /* v86 — safe amount input never keeps ₽ inside the editable value. */
+  (()=>{try{
+    const cleanDigits=value=>String(value||'').replace(/[^\d]/g,'').replace(/\B(?=(\d{3})+(?!\d))/g,' ');
+    const fixSafe=()=>{
+      const safe=$('safeAmount');
+      if(!safe)return;
+      const focused=document.activeElement===safe;
+      const next=cleanDigits(safe.value);
+      if(!focused&&safe.value!==next)safe.value=next;
+      const length=(focused?String(safe.value||''):next).length||1;
+      safe.style.width=Math.max(2,length)+'ch';
+    };
+    const wrap=name=>{
+      const base=window[name]||globalThis[name];
+      if(typeof base!=='function')return;
+      globalThis[name]=function(...args){const result=base.apply(this,args);requestAnimationFrame(fixSafe);setTimeout(fixSafe,0);return result};
+    };
+    wrap('renderInfo');
+    wrap('renderLoansFinance');
+    document.addEventListener('input',event=>{if(event.target?.id==='safeAmount')requestAnimationFrame(fixSafe)},true);
+    document.addEventListener('focusin',event=>{if(event.target?.id==='safeAmount')requestAnimationFrame(fixSafe)},true);
+    document.addEventListener('focusout',event=>{if(event.target?.id==='safeAmount')requestAnimationFrame(fixSafe)},true);
+    new MutationObserver(()=>fixSafe()).observe(document.body,{subtree:true,childList:true});
+    fixSafe();
+  }catch(error){console.warn('safe ruble v86 skipped',error)}})();
+</script>
+<script>
+  /* v99 — Safe input stays editable while ₽ remains visually attached. */
+  (()=>{try{
+    const digits=value=>String(value||'').replace(/[^\d]/g,'');
+    const pretty=value=>digits(value).replace(/\B(?=(\d{3})+(?!\d))/g,' ');
+    const fit=safe=>{
+      if(!safe)return;
+      const length=Math.max(2,String(safe.value||'0').length);
+      safe.style.width=`${length}ch`;
+    };
+    const wire=()=>{
+      const safe=$('safeAmount');
+      if(!safe||safe.dataset.safeEditableV99)return;
+      safe.dataset.safeEditableV99='1';
+      safe.value=pretty(finance?.safe||0)||'0';
+      fit(safe);
+      safe.onfocus=()=>{safe.value=digits(finance?.safe||safe.value);fit(safe);setTimeout(()=>safe.select?.(),0)};
+      safe.oninput=event=>{
+        const raw=digits(event.target.value);
+        finance.safe=Number(raw)||0;
+        event.target.value=pretty(raw);
+        fit(event.target);
+        persistFinance();
+      };
+      safe.onblur=()=>{safe.value=pretty(finance?.safe||0)||'0';fit(safe)};
+    };
+    const baseRenderLoans=typeof renderLoansFinance==='function'?renderLoansFinance:null;
+    if(baseRenderLoans)renderLoansFinance=function(...args){const result=baseRenderLoans.apply(this,args);wire();return result};
+    const baseRenderInfo=typeof renderInfo==='function'?renderInfo:null;
+    if(baseRenderInfo)renderInfo=function(...args){const result=baseRenderInfo.apply(this,args);wire();return result};
+    document.addEventListener('focusin',event=>{if(event.target?.id==='safeAmount')wire()},true);
+    wire();
+  }catch(error){console.warn('safe editable v99 skipped',error)}})();
+</script>
+<script>
+  /* v98 — add-income button stays in sync with formatted money and autofill. */
+  (()=>{try{
+    const digits=value=>String(value||'').replace(/[^\d]/g,'');
+    const isReady=()=>Number(digits($('amount')?.value))>0&&String($('name')?.value||'').trim().length>0;
+    const syncSave=()=>{const save=$('save');if(save)save.disabled=!isReady()};
+    const baseValidate=window.validate||globalThis.validate;
+    globalThis.validate=function(...args){const result=baseValidate?.apply(this,args);syncSave();return result};
+    ['input','change','keyup','focusout'].forEach(type=>{
+      $('form')?.addEventListener(type,event=>{
+        if(event.target?.matches?.('#amount,#name,#category'))requestAnimationFrame(syncSave);
+      },true);
+    });
+    const baseOpenAdd=window.openAdd||globalThis.openAdd;
+    if(typeof baseOpenAdd==='function'){
+      globalThis.openAdd=function(...args){const result=baseOpenAdd.apply(this,args);setTimeout(syncSave,0);return result};
+      if($('open'))$('open').onclick=globalThis.openAdd;
+    }
+    syncSave();
+  }catch(error){console.warn('save validation v98 skipped',error)}})();
+</script>
+<script>
+  /* v96 — remove obsolete default category from already-saved local categories. */
+  (()=>{try{
+    const obsolete=new Set(['Доход Алёны','Доход Алены']);
+    const cleanStoredCategories=()=>{
+      if(!Array.isArray(categories))return;
+      const next=categories.filter(category=>!obsolete.has(String(category||'').trim()));
+      if(next.length===categories.length)return;
+      categories=next.length?next:defaultCategories.filter(category=>!obsolete.has(String(category||'').trim()));
+      localStorage.setItem('income-categories-v1',JSON.stringify(categories));
+      if(typeof nowIso==='function'){
+        categoriesUpdatedAt=nowIso();
+        localStorage.setItem('income-categories-updated-at',categoriesUpdatedAt);
+      }
+      if(typeof refreshCategorySelect==='function')refreshCategorySelect();
+    };
+    cleanStoredCategories();
+    const baseOpenAdd=window.openAdd||globalThis.openAdd;
+    if(typeof baseOpenAdd==='function'){
+      globalThis.openAdd=function(...args){
+        cleanStoredCategories();
+        return baseOpenAdd.apply(this,args);
+      };
+    }
+    const baseManage=$('manageCategories')?.onclick;
+    if(typeof baseManage==='function'){
+      $('manageCategories').onclick=function(event){
+        cleanStoredCategories();
+        return baseManage.call(this,event);
+      };
+    }
+  }catch(error){console.warn('category cleanup v96 skipped',error)}})();
+</script>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script src="supabase-sync.js?v=5"></script>
 </body>

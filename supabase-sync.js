@@ -71,6 +71,12 @@
       history:cloud.history||local.history||{},historyTotals:cloud.historyTotals||local.historyTotals||{}
     };
   }
+  const localModifiedAt=local=>Math.max(
+    stamp(local.financeUpdatedAt),stamp(local.categoriesUpdatedAt),
+    ...(local.items||[]).map(x=>stamp(x.updatedAt)),
+    ...(local.deletedItems||[]).map(x=>stamp(x.updatedAt))
+  );
+
   /* ---------- ошибки (никогда не трём локальные данные) ---------- */
   function showError(error){
     console.error('[supabase]',error);
@@ -143,10 +149,13 @@
     if(error)throw error;
     revision=Number(data?.revision||0);localStorage.setItem(REVISION_KEY,String(revision));
     const remote=data?.payload||{};
+    const local=localPayload();
     const hasRemote=Array.isArray(remote.items)||Boolean(remote.finance)||Boolean(remote.history)||Boolean(remote.historyTotals);
+    const hasLocal=local.items?.length||Object.keys(local.history||{}).length||Object.keys(local.historyTotals||{}).length;
     if(hasRemote){
-      // Supabase — источник истины: при каждом подключении сначала принимаем весь payload сервера.
-      applyPayload(remote);
+      // если локально есть более свежие правки — сливаем и отправляем, иначе принимаем облако
+      if(localModifiedAt(local)>stamp(remote.updatedAt)){applyPayload(mergePayload(remote,local));await saveNow()}
+      else applyPayload(remote);
     }else{
       applyPayload({version:6,updatedAt:new Date().toISOString(),items:[],deletedItems:[],finance:{},categories:categories||[],activity:[],history:{},historyTotals:{}});
       await saveNow();
@@ -163,8 +172,7 @@
         const row=payload.new;
         if(saving||Number(row.revision)<=revision)return;
         revision=Number(row.revision);localStorage.setItem(REVISION_KEY,String(revision));
-        // Новая серверная ревизия уже содержит полное состояние приложения.
-        applyPayload(row.payload||{});
+        applyPayload(mergePayload(row.payload||{},localPayload()));
         setSyncState('ok','Обновлено');
       }).subscribe();
   }
@@ -244,9 +252,8 @@
       return;
     }
 
-    const previousError=localStorage.getItem(LAST_ERROR_KEY)||'';
-    openUtility('Синхронизация',`<div class="settings-status"><span class="settings-status-dot"></span><span><b>Синхронизация включена</b><small>${escapeHtml(session.user.email||'')}</small></span></div><p class="sync-status" id="sbSyncStatus">${previousError?'Последняя ошибка: '+escapeHtml(previousError):'Тот же email и пароль работают на любом другом телефоне — данные общие. Доступ защищён на сервере (RLS), посторонние ваши записи не видят.'}</p><div class="utility-actions"><button type="button" class="utility-primary" id="sbSyncNow">Обновить сейчас</button><button type="button" class="utility-secondary" id="sbSignOut">Выйти</button></div>`);
-    $('sbSyncNow').onclick=async()=>{const button=$('sbSyncNow'),status=$('sbSyncStatus');button.disabled=true;button.textContent='Загружаем…';status.textContent='Получаем все данные из Supabase…';try{await connect();status.textContent='Все данные загружены из Supabase.';button.textContent='Готово';toast('Данные загружены')}catch(error){showError(error);status.textContent='Ошибка Supabase: '+String(error?.message||error||'неизвестная ошибка');button.disabled=false;button.textContent='Повторить'}};
+    openUtility('Синхронизация',`<div class="sync-simple"><span class="settings-status-dot"></span><span><b>Включена</b><small>${escapeHtml(session.user.email||'')}</small></span></div><p class="sync-status">Данные автоматически доступны на другом телефоне после входа с тем же email и паролем.</p><div class="utility-actions sync-actions"><button class="utility-primary" id="sbSyncNow">Обновить сейчас</button><button class="sync-signout" id="sbSignOut">Выйти из аккаунта</button></div>`);
+    $('sbSyncNow').onclick=()=>connect().then(()=>toast('Данные загружены'));
     $('sbSignOut').onclick=async()=>{await client.auth.signOut();closeUtility();location.reload()};
   }
 

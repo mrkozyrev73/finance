@@ -1038,8 +1038,8 @@ input:focus,select:focus,textarea:focus,.amountbox:focus-within{
 .scrim #form .save{position:relative;z-index:1;margin-top:18px;box-shadow:none}
 .scrim #form .save+button{margin-top:10px}
 
-/* keyboard-aware sheet: anchor above the on-screen keyboard */
-.scrim{z-index:40;top:var(--vvo,0px);bottom:auto;height:var(--vvh,100dvh)}
+/* Keep the sheet stable when iOS shifts visualViewport on input focus. */
+.scrim{z-index:40;top:0;bottom:0;height:auto}
 
 /* --- popups: smoother open/close + status not-a-button (cowork) --- */
 .scrim,.utility-scrim{backdrop-filter:none!important;-webkit-backdrop-filter:none!important;transition:opacity 240ms var(--ease-out,cubic-bezier(.23,1,.32,1)),visibility 0s linear 300ms!important}

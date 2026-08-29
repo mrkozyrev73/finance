@@ -2461,8 +2461,7 @@ html,body{
   const applyCloud=data=>{
     if(!Array.isArray(data.items))return;
     items=data.items.map((item,index)=>({...item,owner:item.owner||'Антон',order:item.order??index,updatedAt:item.updatedAt||data.updatedAt||nowIso()}));
-    deletedItems=data.deletedItems||[];finance={...emptyFinance(),...(data.finance||{})};categories=data.categories||categories;activity=data.activity||[];
-    financeUpdatedAt=data.financeUpdatedAt||financeUpdatedAt;categoriesUpdatedAt=data.categoriesUpdatedAt||categoriesUpdatedAt;
+    deletedItems=data.deletedItems||[];const __incFin={...emptyFinance(),...(data.finance||{})};const __finHas=f=>!!f&&Object.keys(f).some(k=>{const v=f[k];return Array.isArray(v)?v.length>0:typeof v==='number'?v>0:typeof v==='string'?v.trim()!=='':(v&&typeof v==='object')?Object.keys(v).length>0:!!v;});if(__finHas(__incFin)||!__finHas(finance)){finance=__incFin;financeUpdatedAt=data.financeUpdatedAt||financeUpdatedAt;}categories=data.categories||categories;activity=data.activity||[];categoriesUpdatedAt=data.categoriesUpdatedAt||categoriesUpdatedAt;
     localStorage.setItem('income-tracker-v3',JSON.stringify(items));localStorage.setItem(financeKey,JSON.stringify(finance));
     localStorage.setItem('income-categories-v1',JSON.stringify(categories));localStorage.setItem('income-deleted-items-v1',JSON.stringify(deletedItems));
     localStorage.setItem('income-activity-v1',JSON.stringify(activity));refreshCategorySelect();render();

@@ -151,13 +151,12 @@
     const remote=data?.payload||{};
     const local=localPayload();
     const hasRemote=Array.isArray(remote.items)||Boolean(remote.finance)||Boolean(remote.history)||Boolean(remote.historyTotals);
-    const hasLocal=local.items?.length||Object.keys(local.history||{}).length||Object.keys(local.historyTotals||{}).length;
+    const hasLocal=local.items?.length||(local.finance&&Object.keys(local.finance).length)||Object.keys(local.history||{}).length||Object.keys(local.historyTotals||{}).length;
     if(hasRemote){
       // если локально есть более свежие правки — сливаем и отправляем, иначе принимаем облако
       if(localModifiedAt(local)>stamp(remote.updatedAt)){applyPayload(mergePayload(remote,local));await saveNow()}
-      else applyPayload(remote);
-    }else{
-      applyPayload({version:6,updatedAt:new Date().toISOString(),items:[],deletedItems:[],finance:{},categories:categories||[],activity:[],history:{},historyTotals:{}});
+      else applyPayload(mergePayload(remote,local));
+    }else if(hasLocal){
       await saveNow();
     }
     subscribe();

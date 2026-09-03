@@ -4818,7 +4818,7 @@ html,body{
   }catch(error){console.warn('hard binding v111 skipped',error)}})();
 </script>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-<script src="supabase-sync.js?v=6"></script>
+<script src="supabase-sync.js?v=7"></script>
 
 <style>/* one clean popup animation — no double-motion / settle-shift (cowork) */
 .scrim .sheet,.utility-sheet{-webkit-overflow-scrolling:auto!important}
@@ -4973,17 +4973,20 @@ html,body{
       if(String(data.notes||'').trim())return true;
       return false;
     }
-    if(typeof finance==='undefined'||hasFinanceData(finance))return;
-    var backups=JSON.parse(localStorage.getItem('income-auto-backups-v1')||'[]');
-    var found=backups.find(function(entry){return hasFinanceData(entry&&entry.finance)});
-    if(!found)return;
-    finance={...emptyFinance(),...found.finance};
-    financeUpdatedAt=nowIso();
-    localStorage.setItem(financeKey,JSON.stringify(finance));
-    localStorage.setItem('income-finance-updated-at',financeUpdatedAt);
-    window.__financeRescuedFromBackup=true;
-    if(typeof toast==='function')setTimeout(function(){toast('Финансы восстановлены из автокопии')},500);
-    if(typeof renderInfo==='function'&&currentView==='info')renderInfo();
+    window.__rescueFinanceFromBackup=function(){
+      if(typeof finance==='undefined'||hasFinanceData(finance))return false;
+      var backups=JSON.parse(localStorage.getItem('income-auto-backups-v1')||'[]');
+      var found=backups.find(function(entry){return hasFinanceData(entry&&entry.finance)});
+      if(!found)return false;
+      finance={...emptyFinance(),...found.finance};
+      financeUpdatedAt=nowIso();
+      localStorage.setItem(financeKey,JSON.stringify(finance));
+      localStorage.setItem('income-finance-updated-at',financeUpdatedAt);
+      window.__financeRescuedFromBackup=true;
+      if(typeof renderInfo==='function'&&currentView==='info')renderInfo();
+      return true;
+    };
+    if(window.__rescueFinanceFromBackup()&&typeof toast==='function')setTimeout(function(){toast('Финансы восстановлены из автокопии')},500);
   }catch(error){console.warn('finance rescue v120 skipped',error)}
 })();
 </script>

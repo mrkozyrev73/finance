@@ -216,6 +216,25 @@
     pushTimer=setTimeout(()=>saveNow(),700);
   }
 
+  async function refreshAllNow(){
+    if(!await initializeClient())return false;
+    setSyncState('','Обновление');
+    await ensureHousehold();
+    const {data,error}=await client.from('app_state')
+      .select('payload,revision,updated_at').eq('household_id',householdId).maybeSingle();
+    if(error)throw error;
+    revision=Number(data?.revision||revision||0);
+    localStorage.setItem(REVISION_KEY,String(revision));
+    applyPayload(mergePayload(data?.payload||{},localPayload()));
+    if(typeof window.__rescueFinanceFromBackup==='function'&&window.__rescueFinanceFromBackup()){
+      render();
+    }
+    if(typeof renderInfo==='function'&&typeof currentView!=='undefined'&&currentView==='info')renderInfo();
+    await saveNow();
+    setSyncState('ok','Обновлено');
+    return true;
+  }
+
   /* ---------- экран входа / статуса (внутри Настроек) ---------- */
   const authMessage=error=>{const m=String(error?.message||'');
     if(/invalid login/i.test(m))return'Неверный email или пароль.';
@@ -262,7 +281,13 @@
     }
 
     openUtility('Синхронизация',`<div class="sync-simple"><span class="settings-status-dot"></span><span><b>Включена</b><small>${escapeHtml(session.user.email||'')}</small></span></div><p class="sync-status">Данные автоматически доступны на другом телефоне после входа с тем же email и паролем.</p><div class="utility-actions sync-actions"><button class="utility-primary" id="sbSyncNow">Обновить сейчас</button><button class="sync-signout" id="sbSignOut">Выйти из аккаунта</button></div>`);
-    $('sbSyncNow').onclick=()=>connect().then(()=>toast('Данные загружены'));
+    $('sbSyncNow').onclick=async()=>{
+      const button=$('sbSyncNow');
+      button.disabled=true;button.textContent='Обновляем…';
+      try{await refreshAllNow();toast('Всё приложение обновлено')}
+      catch(error){showError(error);toast('Не удалось обновить данные')}
+      finally{button.disabled=false;button.textContent='Обновить сейчас'}
+    };
     $('sbSignOut').onclick=async()=>{await client.auth.signOut();closeUtility();location.reload()};
   }
 
@@ -274,6 +299,7 @@
   }
   window.openSupabaseSettings=openSupabaseSettings;
   window.scheduleCloudSync=scheduleSupabase;
+  window.refreshAllFromCloud=refreshAllNow;
   window.addEventListener('online',()=>initializeClient().catch(showError));
   window.addEventListener('offline',()=>setSyncState('error','Офлайн'));
   const syncPill=document.getElementById('syncPill');

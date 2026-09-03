@@ -177,7 +177,7 @@
   function subscribe(){
     if(channel)client.removeChannel(channel);
     channel=client.channel(`app_state:${householdId}`)
-      .on('postgres_changes',{event:'UPDATE',schema:'public',table:'app_state',filter:`household_id=eq.${householdId}`},payload=>{
+      .on('postgres_changes',{event:'*',schema:'public',table:'app_state',filter:`household_id=eq.${householdId}`},payload=>{
         const row=payload.new;
         if(saving||Number(row.revision)<=revision)return;
         revision=Number(row.revision);localStorage.setItem(REVISION_KEY,String(revision));

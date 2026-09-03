@@ -211,7 +211,13 @@
   // Вызывается приложением после каждого изменения (persist).
   function scheduleSupabase(){
     clearTimeout(pushTimer);
-    if(!client||!session||!householdId){setSyncState('error',navigator.onLine?'Войти':'Офлайн');return}
+    if(!client||!session||!householdId){
+      if(navigator.onLine){
+        setSyncState('','Подключение');
+        initializeClient().then(ok=>{if(ok)saveNow()}).catch(showError);
+      }else setSyncState('error','Офлайн');
+      return;
+    }
     setSyncState('','Сохранение');
     pushTimer=setTimeout(()=>saveNow(),700);
   }
@@ -302,6 +308,15 @@
   window.refreshAllFromCloud=refreshAllNow;
   window.addEventListener('online',()=>initializeClient().catch(showError));
   window.addEventListener('offline',()=>setSyncState('error','Офлайн'));
+  let passiveRefreshTimer;
+  function requestPassiveRefresh(){
+    if(document.hidden||!navigator.onLine)return;
+    clearTimeout(passiveRefreshTimer);
+    passiveRefreshTimer=setTimeout(()=>connect().catch(showError),400);
+  }
+  document.addEventListener('visibilitychange',()=>{if(!document.hidden)requestPassiveRefresh()});
+  window.addEventListener('focus',requestPassiveRefresh);
+  setInterval(()=>{if(!document.hidden&&navigator.onLine&&session)connect().catch(showError)},30000);
   const syncPill=document.getElementById('syncPill');
   if(syncPill)syncPill.onclick=()=>{if(session&&typeof openSettings==='function')openSettings();else openSupabaseSettings()};
   // остатки Google-конфига больше не нужны

@@ -2342,7 +2342,7 @@ html,body{
 <div class="toast" id="toast"><svg class="ui-icon toast-check" viewBox="0 0 24 24"><path d="m5 12 4 4 10-10"/></svg><b id="toastText"></b><button class="undo" id="undo" hidden>Вернуть</button></div>
 <script>
   const emptyYear=()=>Array(12).fill(0);
-  const remoteFirst=true;
+  const remoteFirst=false;
   let history=remoteFirst?{2026:emptyYear(),2025:emptyYear(),2024:emptyYear(),2023:emptyYear(),2022:emptyYear()}:(JSON.parse(localStorage.getItem('income-history-v1')||'null')||{2026:emptyYear(),2025:emptyYear(),2024:emptyYear(),2023:emptyYear(),2022:emptyYear()});
   let historyTotals=remoteFirst?{}:(JSON.parse(localStorage.getItem('income-history-totals-v1')||'null')||{});
   const key='income-tracker-v3',tz='Europe/Samara',monthNames=['Январь','Февраль','Март','Апрель','Май','Июнь','Июль','Август','Сентябрь','Октябрь','Ноябрь','Декабрь'],monthInNames=['январе','феврале','марте','апреле','мае','июне','июле','августе','сентябре','октябре','ноябре','декабре'];

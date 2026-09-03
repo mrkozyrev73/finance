@@ -22,6 +22,14 @@
 
   const config=()=>{try{return JSON.parse(localStorage.getItem(CONFIG_KEY)||'null')||DEFAULT_CONFIG}catch{return DEFAULT_CONFIG}};
   const stamp=value=>{const n=Date.parse(value||0);return Number.isFinite(n)?n:0};
+  const hasMeaningfulFinance=value=>!!value&&Object.keys(value).some(key=>{
+    const item=value[key];
+    if(Array.isArray(item))return item.length>0;
+    if(typeof item==='number')return item>0;
+    if(typeof item==='string')return item.trim()!=='';
+    if(item&&typeof item==='object')return Object.keys(item).length>0;
+    return Boolean(item);
+  });
 
   /* ---------- payload <-> приложение ---------- */
   function localPayload(){
@@ -58,7 +66,9 @@
     const items=new Map();
     [...(cloud.items||[]),...(local.items||[])].forEach(x=>{const id=String(x.id),old=items.get(id);if(!old||stamp(x.updatedAt)>=stamp(old.updatedAt))items.set(id,x)});
     deleted.forEach((entry,id)=>{const item=items.get(id);if(!item||stamp(entry.updatedAt)>=stamp(item.updatedAt))items.delete(id)});
-    const financeSrc=stamp(local.financeUpdatedAt)>=stamp(cloud.financeUpdatedAt)?local:cloud;
+    const cloudHasFinance=hasMeaningfulFinance(cloud.finance);
+    const localHasFinance=hasMeaningfulFinance(local.finance);
+    const financeSrc=localHasFinance&&!cloudHasFinance?local:cloudHasFinance&&!localHasFinance?cloud:stamp(local.financeUpdatedAt)>=stamp(cloud.financeUpdatedAt)?local:cloud;
     const catSrc=stamp(local.categoriesUpdatedAt)>=stamp(cloud.categoriesUpdatedAt)?local:cloud;
     const activity=new Map();
     [...(cloud.activity||[]),...(local.activity||[])].forEach(x=>activity.set(String(x.id),x));
@@ -151,7 +161,7 @@
     const remote=data?.payload||{};
     const local=localPayload();
     const hasRemote=Array.isArray(remote.items)||Boolean(remote.finance)||Boolean(remote.history)||Boolean(remote.historyTotals);
-    const hasLocal=local.items?.length||(local.finance&&Object.keys(local.finance).length)||Object.keys(local.history||{}).length||Object.keys(local.historyTotals||{}).length;
+    const hasLocal=local.items?.length||hasMeaningfulFinance(local.finance)||Object.keys(local.history||{}).length||Object.keys(local.historyTotals||{}).length;
     if(hasRemote){
       // если локально есть более свежие правки — сливаем и отправляем, иначе принимаем облако
       if(localModifiedAt(local)>stamp(remote.updatedAt)){applyPayload(mergePayload(remote,local));await saveNow()}

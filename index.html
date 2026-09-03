@@ -5514,6 +5514,84 @@ button,.loan-open,.safe-edit,.settings-row,.row-main,.nav button{
 }
 </style>
 <script>
+/* v129 — Settings is a real tab page, not a bottom sheet. */
+(()=>{try{
+  const nav=document.querySelector('.nav');
+  if(!nav)return;
+  if(!document.getElementById('settingsView')){
+    const info=document.getElementById('infoView');
+    (info||nav).insertAdjacentHTML(info?'afterend':'beforebegin','<section class="settings-view" id="settingsView" hidden></section>');
+  }
+  const loginIcon='<svg class="ui-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M9 6V5a2 2 0 0 1 2-2h7v18h-7a2 2 0 0 1-2-2v-1"/><path d="M3 12h11"/><path d="m10 8 4 4-4 4"/></svg>';
+  const row=(id,icon,title,note)=>typeof settingsRow==='function'?settingsRow(id,icon,title,note):`<button class="settings-row" data-settings-action="${id}"><span class="settings-row-icon">${icon}</span><span><b>${title}</b><small>${note}</small></span><svg class="settings-chevron" viewBox="0 0 24 24" aria-hidden="true"><path d="m9 18 6-6-6-6"/></svg></button>`;
+  function renderSettingsPage(){
+    const syncText=document.getElementById('syncPill')?.textContent||'';
+    const syncReady=/синхрониз|обнов|включ|сохран|подключ/i.test(syncText);
+    document.getElementById('settingsView').innerHTML=`
+      <div class="settings-page-head"><p class="kicker">ПРИЛОЖЕНИЕ</p><h2>Настройки</h2></div>
+      <div class="settings-sync-banner ${syncReady?'ok':'wait'}">
+        <i></i><span><b>${syncReady?'Синхронизация включена':'Синхронизация выключена'}</b><small>${syncReady?'Изменения автоматически уходят в базу и подтягиваются на других устройствах':'Войдите с одной почтой и паролем на нужных устройствах'}</small></span>
+      </div>
+      <button class="settings-login-button" data-settings-action="supabaseSettings">${loginIcon}<span>Войти</span></button>
+      <section class="settings-group"><h3>Управление</h3>
+        ${row('manageCategories','≡','Категории доходов','Добавить, переименовать или удалить')}
+        ${row('templatesButton','↺','Регулярные доходы','Управление ежемесячными записями')}
+        ${row('activityButton','⌁','История действий','Последние изменения приложения')}
+        ${row('trashButton','⌫','Корзина','Удалённые доходы за 30 дней')}
+      </section>
+      <section class="settings-group"><h3>Данные и копии</h3>
+        ${row('exportData','↓','Скачать копию','Сохранить резервный файл на устройство')}
+      </section>`;
+    document.querySelectorAll('#settingsView [data-settings-action]').forEach(button=>button.onclick=()=>document.getElementById(button.dataset.settingsAction)?.click());
+  }
+  function showSettingsPage(){
+    document.getElementById('utilityScrim')?.classList.remove('open','locked');
+    document.getElementById('scrim')?.classList.remove('open');
+    currentView='settings';
+    ['homeTop','homeView','statusFilter','carryWaiting','statsView','infoView'].forEach(id=>{const el=document.getElementById(id);if(el)el.hidden=true});
+    renderSettingsPage();
+    document.getElementById('settingsView').hidden=false;
+    document.getElementById('homeTab')?.classList.remove('active');
+    document.getElementById('statsTab')?.classList.remove('active');
+    document.getElementById('infoTab')?.classList.remove('active');
+    document.getElementById('settingsButton')?.classList.add('active');
+    document.getElementById('searchBox')?.setAttribute('hidden','');
+    document.body.classList.remove('view-home','view-stats','view-info');
+    document.body.classList.add('view-settings');
+    window.scrollTo({top:0,behavior:'auto'});
+  }
+  const baseShowView=showView;
+  showView=function(view){
+    document.getElementById('settingsView')?.setAttribute('hidden','');
+    document.getElementById('settingsButton')?.classList.remove('active');
+    document.body.classList.remove('view-settings');
+    return baseShowView(view);
+  };
+  openSettings=showSettingsPage;
+  document.getElementById('settingsButton')?.addEventListener('click',event=>{event.preventDefault();event.stopPropagation();showSettingsPage()},true);
+  document.getElementById('syncPill')?.addEventListener('click',event=>{event.preventDefault();showSettingsPage()},true);
+}catch(error){console.warn('settings page v129 skipped',error)}})();
+</script>
+<style>
+/* v129 — Settings page shares the app rhythm and avoids sheet scroll/flicker entirely. */
+.settings-view{display:grid;gap:14px;padding:0 0 22px}
+.settings-view[hidden]{display:none!important}
+.settings-page-head{margin:0 2px 2px}
+.settings-page-head h2{margin:0;color:#172019;font-size:30px;font-weight:680;line-height:1.05;letter-spacing:-.045em}
+.settings-view .settings-sync-banner{display:grid;grid-template-columns:10px minmax(0,1fr);align-items:center;gap:10px;margin:0 2px;padding:0;background:transparent;border:0;box-shadow:none}
+.settings-view .settings-sync-banner i{width:8px;height:8px;border-radius:50%;background:#87d957;box-shadow:0 0 0 5px rgba(135,217,87,.13)}
+.settings-view .settings-sync-banner.wait i{background:#c3c9c0;box-shadow:0 0 0 5px rgba(126,136,127,.10)}
+.settings-view .settings-sync-banner b{display:block;color:#172019;font-size:12.5px;font-weight:640;line-height:1.2;letter-spacing:-.01em}
+.settings-view .settings-sync-banner small{display:block;margin-top:2px;color:#7e887f;font-size:10.5px;font-weight:430;line-height:1.32}
+.settings-view .settings-login-button{display:flex;align-items:center;justify-content:center;gap:9px;width:100%;height:54px;margin:2px 0 4px;padding:0 16px;border:0;border-radius:18px;background:linear-gradient(145deg,#a9e875,#7fd153);color:#142018;box-shadow:none;font-size:14px;font-weight:720;letter-spacing:-.015em}
+.settings-view .settings-login-button .ui-icon{width:18px;height:18px;stroke-width:2}
+.settings-view .settings-login-button:active{transform:scale(.98)!important}
+.settings-view .settings-group{margin:0}
+.settings-view .settings-group h3{margin:0 0 7px 3px;color:#858b83;font-size:10px;font-weight:650;letter-spacing:.15em;text-transform:uppercase}
+.settings-view .settings-row{background:#fffefa}
+.nav #settingsButton.active{background:#fffefa!important;color:#172019!important;font-weight:690!important}
+</style>
+<script>
 /* v120 — rescue finance page from local auto-backups when cloud already contains an empty finance object. */
 (function(){
   try{

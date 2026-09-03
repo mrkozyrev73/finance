@@ -5779,6 +5779,55 @@ button,.loan-open,.safe-edit,.settings-row,.row-main,.nav button{
   margin-bottom:14px!important;
 }
 </style>
+<style>
+/* v132 — one left rail for page content and section blocks. */
+#statsView,
+#infoView,
+.settings-view{
+  padding-left:0!important;
+  padding-right:0!important;
+}
+#statsView .stats-head,
+#infoView .info-head,
+.settings-page-head,
+#infoView .loans-block>h4,
+#infoView>.info-card:not(.finance-main)>h3,
+.settings-view .settings-group h3{
+  margin-left:0!important;
+  margin-right:0!important;
+  padding-left:0!important;
+  padding-right:0!important;
+}
+#statsView .period-switch,
+#statsView .stats-summary,
+#statsView .stats-breakdown,
+#statsView .category-stats,
+#infoView .loan-safe,
+#infoView .loans-empty,
+#infoView #addLoan,
+#infoView>.info-card:not(.finance-main),
+.settings-view .settings-login-button,
+.settings-view .settings-group,
+.settings-view .settings-row{
+  margin-left:0!important;
+  margin-right:0!important;
+  width:100%!important;
+}
+.settings-view .settings-sync-banner{
+  margin-left:0!important;
+  margin-right:0!important;
+  padding-left:13px!important;
+  width:100%!important;
+}
+.settings-view .settings-sync-banner i{
+  box-shadow:none!important;
+}
+#infoView .notes,
+#infoView .save-note{
+  margin-left:0!important;
+  margin-right:0!important;
+}
+</style>
 <script>
 /* v120 — rescue finance page from local auto-backups when cloud already contains an empty finance object. */
 (function(){

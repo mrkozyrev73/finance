@@ -4812,7 +4812,7 @@ html,body{
   }catch(error){console.warn('hard binding v111 skipped',error)}})();
 </script>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-<script src="supabase-sync.js?v=9"></script>
+<script src="supabase-sync.js?v=10"></script>
 
 <style>/* one clean popup animation — no double-motion / settle-shift (cowork) */
 .scrim .sheet,.utility-sheet{-webkit-overflow-scrolling:auto!important}
@@ -4951,6 +4951,138 @@ html,body{
 <style>
 .category-manage-list .backup-row{align-items:flex-start!important}
 .category-manage-list .backup-has{box-shadow:inset 3px 0 0 #82cc54!important;background:#f2f8ec!important}
+</style>
+<style>
+/* v121 — compact finance cards + calmer tactile feel for phone use. */
+#infoView{
+  gap:12px!important;
+}
+#infoView .finance-main{
+  gap:10px!important;
+}
+#infoView .finance-main .loan-safe{
+  min-height:96px!important;
+  padding:16px 18px!important;
+  border-radius:20px!important;
+}
+#infoView .finance-main .finance-metric-label{
+  margin-bottom:12px!important;
+  font-size:15px!important;
+  line-height:1.05!important;
+}
+#infoView .finance-main .finance-metric-label:after{
+  font-size:12px!important;
+  font-weight:500!important;
+}
+#infoView .finance-main .safe-metric-input,
+#infoView .finance-main .safe-measure{
+  font-size:31px!important;
+  line-height:.98!important;
+}
+#infoView .finance-main .safe-ruble{
+  font-size:18px!important;
+  transform:translateY(-1px)!important;
+}
+#infoView .loans-block{
+  gap:9px!important;
+}
+#infoView .loans-block>h4,
+#infoView>.info-card:not(.finance-main)>h3{
+  margin-bottom:0!important;
+  font-size:22px!important;
+  line-height:1.08!important;
+}
+#infoView .loans-list{
+  gap:8px!important;
+}
+#infoView .loan-card{
+  border-radius:18px!important;
+  box-shadow:none!important;
+  transition:transform 140ms cubic-bezier(.23,1,.32,1),background-color 160ms ease,border-color 160ms ease!important;
+}
+#infoView .loan-open{
+  padding:12px 14px 10px!important;
+}
+#infoView .loan-card-top{
+  margin-bottom:8px!important;
+}
+#infoView .loan-card-top b{
+  font-size:14px!important;
+  font-weight:640!important;
+}
+#infoView .loan-card-top small{
+  padding:3px 7px!important;
+  font-size:9px!important;
+}
+#infoView .loan-open>strong{
+  font-size:23px!important;
+  line-height:1!important;
+}
+#infoView .loan-caption{
+  margin-top:1px!important;
+  font-size:10px!important;
+}
+#infoView .loan-open p{
+  margin-top:7px!important;
+  font-size:10.5px!important;
+  line-height:1.32!important;
+}
+#infoView .loan-card-metrics{
+  gap:3px!important;
+  margin-top:7px!important;
+  font-size:10.5px!important;
+}
+#infoView .loan-progress{
+  height:3px!important;
+  margin:8px 0 4px!important;
+}
+#infoView .loan-progress-text{
+  font-size:9.5px!important;
+}
+#infoView .loan-actions button{
+  min-height:38px!important;
+  font-size:11px!important;
+}
+#infoView #addLoan{
+  height:48px!important;
+  margin-top:2px!important;
+  border-radius:17px!important;
+  font-size:14px!important;
+}
+#infoView .loans-empty{
+  min-height:88px!important;
+  padding:18px!important;
+  border-radius:20px!important;
+}
+#infoView>.info-card:not(.finance-main){
+  gap:8px!important;
+}
+#infoView .notes{
+  min-height:116px!important;
+  padding:16px!important;
+  border-radius:20px!important;
+  font-size:14px!important;
+}
+.loan-card:active,
+#infoView .finance-main .loan-safe:active{
+  background:#fbfcf7!important;
+}
+button,.loan-open,.safe-edit,.settings-row,.row-main,.nav button{
+  cursor:pointer;
+}
+@media (hover:hover) and (pointer:fine){
+  #infoView .loan-card:hover,
+  #infoView .finance-main .loan-safe:hover{
+    border-color:rgba(35,107,69,.16)!important;
+    background:#fff!important;
+  }
+}
+@media (prefers-reduced-motion:reduce){
+  button,.loan-open,.safe-edit,.settings-row,.row-main,.nav button,.loan-card{
+    transition:opacity 120ms ease,background-color 120ms ease,border-color 120ms ease!important;
+    transform:none!important;
+  }
+}
 </style>
 <script>
 /* v120 — rescue finance page from local auto-backups when cloud already contains an empty finance object. */

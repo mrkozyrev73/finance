@@ -5093,9 +5093,16 @@ button,.loan-open,.safe-edit,.settings-row,.row-main,.nav button{
 #infoView.info-view{
   padding-top:0!important;
 }
+#statsView.stats-view,
+#infoView.info-view{
+  margin-top:0!important;
+}
+#infoView.info-view{
+  gap:8px!important;
+}
 #statsView .stats-head,
 #infoView .info-head{
-  margin:0 2px 18px!important;
+  margin:0 2px 8px!important;
   padding:0!important;
 }
 #statsView .stats-head h2,
@@ -5105,6 +5112,15 @@ button,.loan-open,.safe-edit,.settings-row,.row-main,.nav button{
 #statsView .stats-head .kicker,
 #infoView .info-head .kicker{
   margin-bottom:8px!important;
+}
+#statsView .period-switch{
+  margin:10px 0 8px!important;
+}
+#statsView #statsHint{
+  margin:0!important;
+}
+#statsView .stats-summary{
+  margin-top:8px!important;
 }
 #statsView .category-card,
 #statsView [data-chart-key]{
@@ -5172,6 +5188,35 @@ button,.loan-open,.safe-edit,.settings-row,.row-main,.nav button{
   #statsView [data-chart-key]{
     transition:none!important;
   }
+}
+</style>
+<script>
+/* v123 — move Settings from top chrome into the right side of the bottom menu. */
+(()=>{try{
+  const nav=document.querySelector('.nav'),settings=document.getElementById('settingsButton');
+  if(!nav||!settings)return;
+  settings.className='';
+  settings.setAttribute('aria-label','Настройки');
+  settings.innerHTML='<i><svg class="ui-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 15.5A3.5 3.5 0 1 0 12 8a3.5 3.5 0 0 0 0 7.5Z"/><path d="M19.4 15a1.7 1.7 0 0 0 .34 1.87l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.7 1.7 0 0 0-1.87-.34 1.7 1.7 0 0 0-1.04 1.56V21a2 2 0 0 1-4 0v-.08A1.7 1.7 0 0 0 8.96 19.36a1.7 1.7 0 0 0-1.87.34l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.7 1.7 0 0 0 4.6 15a1.7 1.7 0 0 0-1.56-1.04H3a2 2 0 0 1 0-4h.08A1.7 1.7 0 0 0 4.64 8.9a1.7 1.7 0 0 0-.34-1.87l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.7 1.7 0 0 0 9 4.54 1.7 1.7 0 0 0 10.04 3V3a2 2 0 0 1 4 0v.08A1.7 1.7 0 0 0 15.1 4.64a1.7 1.7 0 0 0 1.87-.34l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06a1.7 1.7 0 0 0-.34 1.87A1.7 1.7 0 0 0 21 10.04h.08a2 2 0 0 1 0 4H21A1.7 1.7 0 0 0 19.4 15Z"/></svg></i>Настройки';
+  nav.append(settings);
+  settings.onclick=event=>{event.preventDefault();event.stopPropagation();if(typeof openSettings==='function')openSettings()};
+}catch(error){console.warn('bottom settings v123 skipped',error)}})();
+</script>
+<style>
+/* v123 — four-item bottom navigation with Settings on the right. */
+.month-nav #settingsButton{
+  display:none!important;
+}
+.nav{
+  grid-template-columns:repeat(4,minmax(0,1fr))!important;
+}
+.nav #settingsButton{
+  display:flex!important;
+}
+.nav #settingsButton.active{
+  background:transparent!important;
+  color:#969c94!important;
+  box-shadow:none!important;
 }
 </style>
 <script>

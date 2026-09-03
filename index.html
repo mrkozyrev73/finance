@@ -5523,24 +5523,31 @@ button,.loan-open,.safe-edit,.settings-row,.row-main,.nav button{
     (info||nav).insertAdjacentHTML(info?'afterend':'beforebegin','<section class="settings-view" id="settingsView" hidden></section>');
   }
   const loginIcon='<svg class="ui-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M9 6V5a2 2 0 0 1 2-2h7v18h-7a2 2 0 0 1-2-2v-1"/><path d="M3 12h11"/><path d="m10 8 4 4-4 4"/></svg>';
+  const settingsIcons={
+    categories:'<svg class="ui-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 7h14"/><path d="M5 12h14"/><path d="M5 17h10"/></svg>',
+    recurring:'<svg class="ui-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M17 2v4"/><path d="M7 2v4"/><path d="M4 10h16"/><rect x="4" y="5" width="16" height="16" rx="3"/><path d="M16 14a3 3 0 1 1-1.1-2.32"/><path d="M16 11v3h-3"/></svg>',
+    activity:'<svg class="ui-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 8v5l3 2"/><circle cx="12" cy="12" r="8"/><path d="M4 4v5h5"/></svg>',
+    trash:'<svg class="ui-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 7h16"/><path d="M10 11v6"/><path d="M14 11v6"/><path d="M6 7l1 14h10l1-14"/><path d="M9 7V4h6v3"/></svg>',
+    backup:'<svg class="ui-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3v12"/><path d="m7 10 5 5 5-5"/><path d="M5 19h14"/></svg>'
+  };
   const row=(id,icon,title,note)=>typeof settingsRow==='function'?settingsRow(id,icon,title,note):`<button class="settings-row" data-settings-action="${id}"><span class="settings-row-icon">${icon}</span><span><b>${title}</b><small>${note}</small></span><svg class="settings-chevron" viewBox="0 0 24 24" aria-hidden="true"><path d="m9 18 6-6-6-6"/></svg></button>`;
   function renderSettingsPage(){
     const syncText=document.getElementById('syncPill')?.textContent||'';
     const syncReady=/синхрониз|обнов|включ|сохран|подключ/i.test(syncText);
     document.getElementById('settingsView').innerHTML=`
-      <div class="settings-page-head"><p class="kicker">ПРИЛОЖЕНИЕ</p><h2>Настройки</h2></div>
+      <div class="settings-page-head"><h2>Настройки</h2></div>
       <div class="settings-sync-banner ${syncReady?'ok':'wait'}">
         <i></i><span><b>${syncReady?'Синхронизация включена':'Синхронизация выключена'}</b><small>${syncReady?'Изменения автоматически уходят в базу и подтягиваются на других устройствах':'Войдите с одной почтой и паролем на нужных устройствах'}</small></span>
       </div>
       <button class="settings-login-button" data-settings-action="supabaseSettings">${loginIcon}<span>Войти</span></button>
       <section class="settings-group"><h3>Управление</h3>
-        ${row('manageCategories','≡','Категории доходов','Добавить, переименовать или удалить')}
-        ${row('templatesButton','↺','Регулярные доходы','Управление ежемесячными записями')}
-        ${row('activityButton','⌁','История действий','Последние изменения приложения')}
-        ${row('trashButton','⌫','Корзина','Удалённые доходы за 30 дней')}
+        ${row('manageCategories',settingsIcons.categories,'Категории доходов','Добавить, переименовать или удалить')}
+        ${row('templatesButton',settingsIcons.recurring,'Регулярные доходы','Управление ежемесячными записями')}
+        ${row('activityButton',settingsIcons.activity,'История действий','Последние изменения приложения')}
+        ${row('trashButton',settingsIcons.trash,'Корзина','Удалённые доходы за 30 дней')}
       </section>
       <section class="settings-group"><h3>Данные и копии</h3>
-        ${row('exportData','↓','Скачать копию','Сохранить резервный файл на устройство')}
+        ${row('exportData',settingsIcons.backup,'Скачать копию','Сохранить резервный файл на устройство')}
       </section>`;
     document.querySelectorAll('#settingsView [data-settings-action]').forEach(button=>button.onclick=()=>document.getElementById(button.dataset.settingsAction)?.click());
   }
@@ -5590,6 +5597,187 @@ button,.loan-open,.safe-edit,.settings-row,.row-main,.nav button{
 .settings-view .settings-group h3{margin:0 0 7px 3px;color:#858b83;font-size:10px;font-weight:650;letter-spacing:.15em;text-transform:uppercase}
 .settings-view .settings-row{background:#fffefa}
 .nav #settingsButton.active{background:#fffefa!important;color:#172019!important;font-weight:690!important}
+</style>
+<style>
+/* v130 — unified visual rhythm: one spacing / type / control scale across pages. */
+.app{
+  --rhythm-1:8px;
+  --rhythm-2:12px;
+  --rhythm-3:16px;
+  --rhythm-4:22px;
+  --control-h:52px;
+  --card-radius:24px;
+  --control-radius:18px;
+}
+.summary,
+#statsView .stats-summary,
+#infoView .loan-safe,
+#infoView .loans-empty,
+#infoView>.info-card:not(.finance-main),
+.settings-view .settings-row:first-of-type,
+.settings-view .settings-row:only-of-type,
+.settings-view .settings-login-button{
+  border-radius:var(--card-radius)!important;
+}
+.heading{
+  margin:var(--rhythm-4) 2px var(--rhythm-2)!important;
+}
+.heading h2,
+#statsView .stats-head h2,
+#infoView .info-head h2,
+.settings-page-head h2,
+#infoView .loans-block>h4,
+#infoView>.info-card:not(.finance-main)>h3{
+  font-size:24px!important;
+  font-weight:650!important;
+  line-height:1.06!important;
+  letter-spacing:-.04em!important;
+}
+.heading p,
+#statsView #statsHint,
+#infoView .info-head p:not(.kicker),
+#infoView>.info-card:not(.finance-main)>p,
+.settings-view .settings-sync-banner small{
+  font-size:13px!important;
+  font-weight:430!important;
+  line-height:1.32!important;
+  letter-spacing:-.01em!important;
+}
+.primary,
+#infoView #addLoan,
+.settings-view .settings-login-button,
+.utility-actions button,
+.tool-grid button,
+.sheet-link{
+  min-height:var(--control-h)!important;
+  height:var(--control-h)!important;
+  border-radius:var(--control-radius)!important;
+}
+#homeView,
+#statsView,
+#infoView,
+.settings-view{
+  gap:var(--rhythm-2)!important;
+}
+#statsView .stats-head,
+#infoView .info-head,
+.settings-page-head{
+  margin:0 2px var(--rhythm-2)!important;
+}
+#statsView .period-switch{
+  margin:var(--rhythm-2) 0 var(--rhythm-2)!important;
+}
+#statsView #statsHint{
+  margin:0 0 var(--rhythm-2)!important;
+}
+#statsView .stats-summary{
+  margin:0 0 var(--rhythm-2)!important;
+  min-height:102px!important;
+  padding:18px!important;
+}
+#statsView .category-stats,
+#infoView .finance-main,
+#infoView .loans-block,
+#infoView .loans-list,
+.settings-view{
+  row-gap:var(--rhythm-2)!important;
+}
+#infoView.info-view{
+  gap:var(--rhythm-2)!important;
+}
+#infoView .finance-main{
+  padding:0!important;
+}
+#infoView .loan-safe{
+  min-height:128px!important;
+  padding:18px!important;
+  margin:0!important;
+}
+#infoView .loans-block{
+  margin:0!important;
+}
+#infoView .loans-block>h4,
+#infoView>.info-card:not(.finance-main)>h3{
+  margin:0 2px var(--rhythm-2)!important;
+}
+#infoView .loans-empty{
+  padding:18px!important;
+  margin:0!important;
+}
+#infoView #addLoan{
+  margin:var(--rhythm-2) 0 var(--rhythm-3)!important;
+}
+#infoView>.info-card:not(.finance-main){
+  margin:0!important;
+  padding:18px!important;
+}
+#infoView .notes{
+  min-height:138px!important;
+  margin-top:var(--rhythm-2)!important;
+}
+.settings-view{
+  padding-top:0!important;
+}
+.settings-view .settings-sync-banner{
+  margin:0 2px var(--rhythm-2)!important;
+}
+.settings-view .settings-login-button{
+  margin:0 0 var(--rhythm-3)!important;
+}
+.settings-view .settings-group{
+  margin:0!important;
+}
+.settings-view .settings-group+.settings-group{
+  margin-top:var(--rhythm-2)!important;
+}
+.settings-view .settings-group h3{
+  margin:0 0 var(--rhythm-1) 3px!important;
+}
+.settings-view .settings-row{
+  min-height:56px!important;
+  padding:10px 11px!important;
+}
+.settings-view .settings-row b{
+  font-size:13px!important;
+  font-weight:620!important;
+  line-height:1.2!important;
+}
+.settings-view .settings-row small{
+  font-size:11px!important;
+  font-weight:430!important;
+  line-height:1.28!important;
+}
+.settings-view .settings-row-icon .ui-icon{
+  width:17px!important;
+  height:17px!important;
+  stroke-width:1.9!important;
+}
+</style>
+<style>
+/* v131 — same distance from page subtitle to the first working block. */
+#statsView .stats-head,
+#infoView .info-head,
+.settings-page-head{
+  margin-bottom:14px!important;
+}
+#statsView .period-switch{
+  margin-top:0!important;
+  margin-bottom:14px!important;
+}
+#infoView.info-view{
+  gap:14px!important;
+}
+#infoView .finance-main{
+  margin-top:0!important;
+  gap:12px!important;
+}
+#infoView .finance-main .loan-safe{
+  margin-top:0!important;
+}
+.settings-view .settings-sync-banner{
+  margin-top:0!important;
+  margin-bottom:14px!important;
+}
 </style>
 <script>
 /* v120 — rescue finance page from local auto-backups when cloud already contains an empty finance object. */

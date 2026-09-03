@@ -2519,12 +2519,14 @@ html,body{
     const syncText=$('syncPill')?.textContent||'Синхронизация';
     const syncReady=/синхрониз|обнов|включ|сохран/i.test(syncText);
     openUtility('Настройки',`
+      <div class="settings-sync-banner ${syncReady?'ok':'wait'}">
+        <i></i><span><b>${syncReady?'Синхронизация включена':'Синхронизация выключена'}</b><small>${syncReady?'Данные обновляются автоматически':'Войдите, чтобы данные были общими на устройствах'}</small></span>
+      </div>
       <section class="settings-group settings-account-group"><h3>Вход</h3>
-        <div class="settings-account-card">
-          <span class="settings-account-icon">↻</span>
-          <span class="settings-account-copy"><b>Почта и пароль</b><small>Для синхронизации между устройствами</small></span>
-          <span class="settings-account-actions"><em class="${syncReady?'ok':'wait'}">${syncReady?'Подключено':'Не подключено'}</em><button data-settings-action="supabaseSettings">${syncReady?'Открыть':'Войти'}</button></span>
-        </div>
+        <button class="settings-login-button" data-settings-action="supabaseSettings">
+          <svg class="ui-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M9 6V5a2 2 0 0 1 2-2h7v18h-7a2 2 0 0 1-2-2v-1"/><path d="M3 12h11"/><path d="m10 8 4 4-4 4"/></svg>
+          <span>Войти</span>
+        </button>
       </section>
       <section class="settings-group"><h3>Данные и копии</h3>
         ${settingsRow('exportData','↓','Скачать копию','Сохранить резервный файл на устройство')}
@@ -3320,12 +3322,14 @@ html,body{
       const syncText=$('syncPill')?.textContent||'Синхронизация';
       const syncReady=/синхрониз|обнов|включ|сохран/i.test(syncText);
       openUtility('Настройки',`
+        <div class="settings-sync-banner ${syncReady?'ok':'wait'}">
+          <i></i><span><b>${syncReady?'Синхронизация включена':'Синхронизация выключена'}</b><small>${syncReady?'Данные обновляются автоматически':'Войдите, чтобы данные были общими на устройствах'}</small></span>
+        </div>
         <section class="settings-group settings-account-group"><h3>Вход</h3>
-          <div class="settings-account-card">
-            <span class="settings-account-icon">↻</span>
-            <span class="settings-account-copy"><b>Почта и пароль</b><small>Для синхронизации между устройствами</small></span>
-            <span class="settings-account-actions"><em class="${syncReady?'ok':'wait'}">${syncReady?'Подключено':'Не подключено'}</em><button data-settings-action="supabaseSettings">${syncReady?'Открыть':'Войти'}</button></span>
-          </div>
+          <button class="settings-login-button" data-settings-action="supabaseSettings">
+            <svg class="ui-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M9 6V5a2 2 0 0 1 2-2h7v18h-7a2 2 0 0 1-2-2v-1"/><path d="M3 12h11"/><path d="m10 8 4 4-4 4"/></svg>
+            <span>Войти</span>
+          </button>
         </section>
         <section class="settings-group"><h3>Управление</h3>
           ${row('manageCategories','≡','Категории доходов','Добавить, переименовать или удалить')}
@@ -5440,6 +5444,73 @@ button,.loan-open,.safe-edit,.settings-row,.row-main,.nav button{
     justify-content:flex-start!important;
     margin-top:2px!important;
   }
+}
+</style>
+<style>
+/* v128 — settings: separate connection status from one clear sign-in action. */
+.utility-sheet:has(.settings-account-group) .settings-sync-banner{
+  display:grid!important;
+  grid-template-columns:10px minmax(0,1fr)!important;
+  align-items:center!important;
+  gap:10px!important;
+  margin:0 0 14px!important;
+  padding:0 3px!important;
+  background:transparent!important;
+  border:0!important;
+  box-shadow:none!important;
+}
+.utility-sheet:has(.settings-account-group) .settings-sync-banner i{
+  width:8px!important;
+  height:8px!important;
+  border-radius:50%!important;
+  background:#87d957!important;
+  box-shadow:0 0 0 5px rgba(135,217,87,.13)!important;
+}
+.utility-sheet:has(.settings-account-group) .settings-sync-banner.wait i{
+  background:#c3c9c0!important;
+  box-shadow:0 0 0 5px rgba(126,136,127,.10)!important;
+}
+.utility-sheet:has(.settings-account-group) .settings-sync-banner b{
+  display:block!important;
+  color:#172019!important;
+  font-size:12.5px!important;
+  font-weight:640!important;
+  line-height:1.2!important;
+  letter-spacing:-.01em!important;
+}
+.utility-sheet:has(.settings-account-group) .settings-sync-banner small{
+  display:block!important;
+  margin-top:2px!important;
+  color:#7e887f!important;
+  font-size:10.5px!important;
+  font-weight:430!important;
+  line-height:1.28!important;
+}
+.utility-sheet:has(.settings-account-group) .settings-login-button{
+  display:flex!important;
+  align-items:center!important;
+  justify-content:center!important;
+  gap:9px!important;
+  width:100%!important;
+  height:54px!important;
+  margin:0!important;
+  padding:0 16px!important;
+  border:0!important;
+  border-radius:18px!important;
+  background:linear-gradient(145deg,#a9e875,#7fd153)!important;
+  color:#142018!important;
+  box-shadow:none!important;
+  font-size:14px!important;
+  font-weight:720!important;
+  letter-spacing:-.015em!important;
+}
+.utility-sheet:has(.settings-account-group) .settings-login-button .ui-icon{
+  width:18px!important;
+  height:18px!important;
+  stroke-width:2!important;
+}
+.utility-sheet:has(.settings-account-group) .settings-login-button:active{
+  transform:scale(.98)!important;
 }
 </style>
 <script>

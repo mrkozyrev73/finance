@@ -4958,5 +4958,34 @@ html,body{
 .category-manage-list .backup-row{align-items:flex-start!important}
 .category-manage-list .backup-has{box-shadow:inset 3px 0 0 #82cc54!important;background:#f2f8ec!important}
 </style>
+<script>
+/* v120 — rescue finance page from local auto-backups when cloud already contains an empty finance object. */
+(function(){
+  try{
+    function hasFinanceData(data){
+      if(!data||typeof data!=='object')return false;
+      if(Number(data.safe)>0)return true;
+      if(Array.isArray(data.loans)&&data.loans.some(function(loan){return Number(loan.currentBalance)>0||Number(loan.monthlyPayment)>0||(Array.isArray(loan.transactions)&&loan.transactions.length)}))return true;
+      if(Array.isArray(data.credits)&&data.credits.some(function(credit){return Number(credit.debt)>0||Number(credit.monthlyPayment)>0||(Array.isArray(credit.earlyPayments)&&credit.earlyPayments.length)}))return true;
+      if(Number(data.mortgageDebt)>0||Number(data.sberDebt)>0)return true;
+      if(Array.isArray(data.mortgageEarlyPayments)&&data.mortgageEarlyPayments.length)return true;
+      if(Array.isArray(data.sberEarlyPayments)&&data.sberEarlyPayments.length)return true;
+      if(String(data.notes||'').trim())return true;
+      return false;
+    }
+    if(typeof finance==='undefined'||hasFinanceData(finance))return;
+    var backups=JSON.parse(localStorage.getItem('income-auto-backups-v1')||'[]');
+    var found=backups.find(function(entry){return hasFinanceData(entry&&entry.finance)});
+    if(!found)return;
+    finance={...emptyFinance(),...found.finance};
+    financeUpdatedAt=nowIso();
+    localStorage.setItem(financeKey,JSON.stringify(finance));
+    localStorage.setItem('income-finance-updated-at',financeUpdatedAt);
+    window.__financeRescuedFromBackup=true;
+    if(typeof toast==='function')setTimeout(function(){toast('Финансы восстановлены из автокопии')},500);
+    if(typeof renderInfo==='function'&&currentView==='info')renderInfo();
+  }catch(error){console.warn('finance rescue v120 skipped',error)}
+})();
+</script>
 </body>
 </html>

@@ -4832,6 +4832,20 @@ body.utility-page-locked{touch-action:none!important}
 .utility-scrim.open .utility-sheet{touch-action:pan-y!important;overscroll-behavior-y:contain!important;overscroll-behavior-x:none!important}
 </style>
 <style>
+/* v127 — settings sheet follows the same content width as the main summary card. */
+.utility-sheet:has(.settings-group){
+  width:min(calc(100% - 72px),382px)!important;
+  max-width:382px!important;
+  margin-right:auto!important;
+  margin-left:auto!important;
+}
+@media(max-width:390px){
+  .utility-sheet:has(.settings-group){
+    width:min(calc(100% - 56px),360px)!important;
+  }
+}
+</style>
+<style>
 /* Калькулятор досрочки — компактно + одна аккуратная обводка */
 .loan-calc-input input,.loan-calc-input input:focus{border:0!important;outline:0!important;background:transparent!important;box-shadow:none!important}
 .loan-calc-input{transition:border-color .16s ease,box-shadow .16s ease!important}

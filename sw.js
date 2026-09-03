@@ -1,4 +1,4 @@
-const CACHE='moi-dohody-v64',FILES=['./','./index.html','./app.css?v=12','./supabase-sync.js?v=10','./manifest.webmanifest','./apple-touch-icon.png','./icon-192.png','./icon-512.png'];
+const CACHE='moi-dohody-v65',FILES=['./','./index.html','./app.css?v=12','./supabase-sync.js?v=10','./manifest.webmanifest','./apple-touch-icon.png','./icon-192.png','./icon-512.png'];
 self.addEventListener('install',event=>event.waitUntil(caches.open(CACHE).then(cache=>cache.addAll(FILES))));
 self.addEventListener('activate',event=>event.waitUntil(caches.keys().then(keys=>Promise.all(keys.filter(key=>key!==CACHE).map(key=>caches.delete(key))))));
 self.addEventListener('fetch',event=>{

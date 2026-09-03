@@ -5255,6 +5255,59 @@ button,.loan-open,.safe-edit,.settings-row,.row-main,.nav button{
   margin-bottom:10px!important;
 }
 </style>
+<style>
+/* v125 — Settings sync status uses the same text grid as normal settings rows. */
+.utility-sheet:has(.settings-group) .settings-status{
+  display:grid!important;
+  grid-template-columns:32px minmax(0,1fr)!important;
+  align-items:center!important;
+  gap:11px!important;
+  width:100%!important;
+  min-height:48px!important;
+  margin:0!important;
+  padding:9px 11px!important;
+  border:0!important;
+  border-radius:0!important;
+  background:transparent!important;
+  box-shadow:none!important;
+  color:#172019!important;
+  cursor:default!important;
+}
+.utility-sheet:has(.settings-group) .settings-status-dot{
+  display:block!important;
+  width:32px!important;
+  height:32px!important;
+  margin:0!important;
+  background:transparent!important;
+  box-shadow:none!important;
+  opacity:0!important;
+}
+.utility-sheet:has(.settings-group) .settings-status-dot:after{
+  display:none!important;
+  content:none!important;
+}
+.utility-sheet:has(.settings-group) .settings-status b{
+  display:block!important;
+  margin:0!important;
+  color:#172019!important;
+  font-size:13px!important;
+  font-weight:620!important;
+  line-height:1.22!important;
+  letter-spacing:-.012em!important;
+}
+.utility-sheet:has(.settings-group) .settings-status small{
+  display:block!important;
+  margin-top:2px!important;
+  color:#7b857d!important;
+  font-size:11px!important;
+  font-weight:450!important;
+  line-height:1.25!important;
+  letter-spacing:0!important;
+}
+.utility-sheet:has(.settings-group) .settings-status+.settings-row{
+  margin-top:0!important;
+}
+</style>
 <script>
 /* v120 — rescue finance page from local auto-backups when cloud already contains an empty finance object. */
 (function(){

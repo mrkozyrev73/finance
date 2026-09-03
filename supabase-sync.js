@@ -254,7 +254,7 @@
     if(!client){openUtility('Синхронизация','<p class="sync-status">Не удалось подключиться к серверу. Проверьте интернет и обновите страницу.</p>');return}
 
     if(!session){
-      openUtility('Вход',`<p class="sync-status">Войдите одним и тем же аккаунтом на обоих телефонах — доходы синхронизируются автоматически. Если аккаунта ещё нет, он создастся сам.</p><label>Email<input id="sbEmail" type="email" autocomplete="email" autocapitalize="off" placeholder="name@mail.com"></label><label>Пароль<input id="sbPassword" type="password" autocomplete="current-password" placeholder="Не менее 8 символов"></label><div class="utility-actions"><button class="utility-primary" id="sbGo">Войти</button></div><p class="sync-status" id="sbAuthStatus"></p>`);
+      openUtility('Вход',`<p class="sync-status">Войдите с одной почтой и паролем на нужных устройствах — доходы синхронизируются автоматически. Если аккаунта ещё нет, он создастся сам.</p><label>Email<input id="sbEmail" type="email" autocomplete="email" autocapitalize="off" placeholder="name@mail.com"></label><label>Пароль<input id="sbPassword" type="password" autocomplete="current-password" placeholder="Не менее 8 символов"></label><div class="utility-actions"><button class="utility-primary" id="sbGo">Войти</button></div><p class="sync-status" id="sbAuthStatus"></p>`);
       const go=async()=>{
         const email=$('sbEmail').value.trim(),password=$('sbPassword').value,status=$('sbAuthStatus');
         if(!email||password.length<8){status.textContent='Введите email и пароль не короче 8 символов.';return}
@@ -286,7 +286,7 @@
       return;
     }
 
-    openUtility('Синхронизация',`<div class="sync-simple"><span class="settings-status-dot"></span><span><b>Включена</b><small>${escapeHtml(session.user.email||'')}</small></span></div><p class="sync-status">Данные автоматически доступны на другом телефоне после входа с тем же email и паролем.</p><div class="utility-actions sync-actions"><button class="utility-primary" id="sbSyncNow">Обновить сейчас</button><button class="sync-signout" id="sbSignOut">Выйти из аккаунта</button></div>`);
+    openUtility('Синхронизация',`<div class="sync-simple"><span class="settings-status-dot"></span><span><b>Включена</b><small>${escapeHtml(session.user.email||'')}</small></span></div><p class="sync-status">Данные автоматически доступны на другом устройстве после входа с той же почтой и паролем.</p><div class="utility-actions sync-actions"><button class="utility-primary" id="sbSyncNow">Обновить сейчас</button><button class="sync-signout" id="sbSignOut">Выйти из аккаунта</button></div>`);
     $('sbSyncNow').onclick=async()=>{
       const button=$('sbSyncNow');
       button.disabled=true;button.textContent='Обновляем…';

@@ -5084,6 +5084,93 @@ button,.loan-open,.safe-edit,.settings-row,.row-main,.nav button{
   }
 }
 </style>
+<style>
+/* v122 — stats/settings polish: no flash on category tap, consistent settings typography, page rhythm aligned to Home. */
+#statsView,
+#infoView{
+  padding-top:0!important;
+}
+#statsView .stats-head,
+#infoView .info-head{
+  margin:0 2px 18px!important;
+  padding:0!important;
+}
+#statsView .stats-head h2,
+#infoView .info-head h2{
+  margin:0 0 7px!important;
+}
+#statsView .stats-head .kicker,
+#infoView .info-head .kicker{
+  margin-bottom:8px!important;
+}
+#statsView .category-card,
+#statsView [data-chart-key]{
+  transform:none!important;
+  transition:background-color 140ms ease,border-color 140ms ease,opacity 120ms ease!important;
+  will-change:auto!important;
+}
+#statsView .category-card:active,
+#statsView [data-chart-key]:active{
+  transform:none!important;
+  background:#f7faf4!important;
+}
+#statsView .stats-breakdown,
+#statsView .category-stats,
+#statsView .stats-details{
+  contain:layout style!important;
+}
+.utility-sheet:has(.settings-group) .settings-group{
+  gap:0!important;
+}
+.utility-sheet:has(.settings-group) .settings-status{
+  display:grid!important;
+  grid-template-columns:8px minmax(0,1fr)!important;
+  align-items:start!important;
+  gap:10px!important;
+  width:100%!important;
+  margin:0!important;
+  padding:10px 2px 12px!important;
+  border:0!important;
+  border-radius:0!important;
+  background:transparent!important;
+  box-shadow:none!important;
+}
+.utility-sheet:has(.settings-group) .settings-status-dot{
+  width:7px!important;
+  height:7px!important;
+  margin-top:6px!important;
+  border-radius:50%!important;
+  background:#82cc54!important;
+  box-shadow:none!important;
+}
+.utility-sheet:has(.settings-group) .settings-status b{
+  display:block!important;
+  margin:0!important;
+  color:#172019!important;
+  font-size:13px!important;
+  font-weight:620!important;
+  line-height:1.2!important;
+  letter-spacing:-.01em!important;
+}
+.utility-sheet:has(.settings-group) .settings-status small{
+  display:block!important;
+  margin-top:3px!important;
+  color:#7e887f!important;
+  font-size:11px!important;
+  font-weight:430!important;
+  line-height:1.32!important;
+  letter-spacing:-.005em!important;
+}
+.utility-sheet:has(.settings-group) .settings-status+.settings-row{
+  margin-top:2px!important;
+}
+@media (prefers-reduced-motion:reduce){
+  #statsView .category-card,
+  #statsView [data-chart-key]{
+    transition:none!important;
+  }
+}
+</style>
 <script>
 /* v120 — rescue finance page from local auto-backups when cloud already contains an empty finance object. */
 (function(){

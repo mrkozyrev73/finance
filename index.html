@@ -5828,6 +5828,49 @@ button,.loan-open,.safe-edit,.settings-row,.row-main,.nav button{
   margin-right:0!important;
 }
 </style>
+<style>
+/* v133 — Supabase sheet actions must look like real app buttons, not thin native strips. */
+.utility-sheet .sync-actions{
+  display:grid!important;
+  gap:10px!important;
+  margin-top:18px!important;
+}
+.utility-sheet .sync-actions button,
+.utility-sheet #sbSyncNow,
+.utility-sheet #sbSignOut{
+  display:flex!important;
+  align-items:center!important;
+  justify-content:center!important;
+  width:100%!important;
+  min-height:52px!important;
+  height:52px!important;
+  margin:0!important;
+  padding:0 16px!important;
+  border-radius:18px!important;
+  font:inherit!important;
+  font-size:14px!important;
+  font-weight:720!important;
+  line-height:1!important;
+  letter-spacing:-.015em!important;
+  appearance:none!important;
+  -webkit-appearance:none!important;
+}
+.utility-sheet #sbSyncNow{
+  border:0!important;
+  background:linear-gradient(145deg,#a9e875,#7fd153)!important;
+  color:#142018!important;
+  box-shadow:none!important;
+}
+.utility-sheet #sbSignOut{
+  border:1px solid rgba(23,32,25,.10)!important;
+  background:#fffefa!important;
+  color:#1f4f35!important;
+  box-shadow:none!important;
+}
+.utility-sheet .sync-actions button:active{
+  transform:scale(.98)!important;
+}
+</style>
 <script>
 /* v120 — rescue finance page from local auto-backups when cloud already contains an empty finance object. */
 (function(){

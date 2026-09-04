@@ -5603,7 +5603,8 @@ button,.loan-open,.safe-edit,.settings-row,.row-main,.nav button{
   openSettings=showSettingsPage;
   document.getElementById('settingsButton')?.addEventListener('click',event=>{event.preventDefault();event.stopPropagation();showSettingsPage()},true);
   document.getElementById('syncPill')?.addEventListener('click',event=>{event.preventDefault();showSettingsPage()},true);
-}catch(error){console.warn('settings page v129 skipped',error)}})();
+  window.__refreshSyncUI=function(){try{var sv=document.getElementById('settingsView');if(sv&&!sv.hidden){renderSettingsPage();}}catch(e){}};
+  }catch(error){console.warn('settings page v129 skipped',error)}})();
 </script>
 <style>
 /* v129 — Settings page shares the app rhythm and avoids sheet scroll/flicker entirely. */
@@ -6287,5 +6288,74 @@ button:active,
   }catch(error){console.warn('native polish v135 skipped',error)}
 })();
 </script>
+<style>
+/* Заметки: выровнять по левому краю как остальные секции (было +18px) и подтянуть вверх */
+#infoView .info-card:has(#freeNotes){padding:0!important;margin-top:-20px!important}
+</style>
+<style>
+/* 1) убрать фильтр по владельцу (Антон/Алёна) в статистике */
+#statsFilterGear{display:none!important}
+/* 2) окно "Добавить доход" — появляется по центру (fade), не выезжает снизу */
+#scrim{align-items:center!important;justify-content:center!important;padding:16px!important}
+#scrim .sheet{
+  width:min(100%,440px)!important;
+  max-height:86vh!important;
+  margin:0 auto!important;
+  border-radius:26px!important;
+  transform:scale(.96)!important;
+  opacity:0!important;
+  transition:opacity .16s ease, transform .18s cubic-bezier(.22,1,.36,1)!important;
+  overflow-y:auto!important;
+}
+#scrim.open .sheet{transform:scale(1)!important;opacity:1!important}
+#scrim .sheet .grab{display:none!important}
+</style>
+<style>
+/* Компактная форма «Добавить доход» — единый стиль, без прокрутки (v134) */
+#scrim .sheet{max-height:92vh!important;padding:22px 18px calc(16px + env(safe-area-inset-bottom))!important}
+#scrim .sheet-head{margin-bottom:8px!important}
+#scrim .sheet-head h2{font-size:22px!important}
+#scrim .sheet-head .kicker{margin-bottom:2px!important}
+
+#scrim #form{display:flex!important;flex-direction:column!important;gap:7px!important;align-items:stretch!important}
+#scrim #form>*{margin:0!important}
+#scrim #form>label{margin-bottom:0!important;color:#5f6961!important}
+#scrim #form .seg-label{margin-bottom:5px!important;font-size:11px!important;color:#5f6961!important}
+
+/* единые поля ввода и одинаковые скругления */
+#scrim #form input,#scrim #form select{height:42px!important;margin-top:4px!important;padding:0 14px!important;border-radius:14px!important;font-size:16px!important}
+#scrim #form select{font-weight:700!important}
+
+/* сумма — цифра строго по центру поля */
+#scrim #form .amountbox{display:flex!important;align-items:center!important;height:50px!important;margin-top:4px!important;padding:0 14px!important;border-radius:14px!important}
+#scrim #form .amountbox input{height:auto!important;padding:0!important;line-height:1!important;font-size:26px!important;font-weight:720!important}
+#scrim #form .amountbox b{align-self:center!important;font-size:20px!important}
+
+/* сегменты статуса и владельца */
+#scrim #form .segments,#scrim #form .owner-switch{border-radius:14px!important;padding:4px!important}
+#scrim #form .segments{margin-bottom:8px!important}
+#scrim #form .segments button,#scrim #form .owner-switch button{height:38px!important;border-radius:11px!important}
+#scrim #form .owner-field{margin-bottom:8px!important}
+
+/* быстрые категории — аккуратный горизонтальный ряд с мягким затуханием справа */
+#scrim #form .cat-quick{gap:6px!important;margin:2px 0 8px!important;padding-bottom:2px!important;-webkit-mask:linear-gradient(90deg,#000 88%,transparent)!important;mask:linear-gradient(90deg,#000 88%,transparent)!important}
+#scrim #form .cat-chip{height:30px!important;line-height:28px!important;font-size:11.5px!important}
+
+#scrim #form .hint{margin:0 2px 6px!important;font-size:11px!important}
+#scrim #form .recurring-field{min-height:42px!important;margin-bottom:4px!important;border-radius:14px!important}
+
+/* кнопка сохранения — как основная кнопка приложения */
+#scrim #form .save{height:48px!important;margin-top:2px!important;border-radius:14px!important;font-size:16px!important;font-weight:750!important}
+</style>
+<style>
+/* v133 — unified left rail: Главная / Статистика / Финансы + шапка месяца на одном краю */
+header.top{padding-left:0!important;padding-right:0!important}
+#homeView,#statsView,#infoView{padding-left:0!important;padding-right:0!important;margin-left:0!important;margin-right:0!important;border-left-width:0!important;border-right-width:0!important}
+#statsView .stats-head,#infoView .info-head{margin-left:0!important;margin-right:0!important;padding-left:0!important;padding-right:0!important}
+#settingsView{padding-left:0!important;padding-right:0!important;margin-left:0!important;margin-right:0!important;border-left-width:0!important;border-right-width:0!important}
+.settings-page-head{margin-left:0!important;margin-right:0!important;padding-left:0!important;padding-right:0!important}
+.settings-page-head h2,.settings-page-head>p,.settings-page-head .kicker{margin-left:0!important;margin-right:0!important}
+#statsView .stats-head .kicker,#statsView .stats-head h2,#statsView .stats-head #statsHint,#statsView .stats-head>p,#infoView .info-head .kicker,#infoView .info-head h2{margin-left:0!important;margin-right:0!important;padding-left:0!important;padding-right:0!important}
+</style>
 </body>
 </html>

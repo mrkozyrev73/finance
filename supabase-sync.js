@@ -106,13 +106,13 @@
         auth:{persistSession:true,autoRefreshToken:true,detectSessionInUrl:false}
       });
       client.auth.onAuthStateChange((_event,next)=>{
-        session=next||null;
+        session=next||null;window.__incomeSyncSession=session?{email:(session.user&&session.user.email)||'',connected:true}:{connected:false,email:''};if(window.__refreshSyncUI)window.__refreshSyncUI();
         if(session)connect().catch(showError);
         else{householdId='';setSyncState('error','Войти')}
       });
     }
     const {data}=await client.auth.getSession();
-    session=data.session||null;
+    session=data.session||null;window.__incomeSyncSession=session?{email:(session.user&&session.user.email)||'',connected:true}:{connected:false,email:''};if(window.__refreshSyncUI)window.__refreshSyncUI();
     if(!session){setSyncState('error','Войти');return false}
     await connect();
     return true;
@@ -298,7 +298,7 @@
       return;
     }
 
-    window.__incomeSyncSession={email:session.user.email||'',connected:true};
+    window.__incomeSyncSession={email:session.user.email||'',connected:true};if(window.__refreshSyncUI)window.__refreshSyncUI();
     openUtility('Синхронизация',`<p class="sync-status compact-sync-email"><span class="settings-status-dot"></span><b>${escapeHtml(session.user.email||'')}</b></p><p class="sync-status">Данные автоматически доступны на другом устройстве после входа с той же почтой и паролем.</p><div class="utility-actions sync-actions"><button class="utility-primary" id="sbSyncNow">Обновить сейчас</button><button class="sync-signout" id="sbSignOut">Выйти из аккаунта</button></div>`);
     $('sbSyncNow').onclick=async()=>{
       const button=$('sbSyncNow');

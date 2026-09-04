@@ -5973,5 +5973,56 @@ button,.loan-open,.safe-edit,.settings-row,.row-main,.nav button{
   }catch(error){console.warn('finance rescue v120 skipped',error)}
 })();
 </script>
+<script>
+/* v121 — reliable notes sync: do not overwrite the active textarea while typing. */
+(function(){
+  try{
+    let notesTimer=null;
+    function saveNotesNow(){
+      const field=document.getElementById('freeNotes');
+      if(!field||typeof finance==='undefined')return;
+      finance.notes=field.value;
+      financeUpdatedAt=nowIso();
+      localStorage.setItem('income-finance-updated-at',financeUpdatedAt);
+      localStorage.setItem(financeKey,JSON.stringify(finance));
+      const sync=window.scheduleFinanceCloudSync||window.scheduleCloudSync;
+      if(typeof sync==='function')sync();
+      const status=document.getElementById('notesStatus');
+      if(status)status.textContent='Сохранено';
+    }
+    function wireNotes(){
+      const field=document.getElementById('freeNotes');
+      if(!field||field.dataset.notesSyncReady==='1')return;
+      field.dataset.notesSyncReady='1';
+      field.oninput=function(){
+        finance.notes=field.value;
+        localStorage.setItem(financeKey,JSON.stringify(finance));
+        const status=document.getElementById('notesStatus');
+        if(status)status.textContent='Сохраняется…';
+        clearTimeout(notesTimer);
+        notesTimer=setTimeout(saveNotesNow,450);
+      };
+      field.onblur=saveNotesNow;
+    }
+    const baseRenderInfo=typeof renderInfo==='function'?renderInfo:null;
+    if(baseRenderInfo){
+      renderInfo=function(){
+        const field=document.getElementById('freeNotes');
+        const isTyping=document.activeElement===field;
+        const draft=isTyping&&field?field.value:null;
+        const result=baseRenderInfo.apply(this,arguments);
+        const nextField=document.getElementById('freeNotes');
+        if(isTyping&&nextField&&draft!==null){
+          nextField.value=draft;
+          finance.notes=draft;
+        }
+        wireNotes();
+        return result;
+      };
+    }
+    wireNotes();
+  }catch(error){console.warn('notes sync v121 skipped',error)}
+})();
+</script>
 </body>
 </html>

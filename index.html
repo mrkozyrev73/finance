@@ -2530,7 +2530,7 @@ html,body{
   $('trashButton').onclick=()=>{const recent=deletedItems.filter(entry=>Date.now()-Date.parse(entry.updatedAt)<30*86400000);openUtility('Корзина · 30 дней',recent.map(entry=>`<div class="trash-row" data-trash="${entry.id}"><span><b>${escapeHtml(entry.item?.name||'Доход')}</b><small>${rub(entry.item?.amount||0)}</small></span><button>Восстановить</button></div>`).join('')||'<p class="sync-status">Корзина пуста.</p>');document.querySelectorAll('[data-trash] button').forEach(button=>button.onclick=()=>{const id=button.closest('[data-trash]').dataset.trash,index=deletedItems.findIndex(entry=>String(entry.id)===id);if(index<0)return;const restored={...deletedItems[index].item,updatedAt:nowIso()};delete restored.deletedAt;items.push(restored);deletedItems.splice(index,1);localStorage.setItem('income-deleted-items-v1',JSON.stringify(deletedItems));addActivity('Восстановлен доход',restored);persist();closeUtility();render();toast('Доход восстановлен')})};
   $('templatesButton').onclick=()=>{const recurring=items.filter(item=>item.recurring);openUtility('Регулярные доходы',recurring.map(item=>`<div class="template-row" data-template="${item.id}"><span><b>${escapeHtml(item.name)}</b><small>${escapeHtml(item.owner)} · ${rub(item.amount)}</small></span><button>Отключить</button></div>`).join('')||'<p class="sync-status">Регулярных доходов пока нет.</p>');document.querySelectorAll('[data-template] button').forEach(button=>button.onclick=()=>{const item=items.find(item=>String(item.id)===button.closest('[data-template]').dataset.template);if(!item)return;item.recurring=false;item.updatedAt=nowIso();persist();closeUtility();toast('Регулярное повторение выключено')})};
 
-  if(!localStorage.getItem('income-edit-hint-seen')){setTimeout(()=>toast('Совет: дважды нажмите на доход для редактирования'),900);localStorage.setItem('income-edit-hint-seen','1')}
+  
   const showViewThemeBase=showView;showView=function(view){showViewThemeBase(view);$('searchBox').hidden=view!=='home';document.body.classList.toggle('view-home',view==='home');document.body.classList.toggle('view-stats',view==='stats');document.body.classList.toggle('view-info',view==='info')};$('searchBox').hidden=currentView!=='home';document.body.classList.toggle('view-home',currentView==='home');document.body.classList.toggle('view-stats',currentView==='stats');document.body.classList.toggle('view-info',currentView==='info');
   setSyncState('','Подключение');
 </script>
@@ -6356,6 +6356,24 @@ header.top{padding-left:0!important;padding-right:0!important}
 .settings-page-head{margin-left:0!important;margin-right:0!important;padding-left:0!important;padding-right:0!important}
 .settings-page-head h2,.settings-page-head>p,.settings-page-head .kicker{margin-left:0!important;margin-right:0!important}
 #statsView .stats-head .kicker,#statsView .stats-head h2,#statsView .stats-head #statsHint,#statsView .stats-head>p,#infoView .info-head .kicker,#infoView .info-head h2{margin-left:0!important;margin-right:0!important;padding-left:0!important;padding-right:0!important}
+</style>
+<style>
+/* v137 — utility-шторки по центру, как «Добавить доход» */
+#utilityScrim,.utility-scrim{align-items:center!important;justify-content:center!important;padding:16px!important}
+#utilityScrim .utility-sheet,.utility-scrim .utility-sheet{
+  width:min(100%,440px)!important;
+  max-height:90vh!important;
+  margin:0 auto!important;
+  border-radius:26px!important;
+  padding:22px 20px calc(18px + env(safe-area-inset-bottom))!important;
+  transform:scale(.96)!important;
+  opacity:0!important;
+  transition:opacity .16s ease, transform .18s cubic-bezier(.22,1,.36,1)!important;
+  overflow-y:auto!important;
+}
+#utilityScrim.open .utility-sheet,.utility-scrim.open .utility-sheet{transform:scale(1)!important;opacity:1!important}
+#utilityScrim .utility-sheet .grab,.utility-scrim .utility-sheet .grab{display:none!important}
+#utilityScrim .utility-head,.utility-scrim .utility-head{position:sticky!important;top:0!important;z-index:4!important;background:inherit!important}
 </style>
 </body>
 </html>

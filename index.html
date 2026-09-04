@@ -2503,7 +2503,7 @@ html,body{
   $('form').onsubmit=event=>{
     event.preventDefault();const stamp=nowIso(),existing=editingId?items.find(item=>item.id===editingId):null,wasEditing=Boolean(existing);
     const entry={id:editingId||Date.now(),name:$('name').value.trim(),category:$('category').value,amount:Number($('amount').value),status:newStatus,date:newStatus==='received'?(existing?.date||today()):'',month:existing?.month||currentMonth,recurring:$('recurring').checked,owner:formOwner,order:existing?.order??items.length,createdAt:existing?.createdAt||stamp,updatedAt:stamp,highlightAt:stamp};
-    items=wasEditing?items.map(item=>item.id===entry.id?entry:item):[...items,entry];addActivity(wasEditing?'Изменён доход':'Добавлен доход',entry);
+    items=wasEditing?items.map(item=>item.id===entry.id?entry:item):[entry,...items];addActivity(wasEditing?'Изменён доход':'Добавлен доход',entry);
     editingId=null;persist();
     const scrim=$('scrim'),sheet=scrim.querySelector('.sheet'),saveButton=$('save');let finished=false;
     saveButton.disabled=true;
@@ -3246,7 +3246,7 @@ html,body{
     $('form').onsubmit=event=>{
       event.preventDefault();const stamp=nowIso(),existing=editingId?items.find(item=>item.id===editingId):null,wasEditing=Boolean(existing),amount=number($('amount').value);
       const entry={id:editingId||Date.now(),name:$('name').value.trim(),category:$('category').value,amount,status:newStatus,date:newStatus==='received'?(existing?.date||today()):'',month:existing?.month||currentMonth,recurring:$('recurring').checked,owner:formOwner,order:existing?.order??items.length,createdAt:existing?.createdAt||stamp,updatedAt:stamp,highlightAt:stamp};
-      items=wasEditing?items.map(item=>item.id===entry.id?entry:item):[...items,entry];addActivity(wasEditing?'Изменён доход':'Добавлен доход',entry);
+      items=wasEditing?items.map(item=>item.id===entry.id?entry:item):[entry,...items];addActivity(wasEditing?'Изменён доход':'Добавлен доход',entry);
       editingId=null;persist();
       const scrim=$('scrim'),sheet=scrim.querySelector('.sheet'),saveButton=$('save');let finished=false;
       saveButton.disabled=true;
@@ -4668,7 +4668,7 @@ html,body{
           highlightAt:existing?.highlightAt||stamp
         };
         if(editingId)items=items.map(item=>item.id===editingId?entry:item);
-        else items.push(entry);
+        else items.unshift(entry);
         const wasEditing=Boolean(editingId);
         editingId=null;
         persist();

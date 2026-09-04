@@ -2457,12 +2457,36 @@ html,body{
     const title='Синхронизация: '+text;pill.className='sync-pill '+state;pill.dataset.label=text;pill.setAttribute('aria-label',title);pill.title=title;pill.textContent=text;
   };
   const applyCloud=data=>{
-    if(!Array.isArray(data.items))return;
-    items=data.items.map((item,index)=>({...item,owner:item.owner||'Антон',order:item.order??index,updatedAt:item.updatedAt||data.updatedAt||nowIso()}));
-    deletedItems=data.deletedItems||[];const __incFin={...emptyFinance(),...(data.finance||{})};const __finHas=f=>!!f&&Object.keys(f).some(k=>{const v=f[k];return Array.isArray(v)?v.length>0:typeof v==='number'?v>0:typeof v==='string'?v.trim()!=='':(v&&typeof v==='object')?Object.keys(v).length>0:!!v;});if(__finHas(__incFin)||!__finHas(finance)){finance=__incFin;financeUpdatedAt=data.financeUpdatedAt||financeUpdatedAt;localStorage.setItem('income-finance-updated-at',financeUpdatedAt);}categories=data.categories||categories;activity=data.activity||[];categoriesUpdatedAt=data.categoriesUpdatedAt||categoriesUpdatedAt;
-    localStorage.setItem('income-tracker-v3',JSON.stringify(items));localStorage.setItem(financeKey,JSON.stringify(finance));
-    localStorage.setItem('income-categories-v1',JSON.stringify(categories));localStorage.setItem('income-deleted-items-v1',JSON.stringify(deletedItems));
-    localStorage.setItem('income-activity-v1',JSON.stringify(activity));refreshCategorySelect();render();
+    if(!data||(!Array.isArray(data.items)&&!data.finance))return;
+    if(Array.isArray(data.items)){
+      items=data.items.map((item,index)=>({...item,owner:item.owner||'Антон',order:item.order??index,updatedAt:item.updatedAt||data.updatedAt||nowIso()}));
+      localStorage.setItem('income-tracker-v3',JSON.stringify(items));
+    }
+    if(Array.isArray(data.deletedItems)){
+      deletedItems=data.deletedItems;
+      localStorage.setItem('income-deleted-items-v1',JSON.stringify(deletedItems));
+    }
+    const __incFin={...emptyFinance(),...(data.finance||{})};
+    const __finHas=f=>!!f&&Object.keys(f).some(k=>{const v=f[k];return Array.isArray(v)?v.length>0:typeof v==='number'?v>0:typeof v==='string'?v.trim()!=='':(v&&typeof v==='object')?Object.keys(v).length>0:!!v;});
+    const __incomingFinanceAt=Date.parse(data.financeUpdatedAt||0)||0;
+    const __localFinanceAt=Date.parse(financeUpdatedAt||0)||0;
+    if(data.finance&&(__incomingFinanceAt>=__localFinanceAt||__finHas(__incFin)||!__finHas(finance))){
+      finance=__incFin;
+      financeUpdatedAt=data.financeUpdatedAt||financeUpdatedAt||nowIso();
+      localStorage.setItem('income-finance-updated-at',financeUpdatedAt);
+      localStorage.setItem(financeKey,JSON.stringify(finance));
+    }
+    if(Array.isArray(data.categories)){
+      categories=data.categories;
+      categoriesUpdatedAt=data.categoriesUpdatedAt||categoriesUpdatedAt;
+      localStorage.setItem('income-categories-v1',JSON.stringify(categories));
+    }
+    if(Array.isArray(data.activity)){
+      activity=data.activity;
+      localStorage.setItem('income-activity-v1',JSON.stringify(activity));
+    }
+    refreshCategorySelect();render();
+    if(typeof renderInfo==='function'&&currentView==='info')renderInfo();
   };
 
   
@@ -2490,7 +2514,7 @@ html,body{
   toggle=function(id){const stamp=nowIso();items=items.map(item=>item.id===id?{...item,status:item.status==='received'?'waiting':'received',date:item.status==='received'?'':today(),updatedAt:stamp,highlightAt:stamp}:item);const item=items.find(item=>item.id===id);addActivity(item.status==='received'?'Доход получен':'Доход снова ожидается',item);persist();render();toast(item.status==='received'?'Доход получен':'Доход снова ожидается')};
   removeIncome=async function(id){const index=items.findIndex(item=>item.id===id);if(index<0)return false;const item=items[index];if(!await askConfirm('Удалить доход?',`«${item.name}» на сумму ${rub(item.amount)} будет перемещён в корзину.`))return false;const stamp=nowIso();deletedItems.push({id:item.id,updatedAt:stamp,item:{...item,deletedAt:stamp}});localStorage.setItem('income-deleted-items-v1',JSON.stringify(deletedItems));addActivity('Удалён доход',item);items.splice(index,1);persist();render();toast('Доход перемещён в корзину');return true};
 
-  const persistFinanceV5=persistFinance;persistFinance=function(){financeUpdatedAt=nowIso();localStorage.setItem('income-finance-updated-at',financeUpdatedAt);persistFinanceV5()};
+  const persistFinanceV5=persistFinance;persistFinance=function(){financeUpdatedAt=nowIso();localStorage.setItem('income-finance-updated-at',financeUpdatedAt);persistFinanceV5();const sync=window.scheduleFinanceCloudSync||window.scheduleCloudSync;if(typeof sync==='function')sync()};
   document.querySelector('.stats-head').insertAdjacentHTML('beforeend','<div class="stats-controls"><select id="statsOwner"><option value="all">Все доходы</option><option>Антон</option><option>Алёна</option></select><select id="statsStatus"><option value="all">Все статусы</option><option value="received">Получены</option><option value="waiting">Ожидаются</option></select></div>');
   const statsOwner=$('statsOwner'),statsStatus=$('statsStatus');
   const renderStatsV5=renderStats;renderStats=function(){renderStatsV5();if(statsPeriod==='year'||(statsOwner.value==='all'&&statsStatus.value==='all'))return;const filtered=monthItems().filter(item=>(statsOwner.value==='all'||item.owner===statsOwner.value)&&(statsStatus.value==='all'||item.status===statsStatus.value)),total=filtered.reduce((sum,item)=>sum+item.amount,0),received=filtered.filter(item=>item.status==='received').reduce((sum,item)=>sum+item.amount,0),groups={};filtered.forEach(item=>{groups[item.category]??={total:0,count:0};groups[item.category].total+=item.amount;groups[item.category].count++});$('statsTotal').textContent=rub(total);$('statsReceived').textContent=rub(received);$('categoryStats').innerHTML=Object.entries(groups).sort((a,b)=>b[1].total-a[1].total).map(([name,data])=>`<button class="category-card"><span class="category-card-head"><b>${escapeHtml(name)}</b><b>${rub(data.total)}</b></span><small>${data.count} записей</small></button>`).join('')||'<div class="empty">Нет данных по выбранному фильтру</div>'};
@@ -4824,7 +4848,7 @@ html,body{
   }catch(error){console.warn('hard binding v111 skipped',error)}})();
 </script>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-<script src="supabase-sync.js?v=12"></script>
+<script src="supabase-sync.js?v=13"></script>
 
 <style>/* one clean popup animation — no double-motion / settle-shift (cowork) */
 .scrim .sheet,.utility-sheet{-webkit-overflow-scrolling:auto!important}

@@ -40,7 +40,7 @@
   }
 
   function applyPayload(payload){
-    if(!payload||!Array.isArray(payload.items))return;
+    if(!payload||(!Array.isArray(payload.items)&&!payload.finance))return;
     applyCloud({
       ...payload,
       finance:payload.finance||{},
@@ -58,6 +58,8 @@
       localStorage.setItem('income-history-totals-v1',JSON.stringify(historyTotals));
     }
     render();
+    if(typeof renderInfo==='function'&&typeof currentView!=='undefined'&&currentView==='info')renderInfo();
+    if(typeof renderSettingsPage==='function'&&typeof currentView!=='undefined'&&currentView==='settings')renderSettingsPage();
   }
 
   function mergePayload(cloud={},local={}){
@@ -222,6 +224,16 @@
     pushTimer=setTimeout(()=>saveNow(),700);
   }
 
+  function scheduleFinanceSupabase(){
+    clearTimeout(pushTimer);
+    if(!client||!session||!householdId){
+      scheduleSupabase();
+      return;
+    }
+    setSyncState('','Сохранение');
+    pushTimer=setTimeout(()=>saveNow(),120);
+  }
+
   async function refreshAllNow(){
     if(!await initializeClient())return false;
     setSyncState('','Обновление');
@@ -305,6 +317,7 @@
   }
   window.openSupabaseSettings=openSupabaseSettings;
   window.scheduleCloudSync=scheduleSupabase;
+  window.scheduleFinanceCloudSync=scheduleFinanceSupabase;
   window.refreshAllFromCloud=refreshAllNow;
   window.addEventListener('online',()=>initializeClient().catch(showError));
   window.addEventListener('offline',()=>setSyncState('error','Офлайн'));

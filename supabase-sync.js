@@ -298,7 +298,8 @@
       return;
     }
 
-    openUtility('Синхронизация',`<div class="sync-simple"><span class="settings-status-dot"></span><span><b>Включена</b><small>${escapeHtml(session.user.email||'')}</small></span></div><p class="sync-status">Данные автоматически доступны на другом устройстве после входа с той же почтой и паролем.</p><div class="utility-actions sync-actions"><button class="utility-primary" id="sbSyncNow">Обновить сейчас</button><button class="sync-signout" id="sbSignOut">Выйти из аккаунта</button></div>`);
+    window.__incomeSyncSession={email:session.user.email||'',connected:true};
+    openUtility('Синхронизация',`<p class="sync-status compact-sync-email"><span class="settings-status-dot"></span><b>${escapeHtml(session.user.email||'')}</b></p><p class="sync-status">Данные автоматически доступны на другом устройстве после входа с той же почтой и паролем.</p><div class="utility-actions sync-actions"><button class="utility-primary" id="sbSyncNow">Обновить сейчас</button><button class="sync-signout" id="sbSignOut">Выйти из аккаунта</button></div>`);
     $('sbSyncNow').onclick=async()=>{
       const button=$('sbSyncNow');
       button.disabled=true;button.textContent='Обновляем…';
@@ -335,5 +336,5 @@
   // остатки Google-конфига больше не нужны
   localStorage.removeItem('income-google-sync-url');
   localStorage.removeItem('income-google-sync-last-error');
-  initializeClient().catch(showError);
+  initializeClient().then(()=>{if(session)window.__incomeSyncSession={email:session.user.email||'',connected:true}}).catch(showError);
 })();

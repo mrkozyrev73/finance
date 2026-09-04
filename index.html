@@ -5556,12 +5556,14 @@ button,.loan-open,.safe-edit,.settings-row,.row-main,.nav button{
   };
   const row=(id,icon,title,note)=>typeof settingsRow==='function'?settingsRow(id,icon,title,note):`<button class="settings-row" data-settings-action="${id}"><span class="settings-row-icon">${icon}</span><span><b>${title}</b><small>${note}</small></span><svg class="settings-chevron" viewBox="0 0 24 24" aria-hidden="true"><path d="m9 18 6-6-6-6"/></svg></button>`;
   function renderSettingsPage(){
+    const syncSession=window.__incomeSyncSession||{};
     const syncText=document.getElementById('syncPill')?.textContent||'';
-    const syncReady=/синхрониз|обнов|включ|сохран|подключ/i.test(syncText);
+    const syncReady=Boolean(syncSession.connected)||/синхрониз|обнов|включ|сохран|подключ/i.test(syncText);
+    const syncEmail=syncSession.email||'';
     document.getElementById('settingsView').innerHTML=`
       <div class="settings-page-head"><h2>Настройки</h2></div>
       <div class="settings-sync-banner ${syncReady?'ok':'wait'}">
-        <i></i><span><b>${syncReady?'Синхронизация включена':'Синхронизация выключена'}</b><small>${syncReady?'Изменения автоматически уходят в базу и подтягиваются на других устройствах':'Войдите с одной почтой и паролем на нужных устройствах'}</small></span>
+        <i></i><span><b>${syncReady?'Синхронизация включена':'Синхронизация выключена'}</b><small>${syncReady?(syncEmail||'Изменения автоматически уходят в базу'):'Войдите с одной почтой и паролем на нужных устройствах'}</small></span>
       </div>
       <button class="settings-login-button" data-settings-action="supabaseSettings">${loginIcon}<span>Войти</span></button>
       <section class="settings-group"><h3>Управление</h3>
@@ -6156,6 +6158,61 @@ button:active,
     transition:background-color 120ms ease,border-color 120ms ease,opacity 120ms ease!important;
     transform:none!important;
   }
+}
+</style>
+<style>
+/* v136 — sync status: no duplicate heavy cards, one calm readable state. */
+.utility-sheet .sync-simple{
+  display:none!important;
+}
+.utility-sheet .compact-sync-email{
+  display:flex!important;
+  align-items:center!important;
+  gap:9px!important;
+  margin:2px 0 12px!important;
+  padding:0!important;
+  border:0!important;
+  background:transparent!important;
+  box-shadow:none!important;
+  color:#7e887f!important;
+  font-size:13px!important;
+  line-height:1.3!important;
+}
+.utility-sheet .compact-sync-email .settings-status-dot{
+  width:9px!important;
+  height:9px!important;
+  flex:0 0 9px!important;
+  border-radius:50%!important;
+  background:#72d58a!important;
+  box-shadow:0 0 0 5px rgba(114,213,138,.14)!important;
+}
+.utility-sheet .compact-sync-email b{
+  overflow:hidden!important;
+  color:#5f6a61!important;
+  font-size:13px!important;
+  font-weight:560!important;
+  text-overflow:ellipsis!important;
+  white-space:nowrap!important;
+}
+.utility-sheet .compact-sync-email+p.sync-status{
+  margin:0 0 16px!important;
+  color:#858e86!important;
+  font-size:13px!important;
+  line-height:1.42!important;
+}
+.settings-view .settings-sync-banner{
+  grid-template-columns:9px minmax(0,1fr)!important;
+  gap:11px!important;
+  padding-left:0!important;
+}
+.settings-view .settings-sync-banner b{
+  font-size:14px!important;
+  font-weight:680!important;
+}
+.settings-view .settings-sync-banner small{
+  margin-top:3px!important;
+  font-size:12px!important;
+  line-height:1.35!important;
 }
 </style>
 <script>

@@ -2353,7 +2353,7 @@ html,body{
   const financeKey='income-finance-info-v1';let finance=remoteFirst?emptyFinance():(JSON.parse(localStorage.getItem(financeKey)||'null')||emptyFinance());if(finance.mortgageEarly==null){finance.mortgageEarly=(finance.baseEarly||0)+(finance.payments||[]).filter(x=>x.credit==='Ипотека').reduce((s,x)=>s+x.amount,0);finance.sberEarly=(finance.payments||[]).filter(x=>x.credit==='Кредит Сбер').reduce((s,x)=>s+x.amount,0)}if(!finance.mortgageEarlyPayments){finance.mortgageEarlyPayments=finance.mortgageEarly?[{id:Date.now()-1,amount:finance.mortgageEarly,date:'',label:'Ранее внесено'}]:[];finance.sberEarlyPayments=finance.sberEarly?[{id:Date.now()-2,amount:finance.sberEarly,date:'',label:'Ранее внесено'}]:[];delete finance.baseEarly;delete finance.payments;delete finance.mortgageEarly;delete finance.sberEarly;if(!remoteFirst)localStorage.setItem(financeKey,JSON.stringify(finance))}const moneyText=n=>new Intl.NumberFormat('ru-RU',{maximumFractionDigits:2}).format(Number(n)||0)+' ₽',earlySum=type=>(finance[type]||[]).reduce((s,x)=>s+x.amount,0);document.querySelector('.info-head').insertAdjacentHTML('afterend','<section class="info-summary"><span>Общий долг</span><strong id="infoDebtTotal">0 ₽</strong><div><span>В сейфе <b id="infoSafeTotal">0 ₽</b></span><span>Досрочно <b id="infoEarlyTotal">0 ₽</b></span></div></section>');
   let lastDeleted=null,lastMoved=null,nativeDragged=null;
   function persist(){localStorage.setItem(key,JSON.stringify(items))} function toast(text,canUndo=false){$('toastText').textContent=text;$('undo').hidden=!canUndo;$('toast').classList.add('show');clearTimeout(toast.t);toast.t=setTimeout(()=>{$('toast').classList.remove('show');$('undo').hidden=true;lastDeleted=null;lastMoved=null},canUndo?3500:1700)}
-  function render(){const all=monthItems(),visible=activeFilter==='all'?all:all.filter(x=>x.status===activeFilter),total=all.reduce((s,x)=>s+x.amount,0),receivedItems=all.filter(x=>x.status==='received'),received=receivedItems.reduce((s,x)=>s+x.amount,0),remaining=total-received,year=currentMonth.slice(0,4);$('monthTitle').innerHTML=`${monthLabel()} <span>${year}</span>`;$('monthPicker').value=currentMonth;$('received').innerHTML=new Intl.NumberFormat('ru-RU').format(received)+' <small>₽</small>';$('remaining').textContent=rub(remaining);$('total').textContent=rub(total);$('progress').style.width=(total?received/total*100:0)+'%';const count=all.filter(x=>x.status==='waiting').length;$('allCount').textContent=all.length;$('filterWaitingCount').textContent=count;$('filterReceivedCount').textContent=receivedItems.length;$('waitingCount').textContent=count?count+' '+(count===1?'доход ожидается':'доходов ожидаются'):'Всё получено';$('carryWaiting').textContent=`Перенести ожидаемые (${count}) в следующий месяц`;$('carryWaiting').classList.toggle('show',false);document.querySelectorAll('[data-filter]').forEach(b=>b.classList.toggle('active',b.dataset.filter===activeFilter));$('list').innerHTML=visible.length?[...visible].sort((a,b)=>(a.status==='received')-(b.status==='received')).map(x=>`<div class="row ${x.status==='received'?'done':''}" data-id="${x.id}"><button class="row-main" aria-label="Изменить статус: ${escapeHtml(x.name)}"><span class="check">${x.status==='received'?'✓':''}</span><span class="copy"><b>${escapeHtml(x.name)}</b><small><i class="status-dot"></i>${escapeHtml(x.category)} · ${x.status==='received'?'получен':'ожидается'}</small></span><strong>${rub(x.amount)}</strong></button><button class="edit-row" aria-label="Редактировать: ${escapeHtml(x.name)}"><svg class="edit-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 20h9"/><path d="M16.5 3.5a2.12 2.12 0 0 1 3 3L7 19l-4 1 1-4 12.5-12.5Z"/></svg></button><button class="delete-row" aria-label="Удалить: ${escapeHtml(x.name)}"><i class="trash-icon"></i></button></div>`).join(''):`<div class="empty">${all.length?'В этой выборке пока ничего нет.':'В этом месяце доходов пока нет.<br>Добавьте первый доход кнопкой выше.'}</div>`;document.querySelectorAll('.row-main').forEach(button=>{button.onclick=()=>{if(button.dataset.dragged){delete button.dataset.dragged;return}toggle(Number(button.closest('.row').dataset.id))};setupTouchDrag(button)});document.querySelectorAll('.row').forEach(setupNativeDrag);document.querySelectorAll('.edit-row').forEach(button=>button.onclick=()=>openEdit(Number(button.closest('.row').dataset.id)));document.querySelectorAll('.delete-row').forEach(button=>button.onclick=()=>removeIncome(Number(button.closest('.row').dataset.id)));renderStats()}
+  function render(){const all=monthItems(),visible=activeFilter==='all'?all:all.filter(x=>x.status===activeFilter),total=all.reduce((s,x)=>s+x.amount,0),receivedItems=all.filter(x=>x.status==='received'),received=receivedItems.reduce((s,x)=>s+x.amount,0),remaining=total-received,year=currentMonth.slice(0,4);$('monthTitle').innerHTML=`${monthLabel()} <span>${year}</span>`;$('monthPicker').value=currentMonth;$('received').innerHTML=new Intl.NumberFormat('ru-RU').format(received)+' <small>₽</small>';$('remaining').textContent=rub(remaining);$('total').textContent=rub(total);$('progress').style.width=(total?received/total*100:0)+'%';const count=all.filter(x=>x.status==='waiting').length;$('allCount').textContent=all.length;$('filterWaitingCount').textContent=count;$('filterReceivedCount').textContent=receivedItems.length;$('waitingCount').textContent=count?count+' '+(count%10===1&&count%100!==11?'доход ожидается':count%10>=2&&count%10<=4&&(count%100<12||count%100>14)?'дохода ожидаются':'доходов ожидаются'):'Всё получено';$('carryWaiting').textContent=`Перенести ожидаемые (${count}) в следующий месяц`;$('carryWaiting').classList.toggle('show',false);document.querySelectorAll('[data-filter]').forEach(b=>b.classList.toggle('active',b.dataset.filter===activeFilter));$('list').innerHTML=visible.length?[...visible].sort((a,b)=>(a.status==='received')-(b.status==='received')).map(x=>`<div class="row ${x.status==='received'?'done':''}" data-id="${x.id}"><button class="row-main" aria-label="Изменить статус: ${escapeHtml(x.name)}"><span class="check">${x.status==='received'?'✓':''}</span><span class="copy"><b>${escapeHtml(x.name)}</b><small><i class="status-dot"></i>${escapeHtml(x.category)} · ${x.status==='received'?'получен':'ожидается'}</small></span><strong>${rub(x.amount)}</strong></button><button class="edit-row" aria-label="Редактировать: ${escapeHtml(x.name)}"><svg class="edit-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 20h9"/><path d="M16.5 3.5a2.12 2.12 0 0 1 3 3L7 19l-4 1 1-4 12.5-12.5Z"/></svg></button><button class="delete-row" aria-label="Удалить: ${escapeHtml(x.name)}"><i class="trash-icon"></i></button></div>`).join(''):`<div class="empty">${all.length?'В этой выборке пока ничего нет.':'В этом месяце доходов пока нет.<br>Добавьте первый доход кнопкой выше.'}</div>`;document.querySelectorAll('.row-main').forEach(button=>{button.onclick=()=>{if(button.dataset.dragged){delete button.dataset.dragged;return}toggle(Number(button.closest('.row').dataset.id))};setupTouchDrag(button)});document.querySelectorAll('.row').forEach(setupNativeDrag);document.querySelectorAll('.edit-row').forEach(button=>button.onclick=()=>openEdit(Number(button.closest('.row').dataset.id)));document.querySelectorAll('.delete-row').forEach(button=>button.onclick=()=>removeIncome(Number(button.closest('.row').dataset.id)));renderStats()}
   function saveVisualOrder(){const order=[...document.querySelectorAll('#list .row')].map(element=>Number(element.dataset.id)),visible=new Set(order),ordered=order.map(id=>items.find(item=>item.id===id));items=[...items.filter(item=>!visible.has(item.id)),...ordered];persist()}
   function renderStats(){const total=items.reduce((sum,item)=>sum+item.amount,0),received=items.filter(item=>item.status==='received').reduce((sum,item)=>sum+item.amount,0);document.querySelectorAll('[data-period]').forEach(button=>button.classList.toggle('active',button.dataset.period===statsPeriod));$('yearSelect').hidden=statsPeriod!=='year';if(statsPeriod==='year'){selectedStatsCategory=null;const monthNames=['Янв','Фев','Мар','Апр','Май','Июн','Июл','Авг','Сен','Окт','Ноя','Дек'],values=[...history[selectedYear]];if(selectedYear===2026)values[7]=total;const annual=values.reduce((sum,value)=>sum+value,0),monthsWithData=values.filter(Boolean).length||1,average=Math.round(annual/monthsWithData),max=Math.max(...values,1);$('statsTotalLabel').textContent=`Доход за ${selectedYear} год`;$('statsReceivedLabel').textContent='Среднее в месяц';$('statsTotal').textContent=rub(annual);$('statsReceived').textContent=rub(average);$('statsHint').textContent=`Доходы по месяцам ${selectedYear} года`;$('categoryStats').innerHTML=`<div class="year-chart">${values.map((value,index)=>`<span class="month-column ${selectedYear===2026&&index===7?'current':''}" title="${monthNames[index]}: ${rub(value)}"><i style="height:${Math.max(3,value/max*150)}px"></i><b>${monthNames[index]}</b></span>`).join('')}</div><p class="year-note">${selectedYear===2026?'Август рассчитывается из текущего списка.':'Итог за год: '+rub(annual)}</p>`;$('statsDetails').innerHTML='';return}$('statsTotalLabel').textContent='План за август';$('statsReceivedLabel').textContent='Получено';$('statsTotal').textContent=rub(total);$('statsReceived').textContent=rub(received);$('statsHint').textContent='Нажмите на категорию, чтобы увидеть её доходы';const groups={};items.forEach(item=>{if(!groups[item.category])groups[item.category]={total:0,received:0,count:0};groups[item.category].total+=item.amount;groups[item.category].count++;if(item.status==='received')groups[item.category].received+=item.amount});const sorted=Object.entries(groups).sort((a,b)=>b[1].total-a[1].total);$('categoryStats').innerHTML=sorted.map(([name,data])=>`<button class="category-card ${selectedStatsCategory===name?'active':''}" data-category="${escapeHtml(name)}"><span class="category-card-head"><b>${escapeHtml(name)}</b><b>${rub(data.total)}</b></span><span class="category-bar"><i style="width:${total?data.total/total*100:0}%"></i></span><small>${data.count} записей · получено ${rub(data.received)}</small></button>`).join('');document.querySelectorAll('.category-card').forEach(card=>card.onclick=()=>{selectedStatsCategory=selectedStatsCategory===card.dataset.category?null:card.dataset.category;renderStats()});if(!selectedStatsCategory){$('statsDetails').innerHTML='';return}const selected=items.filter(item=>item.category===selectedStatsCategory);$('statsDetails').innerHTML=`<h3>${escapeHtml(selectedStatsCategory)}</h3>`+selected.map(item=>`<div class="stat-income ${item.status==='waiting'?'waiting':''}"><span>${escapeHtml(item.name)}</span><b>${rub(item.amount)}</b></div>`).join('')}
   const renderStatsBase=renderStats;
@@ -6377,131 +6377,7 @@ header.top{padding-left:0!important;padding-right:0!important}
 </style>
 
 
-<style>
-/* v139 — свайп влево на доходе открывает действия (правка/удаление) */
-#list .row{overflow:hidden!important}
-#list .row .row-main{position:relative!important;z-index:2!important;background:var(--surface,#fff)!important;transition:transform .32s cubic-bezier(.32,.72,0,1)!important;padding-right:16px!important;will-change:transform;touch-action:pan-y}
-#list .row.swiping .row-main{transition:none!important}
-#list .row .edit-row,#list .row .delete-row{position:absolute!important;top:0!important;bottom:0!important;height:auto!important;width:66px!important;min-width:66px!important;margin:0!important;padding:0!important;border:0!important;border-radius:0!important;display:grid!important;place-items:center!important;opacity:1!important;transform:none!important;transition:background-color .16s ease!important;z-index:1!important}
-#list .row .edit-row{right:66px!important;background:#e7ede6!important;color:#465648!important}
-#list .row .delete-row{right:0!important;background:#e5544d!important;color:#fff!important}
-#list .row .edit-row .ui-icon,#list .row .delete-row .ui-icon{width:21px!important;height:21px!important;stroke-width:1.9!important;opacity:1!important}
-#list .row .edit-row:active{background:#dde6dc!important}
-#list .row .delete-row:active{background:#d7443d!important}
-@media (prefers-reduced-motion:reduce){#list .row .row-main{transition:transform .12s ease!important}}
-@media (hover:hover) and (pointer:fine){
-#list .row .row-main{padding-right:66px!important}
-#list .row .edit-row,#list .row .delete-row{top:50%!important;bottom:auto!important;height:30px!important;width:28px!important;min-width:28px!important;transform:translateY(-50%)!important;background:transparent!important;border-radius:8px!important;opacity:.55!important;z-index:3!important;transition:opacity .14s ease,background-color .14s ease,color .14s ease!important}
-#list .row .edit-row{right:38px!important;color:#8b958d!important}
-#list .row .delete-row{right:8px!important;color:#a9aea6!important}
-#list .row .edit-row .ui-icon,#list .row .delete-row .ui-icon{width:15px!important;height:15px!important}
-#list .row:hover .edit-row,#list .row:hover .delete-row{opacity:1!important}
-#list .row .edit-row:hover{color:#5f6a61!important;background:#eef1eb!important}
-#list .row .delete-row:hover{color:#925c56!important;background:#f4ebe9!important}
-}
-</style>
-<script>
-/* v139 — свайп-действия на строке дохода (touch), не мешает тапу и перетаскиванию */
-(function(){
-  try{
-    var list=document.getElementById('list'); if(!list) return;
-    var OPEN=132; // две плитки по 66
-    var active=null;   // {row,main,startX,startY,startT,base,locked,x,captured,pid}
-    var openRow=null;  // текущая открытая строка
-    function setX(main,x,anim){
-      main.parentElement.classList.toggle('swiping',!anim);
-      main.style.transform = x?('translateX('+x+'px)'):'';
-    }
-    function close(row,anim){
-      if(!row) return;
-      var main=row.querySelector('.row-main'); if(main) setX(main,0,anim!==false);
-      row.dataset.swipeOpen='';
-      if(openRow===row) openRow=null;
-    }
-    function open(row){
-      var main=row.querySelector('.row-main'); if(!main) return;
-      if(openRow&&openRow!==row) close(openRow,true);
-      setX(main,-OPEN,true);
-      row.dataset.swipeOpen='1';
-      openRow=row;
-      try{navigator.vibrate&&navigator.vibrate(12);}catch(e){}
-    }
-    list.addEventListener('pointerdown',function(e){
-      if(e.pointerType!=='touch') return;
-      var main=e.target.closest && e.target.closest('.row-main'); if(!main) return;
-      if(active) return; // мультитач — игнор
-      var row=main.closest('.row');
-      active={row:row,main:main,startX:e.clientX,startY:e.clientY,startT:Date.now(),
-              base: row.dataset.swipeOpen?-OPEN:0, locked:'', x: row.dataset.swipeOpen?-OPEN:0, captured:false, pid:e.pointerId, moved:false};
-    },true);
-    list.addEventListener('pointermove',function(e){
-      if(!active||e.pointerId!==active.pid) return;
-      var dx=e.clientX-active.startX, dy=e.clientY-active.startY;
-      if(!active.locked){
-        if(Math.abs(dx)>7 && Math.abs(dx)>Math.abs(dy)*1.2){
-          active.locked='h';
-          // прервать возможное перетаскивание
-          try{active.main.dispatchEvent(new PointerEvent('pointercancel',{bubbles:true,pointerId:active.pid}));}catch(err){}
-          try{active.main.setPointerCapture(active.pid);active.captured=true;}catch(err){}
-        } else if(Math.abs(dy)>7){
-          active.locked='v'; // вертикаль — отдаём скроллу/перетаскиванию
-        }
-      }
-      if(active.locked==='h'){
-        e.preventDefault();
-        active.moved=true;
-        var x=active.base+dx;
-        if(x>0){ x=x*0.28; }                 // резинка вправо
-        else if(x<-OPEN){ x=-OPEN+(x+OPEN)*0.28; } // резинка за предел
-        active.x=x;
-        setX(active.main,x,false);
-      }
-    },true);
-    function end(e){
-      if(!active||(e&&e.pointerId!==active.pid)) return;
-      var a=active; active=null;
-      if(a.locked!=='h'){ return; }
-      var dt=Math.max(1,Date.now()-a.startT), dx=(a.x-a.base);
-      var vel=dx/dt; // px/ms (влево — отрицательно)
-      var wasOpen=a.base===-OPEN;
-      var shouldOpen;
-      if(wasOpen){ shouldOpen = !(a.x> -OPEN*0.6 || vel>0.11); }
-      else { shouldOpen = (a.x < -OPEN*0.4) || vel< -0.11; }
-      if(shouldOpen) open(a.row); else close(a.row,true);
-      if(a.captured){try{a.main.releasePointerCapture(a.pid);}catch(err){}}
-    }
-    list.addEventListener('pointerup',end,true);
-    list.addEventListener('pointercancel',function(e){
-      if(!e.isTrusted) return;
-      if(!active||e.pointerId!==active.pid) return;
-      var a=active; active=null;
-      if(a.locked==='h'){ if(a.base===-OPEN) open(a.row); else close(a.row,true); }
-    },true);
-    // клик по открытой строке — закрыть, не переключать статус
-    list.addEventListener('click',function(e){
-      var row=e.target.closest && e.target.closest('.row');
-      if(openRow){
-        var onAction=e.target.closest && e.target.closest('.edit-row,.delete-row');
-        if(!onAction && (!row || row===openRow)){
-          e.preventDefault(); e.stopPropagation();
-          close(openRow,true);
-          return;
-        }
-        if(row && row!==openRow){ close(openRow,true); }
-      }
-    },true);
-    // тап вне списка закрывает открытую строку
-    document.addEventListener('pointerdown',function(e){
-      if(openRow && !(e.target.closest && e.target.closest('.row')===openRow)) close(openRow,true);
-    },true);
-    // при перерисовке списка сбросить состояние
-    if(typeof render==='function'){
-      var base=render;
-      render=function(){var r=base.apply(this,arguments); openRow=null; return r;};
-    }
-  }catch(error){ console.warn('swipe module skipped', error); }
-})();
-</script>
+
 
 <style>
 /* v140 — Вклады: как кредиты, между Сейфом и Кредитами */
@@ -6686,5 +6562,108 @@ header.top{padding-left:0!important;padding-right:0!important}
 #infoView .loan-safe .safe-metric-input{max-width:calc(100% - 46px)!important}
 #infoView .loan-safe .safe-ruble{position:absolute!important;right:15px!important;bottom:3px!important;left:auto!important;top:auto!important}
 </style>
+<style>
+/* v144 — свайп по доходам (правка + удаление), как у вкладов */
+#list .row{position:relative!important;overflow:hidden!important}
+/* базовые иконки скрыты всегда — показываются только внутри .row-actions после свайпа */
+#list .row .edit-row,#list .row .delete-row{opacity:0!important;pointer-events:none!important}
+#list .row .row-actions{position:absolute!important;top:0;right:0;bottom:0;z-index:1;display:flex}
+#list .row .row-actions .edit-row,#list .row .row-actions .delete-row{position:static!important;top:auto!important;right:auto!important;left:auto!important;bottom:auto!important;transform:none!important;width:84px!important;height:auto!important;min-height:0!important;margin:0!important;padding:0!important;border:0!important;border-radius:0!important;display:grid!important;place-items:center!important;opacity:1!important;pointer-events:auto!important}
+#list .row .row-actions .edit-row{background:#e7ede6!important;color:#465648!important}
+#list .row .row-actions .delete-row{background:#e5544d!important;color:#fff!important}
+#list .row .row-actions .edit-row .ui-icon,#list .row .row-actions .delete-row .ui-icon{width:22px!important;height:22px!important;stroke-width:1.85!important}
+#list .row .row-actions .edit-row:active{background:#dde6dc!important}
+#list .row .row-actions .delete-row:active{background:#d7443d!important}
+#list .row .row-swipe-inner{position:relative;z-index:2;background:var(--surface,#fffefa);transition:transform .3s cubic-bezier(.32,.72,0,1);will-change:transform;touch-action:pan-y}
+#list .row.swiping .row-swipe-inner{transition:none!important}
+#list .row .row-swipe-inner .row-main{padding-right:14px!important}
+
+</style>
+<script>
+/* v143 — свайп по доходам: правка + удаление, по механике вкладов (touch) */
+(function(){
+  try{
+    var list=document.getElementById('list'); if(!list) return;
+    var EDIT='<svg class="ui-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 20h9"/><path d="M16.5 3.5a2.12 2.12 0 0 1 3 3L7 19l-4 1 1-4 12.5-12.5Z"/></svg>';
+    var TRASH='<svg class="ui-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 7h16"/><path d="M10 11v6"/><path d="M14 11v6"/><path d="M6 7l1 14h10l1-14"/><path d="M9 7V4h6v3"/></svg>';
+    var OPENW=168;
+    var openRow=null;
+    function enhance(){
+      [].forEach.call(list.querySelectorAll('.row'),function(row){
+        if(row.querySelector('.row-swipe-inner'))return;
+        var main=row.querySelector('.row-main'); if(!main)return;
+        var edit=row.querySelector('.edit-row'), del=row.querySelector('.delete-row');
+        if(edit) edit.innerHTML=EDIT;
+        if(del) del.innerHTML=TRASH;
+        var actions=document.createElement('div'); actions.className='row-actions';
+        if(edit) actions.appendChild(edit);
+        if(del) actions.appendChild(del);
+        var inner=document.createElement('div'); inner.className='row-swipe-inner';
+        inner.appendChild(main);
+        row.appendChild(actions);
+        row.appendChild(inner);
+      });
+    }
+    function innerOf(row){return row&&row.querySelector('.row-swipe-inner');}
+    function closeRow(row,anim){if(!row)return;var inner=innerOf(row);if(inner){row.classList.toggle('swiping',anim===false);inner.style.transform='';}row.removeAttribute('data-swipe-open');if(openRow===row)openRow=null;}
+    function openRowFn(row){if(openRow&&openRow!==row)closeRow(openRow,true);var inner=innerOf(row);if(!inner)return;row.classList.remove('swiping');inner.style.transform='translateX(-'+OPENW+'px)';row.setAttribute('data-swipe-open','1');openRow=row;try{navigator.vibrate&&navigator.vibrate(12);}catch(e){}}
+    /* render() объявлен внутри IIFE приложения и недоступен отсюда — поэтому ловим
+       перерисовку списка через MutationObserver: надёжно при любом порядке инициализации */
+    var reflow=null;
+    function schedule(){if(reflow)return;reflow=requestAnimationFrame?requestAnimationFrame(function(){reflow=null;try{enhance();}catch(e){}}):setTimeout(function(){reflow=null;try{enhance();}catch(e){}},0);}
+    try{
+      var mo=new MutationObserver(function(muts){
+        for(var i=0;i<muts.length;i++){
+          var m=muts[i];
+          // если список перерисован (добавлены/удалены строки) — сбросить открытую и переинициализировать
+          if(m.type==='childList'){
+            for(var j=0;j<m.addedNodes.length;j++){var n=m.addedNodes[j];if(n.nodeType===1&&(n.classList&&n.classList.contains('row')||n.querySelector&&n.querySelector('.row'))){openRow=null;}}
+          }
+        }
+        schedule();
+      });
+      mo.observe(list,{childList:true,subtree:true});
+    }catch(e){}
+    enhance();
+    document.addEventListener('DOMContentLoaded',enhance);
+    window.addEventListener('load',enhance);
+    if(!window.__incSwipeInit){
+      window.__incSwipeInit=true;
+      var sw=null;
+      document.addEventListener('pointerdown',function(e){
+        if(e.pointerType!=='touch')return;
+        var inner=e.target.closest&&e.target.closest('#list .row-swipe-inner');if(!inner)return;
+        var row=inner.closest('.row');
+        sw={row:row,inner:inner,main:row.querySelector('.row-main'),x0:e.clientX,y0:e.clientY,base:row.hasAttribute('data-swipe-open')?-OPENW:0,locked:'',pid:e.pointerId,x:row.hasAttribute('data-swipe-open')?-OPENW:0};
+      },true);
+      document.addEventListener('pointermove',function(e){
+        if(!sw||e.pointerId!==sw.pid)return;
+        var dx=e.clientX-sw.x0,dy=e.clientY-sw.y0;
+        if(!sw.locked){
+          if(Math.abs(dx)>8&&Math.abs(dx)>Math.abs(dy)*1.2){sw.locked='h';sw.row.classList.add('swiping');try{if(document.activeElement&&document.activeElement.blur)document.activeElement.blur();}catch(_){}try{if(sw.main)sw.main.dispatchEvent(new PointerEvent('pointercancel',{bubbles:true,pointerId:sw.pid}));}catch(_){}try{sw.inner.setPointerCapture(sw.pid);}catch(_){}}
+          else if(Math.abs(dy)>8){sw.locked='v';}
+        }
+        if(sw.locked==='h'){e.preventDefault();var x=sw.base+dx;if(x>0)x*=0.3;else if(x<-OPENW)x=-OPENW+(x+OPENW)*0.3;sw.x=x;sw.inner.style.transform='translateX('+x+'px)';}
+      },true);
+      function endSw(e){if(!sw||(e&&e.pointerId!==sw.pid))return;var st=sw;sw=null;if(st.locked!=='h')return;st.row.classList.remove('swiping');var openIt=st.base===0?(st.x<-OPENW*0.4):!(st.x>-OPENW*0.6);if(openIt)openRowFn(st.row);else closeRow(st.row,true);}
+      document.addEventListener('pointerup',endSw,true);
+      document.addEventListener('pointercancel',function(e){if(!e.isTrusted)return;if(!sw||e.pointerId!==sw.pid)return;var st=sw;sw=null;if(st.locked==='h'){if(st.base===-OPENW)openRowFn(st.row);else closeRow(st.row,true);}},true);
+      document.addEventListener('click',function(e){
+        var tile=e.target.closest&&e.target.closest('#list .row-actions .edit-row,#list .row-actions .delete-row');
+        if(tile){var row=tile.closest('.row');setTimeout(function(){closeRow(row,true);},0);return;}
+        if(openRow){var inr=e.target.closest&&e.target.closest('#list .row-swipe-inner');if(inr&&inr.closest('.row')===openRow){e.preventDefault();e.stopPropagation();closeRow(openRow,true);}}
+      },true);
+      document.addEventListener('pointerdown',function(e){if(openRow){var r=e.target.closest&&e.target.closest('#list .row');if(r!==openRow)closeRow(openRow,true);}},true);
+    }
+  }catch(error){console.warn('income swipe skipped',error);}
+})();
+</script>
+
+<link rel="stylesheet" href="polish.css?v=8">
+<script>
+// Keyboard navigation remains immediate; pointer interactions retain subtle feedback.
+document.addEventListener('keydown',()=>document.documentElement.classList.add('keyboard-input'),true);
+document.addEventListener('pointerdown',()=>document.documentElement.classList.remove('keyboard-input'),true);
+</script>
 </body>
 </html>

@@ -6375,5 +6375,316 @@ header.top{padding-left:0!important;padding-right:0!important}
 #utilityScrim .utility-sheet .grab,.utility-scrim .utility-sheet .grab{display:none!important}
 #utilityScrim .utility-head,.utility-scrim .utility-head{position:sticky!important;top:0!important;z-index:4!important;background:inherit!important}
 </style>
+
+
+<style>
+/* v139 — свайп влево на доходе открывает действия (правка/удаление) */
+#list .row{overflow:hidden!important}
+#list .row .row-main{position:relative!important;z-index:2!important;background:var(--surface,#fff)!important;transition:transform .32s cubic-bezier(.32,.72,0,1)!important;padding-right:16px!important;will-change:transform;touch-action:pan-y}
+#list .row.swiping .row-main{transition:none!important}
+#list .row .edit-row,#list .row .delete-row{position:absolute!important;top:0!important;bottom:0!important;height:auto!important;width:66px!important;min-width:66px!important;margin:0!important;padding:0!important;border:0!important;border-radius:0!important;display:grid!important;place-items:center!important;opacity:1!important;transform:none!important;transition:background-color .16s ease!important;z-index:1!important}
+#list .row .edit-row{right:66px!important;background:#e7ede6!important;color:#465648!important}
+#list .row .delete-row{right:0!important;background:#e5544d!important;color:#fff!important}
+#list .row .edit-row .ui-icon,#list .row .delete-row .ui-icon{width:21px!important;height:21px!important;stroke-width:1.9!important;opacity:1!important}
+#list .row .edit-row:active{background:#dde6dc!important}
+#list .row .delete-row:active{background:#d7443d!important}
+@media (prefers-reduced-motion:reduce){#list .row .row-main{transition:transform .12s ease!important}}
+@media (hover:hover) and (pointer:fine){
+#list .row .row-main{padding-right:66px!important}
+#list .row .edit-row,#list .row .delete-row{top:50%!important;bottom:auto!important;height:30px!important;width:28px!important;min-width:28px!important;transform:translateY(-50%)!important;background:transparent!important;border-radius:8px!important;opacity:.55!important;z-index:3!important;transition:opacity .14s ease,background-color .14s ease,color .14s ease!important}
+#list .row .edit-row{right:38px!important;color:#8b958d!important}
+#list .row .delete-row{right:8px!important;color:#a9aea6!important}
+#list .row .edit-row .ui-icon,#list .row .delete-row .ui-icon{width:15px!important;height:15px!important}
+#list .row:hover .edit-row,#list .row:hover .delete-row{opacity:1!important}
+#list .row .edit-row:hover{color:#5f6a61!important;background:#eef1eb!important}
+#list .row .delete-row:hover{color:#925c56!important;background:#f4ebe9!important}
+}
+</style>
+<script>
+/* v139 — свайп-действия на строке дохода (touch), не мешает тапу и перетаскиванию */
+(function(){
+  try{
+    var list=document.getElementById('list'); if(!list) return;
+    var OPEN=132; // две плитки по 66
+    var active=null;   // {row,main,startX,startY,startT,base,locked,x,captured,pid}
+    var openRow=null;  // текущая открытая строка
+    function setX(main,x,anim){
+      main.parentElement.classList.toggle('swiping',!anim);
+      main.style.transform = x?('translateX('+x+'px)'):'';
+    }
+    function close(row,anim){
+      if(!row) return;
+      var main=row.querySelector('.row-main'); if(main) setX(main,0,anim!==false);
+      row.dataset.swipeOpen='';
+      if(openRow===row) openRow=null;
+    }
+    function open(row){
+      var main=row.querySelector('.row-main'); if(!main) return;
+      if(openRow&&openRow!==row) close(openRow,true);
+      setX(main,-OPEN,true);
+      row.dataset.swipeOpen='1';
+      openRow=row;
+      try{navigator.vibrate&&navigator.vibrate(12);}catch(e){}
+    }
+    list.addEventListener('pointerdown',function(e){
+      if(e.pointerType!=='touch') return;
+      var main=e.target.closest && e.target.closest('.row-main'); if(!main) return;
+      if(active) return; // мультитач — игнор
+      var row=main.closest('.row');
+      active={row:row,main:main,startX:e.clientX,startY:e.clientY,startT:Date.now(),
+              base: row.dataset.swipeOpen?-OPEN:0, locked:'', x: row.dataset.swipeOpen?-OPEN:0, captured:false, pid:e.pointerId, moved:false};
+    },true);
+    list.addEventListener('pointermove',function(e){
+      if(!active||e.pointerId!==active.pid) return;
+      var dx=e.clientX-active.startX, dy=e.clientY-active.startY;
+      if(!active.locked){
+        if(Math.abs(dx)>7 && Math.abs(dx)>Math.abs(dy)*1.2){
+          active.locked='h';
+          // прервать возможное перетаскивание
+          try{active.main.dispatchEvent(new PointerEvent('pointercancel',{bubbles:true,pointerId:active.pid}));}catch(err){}
+          try{active.main.setPointerCapture(active.pid);active.captured=true;}catch(err){}
+        } else if(Math.abs(dy)>7){
+          active.locked='v'; // вертикаль — отдаём скроллу/перетаскиванию
+        }
+      }
+      if(active.locked==='h'){
+        e.preventDefault();
+        active.moved=true;
+        var x=active.base+dx;
+        if(x>0){ x=x*0.28; }                 // резинка вправо
+        else if(x<-OPEN){ x=-OPEN+(x+OPEN)*0.28; } // резинка за предел
+        active.x=x;
+        setX(active.main,x,false);
+      }
+    },true);
+    function end(e){
+      if(!active||(e&&e.pointerId!==active.pid)) return;
+      var a=active; active=null;
+      if(a.locked!=='h'){ return; }
+      var dt=Math.max(1,Date.now()-a.startT), dx=(a.x-a.base);
+      var vel=dx/dt; // px/ms (влево — отрицательно)
+      var wasOpen=a.base===-OPEN;
+      var shouldOpen;
+      if(wasOpen){ shouldOpen = !(a.x> -OPEN*0.6 || vel>0.11); }
+      else { shouldOpen = (a.x < -OPEN*0.4) || vel< -0.11; }
+      if(shouldOpen) open(a.row); else close(a.row,true);
+      if(a.captured){try{a.main.releasePointerCapture(a.pid);}catch(err){}}
+    }
+    list.addEventListener('pointerup',end,true);
+    list.addEventListener('pointercancel',function(e){
+      if(!e.isTrusted) return;
+      if(!active||e.pointerId!==active.pid) return;
+      var a=active; active=null;
+      if(a.locked==='h'){ if(a.base===-OPEN) open(a.row); else close(a.row,true); }
+    },true);
+    // клик по открытой строке — закрыть, не переключать статус
+    list.addEventListener('click',function(e){
+      var row=e.target.closest && e.target.closest('.row');
+      if(openRow){
+        var onAction=e.target.closest && e.target.closest('.edit-row,.delete-row');
+        if(!onAction && (!row || row===openRow)){
+          e.preventDefault(); e.stopPropagation();
+          close(openRow,true);
+          return;
+        }
+        if(row && row!==openRow){ close(openRow,true); }
+      }
+    },true);
+    // тап вне списка закрывает открытую строку
+    document.addEventListener('pointerdown',function(e){
+      if(openRow && !(e.target.closest && e.target.closest('.row')===openRow)) close(openRow,true);
+    },true);
+    // при перерисовке списка сбросить состояние
+    if(typeof render==='function'){
+      var base=render;
+      render=function(){var r=base.apply(this,arguments); openRow=null; return r;};
+    }
+  }catch(error){ console.warn('swipe module skipped', error); }
+})();
+</script>
+
+<style>
+/* v140 — Вклады: как кредиты, между Сейфом и Кредитами */
+#infoView .deposit-add{display:flex;align-items:center;justify-content:center;gap:8px;width:100%;height:56px;margin:4px 0 2px;border:0;border-radius:20px;background:linear-gradient(145deg,#a9e875,#7fd153);color:#152017;font-size:17px;font-weight:730;box-shadow:0 6px 16px rgba(129,209,84,.14);transition:transform .14s cubic-bezier(.23,1,.32,1)}
+#infoView .deposit-add:active{transform:scale(.985)}
+#infoView .deposit-add .ui-icon{width:20px;height:20px}
+#infoView .deposits-block{margin-top:0}
+#infoView .deposits-block>h4{margin:0 0 10px!important}
+#infoView .deposits-block .deposits-list{display:grid!important;gap:10px!important}
+#infoView .deposits-block .deposit-card{position:relative;margin:0;padding:0;border:1px solid rgba(23,32,25,.075);border-radius:22px;color:#172019;background:#fffefa;box-shadow:none;overflow:hidden}
+#infoView .deposit-card .deposit-card-inner{position:relative;z-index:2;background:#fffefa;padding:16px 18px;transition:transform .3s cubic-bezier(.32,.72,0,1);will-change:transform;touch-action:pan-y}
+#infoView .deposit-card.swiping .deposit-card-inner{transition:none!important}
+#infoView .deposit-card .deposit-swipe-del{position:absolute;top:0;right:0;bottom:0;z-index:1;width:92px;display:grid;place-items:center;border:0;margin:0;padding:0;background:#e5544d;color:#fff;cursor:pointer}
+#infoView .deposit-card .deposit-swipe-del:active{background:#d7443d}
+#infoView .deposit-card .deposit-swipe-del .ui-icon{width:22px;height:22px;stroke-width:1.85}
+#infoView .deposit-card .deposit-name{display:block!important;width:100%!important;margin:0 0 12px!important;padding:0!important;border:0!important;background:transparent!important;box-shadow:none!important;font:inherit!important;font-size:15px!important;font-weight:680!important;color:#435241!important;letter-spacing:-.02em!important;outline:none!important;height:auto!important;text-align:left!important;caret-color:#2c6a49!important}
+#infoView .deposit-card .deposit-name:focus{color:#20452f!important}
+#infoView .deposit-card .deposit-name::placeholder{color:#9aa39b!important}
+#infoView .deposit-card .deposit-edit{display:block!important;position:relative!important;width:100%!important;max-width:100%!important;margin:0!important;overflow:visible!important}
+#infoView .deposit-card .deposit-amount{display:block!important;width:100%!important;max-width:100%!important;box-sizing:border-box!important;height:auto!important;margin:0!important;padding:0 42px 0 0!important;border:0!important;background:transparent!important;box-shadow:none!important;font:inherit!important;font-size:34px!important;font-weight:720!important;color:#172019!important;letter-spacing:-.045em!important;line-height:1.05!important;outline:none!important;font-variant-numeric:tabular-nums!important;text-align:left!important;white-space:nowrap!important;overflow:hidden!important;text-overflow:clip!important;caret-color:#2c6a49!important}
+#infoView .deposit-card .deposit-amount::placeholder{color:#a7b0a7!important}
+#infoView .deposit-card .deposit-ruble{position:absolute!important;right:15px!important;bottom:3px!important;color:#8a938a;font-size:18px;font-weight:680;pointer-events:none}
+#infoView .deposit-card .deposit-measure{position:absolute!important;left:-9999px!important;top:0!important;visibility:hidden!important;white-space:pre!important;pointer-events:none!important;font:inherit!important;font-size:34px!important;font-weight:720!important;letter-spacing:-.045em!important;font-variant-numeric:tabular-nums!important}
+#infoView .deposit-card .deposit-rate{display:flex;align-items:baseline;gap:4px;margin-top:10px;color:#8a938a;font-size:12px;font-weight:560}
+#infoView .deposit-card .deposit-rate-label{color:#96a096}
+#infoView .deposit-card .deposit-rate-input{width:1.5ch;min-width:1ch;max-width:6ch;height:auto!important;border:0!important;background:transparent!important;box-shadow:none!important;font:inherit!important;font-size:12px!important;font-weight:750!important;color:#2f5f43!important;padding:0!important;margin:0!important;outline:none!important;caret-color:#2c6a49!important;text-align:left!important;font-variant-numeric:tabular-nums!important}
+#infoView .deposit-card .deposit-rate-input::placeholder{color:#a7b0a7!important}
+#infoView .deposit-card .deposit-rate-suffix{color:#96a096}
+/* сумма во вкладах — маленькая строка снизу секции */
+/* окно создания вклада — как форма кредита (нормальные кнопки/поля) */
+#newDepName,#newDepAmount{width:100%!important;box-sizing:border-box!important}
+</style>
+<script>
+/* v140 — Вклады: оформление как кредиты, между сейфом и кредитами, синхронизация как у сейфа */
+(function(){
+  try{
+    if(typeof finance!=='object'||finance===null) return;
+    if(!Array.isArray(finance.deposits)) finance.deposits=[];
+    var money=function(n){return new Intl.NumberFormat('ru-RU').format(Number(n)||0)+' ₽';};
+    var fmt=function(n){return new Intl.NumberFormat('ru-RU').format(Number(n)||0);};
+    var esc=function(v){var d=document.createElement('div');d.textContent=String(v==null?'':v);return d.innerHTML;};
+    var TRASH='<svg class="ui-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 7h16"/><path d="M10 11v6"/><path d="M14 11v6"/><path d="M6 7l1 14h10l1-14"/><path d="M9 7V4h6v3"/></svg>';
+    var PLUS='<svg class="ui-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 5v14M5 12h14"/></svg>';
+    var __depOpenCard=null;
+    function sum(){return (finance.deposits||[]).reduce(function(s,d){return s+(Number(d.amount)||0);},0);}
+    function build(){
+      var iv=document.getElementById('infoView'); if(!iv) return;
+      __depOpenCard=null;
+      var fm=iv.querySelector('.finance-main'); if(!fm) return;
+      var old=fm.querySelector('.deposits-block'); if(old) old.remove();
+      var block=document.createElement('section');
+      block.className='loans-block deposits-block';
+      var deps=finance.deposits||[];
+      var listInner;
+      if(deps.length){
+        listInner=deps.map(function(d){
+          return '<div class="deposit-card" data-dep="'+esc(d.id)+'">'
+            +'<button class="deposit-swipe-del" type="button" tabindex="-1" aria-label="Удалить вклад">'+TRASH+'</button>'
+            +'<div class="deposit-card-inner">'
+            +'<input class="deposit-name" value="'+esc(d.name||'Вклад')+'" placeholder="Название вклада" aria-label="Название вклада">'
+            +'<label class="deposit-edit"><input class="deposit-amount" inputmode="numeric" value="'+fmt(d.amount)+'" aria-label="Сумма вклада"><span class="deposit-ruble" aria-hidden="true">₽</span></label>'
+            +'<div class="deposit-rate"><span class="deposit-rate-label">Ставка</span><input class="deposit-rate-input" inputmode="decimal" value="'+esc(d.rate!=null?d.rate:'')+'" placeholder="0" aria-label="Процентная ставка"><span class="deposit-rate-suffix">% годовых</span></div>'
+            +'<span class="deposit-measure" aria-hidden="true"></span>'
+            +'</div>'
+            +'</div>';
+        }).join('');
+      } else {
+        listInner='<div class="loans-empty"><b>Вкладов пока нет</b><span>Добавляйте вклады и накопления — каждый со своим названием и суммой.</span></div>';
+      }
+      block.innerHTML='<h4>Вклады</h4>'
+        +'<div class="loans-list deposits-list">'+listInner+'</div>'
+        +'<button class="deposit-add" id="addDeposit" type="button">'+PLUS+'Добавить вклад</button>';
+      var loans=fm.querySelector('.loans-block:not(.deposits-block)');
+      var safe=fm.querySelector('.loan-safe');
+      if(loans){fm.insertBefore(block,loans);}
+      else if(safe&&safe.nextSibling){fm.insertBefore(block,safe.nextSibling);}
+      else{fm.appendChild(block);}
+      wire(block);
+    }
+    function wire(block){
+      [].forEach.call(block.querySelectorAll('.deposit-card'),function(card){
+        var id=card.getAttribute('data-dep');
+        var dep=(finance.deposits||[]).find(function(d){return String(d.id)===String(id);}); if(!dep) return;
+        var nameI=card.querySelector('.deposit-name'), amtI=card.querySelector('.deposit-amount');
+        nameI.oninput=function(){dep.name=nameI.value;persistFinance();};
+        nameI.onblur=function(){if(!nameI.value.trim()){dep.name='Вклад';nameI.value='Вклад';persistFinance();}};
+        var measure=card.querySelector('.deposit-measure');
+        var sizeAmt=function(){if(!measure)return;measure.textContent=(amtI.value&&amtI.value.length)?amtI.value:(amtI.placeholder||'0');var w=measure.offsetWidth+1;var maxW=(card.clientWidth||320)-56;/* width handled by CSS */ void(w);void(maxW);};
+        amtI.onfocus=function(){amtI.value=dep.amount?String(dep.amount):'';sizeAmt();};
+        amtI.oninput=function(){amtI.value=amtI.value.replace(/\D/g,'');dep.amount=Number(amtI.value)||0;persistFinance();sizeAmt();};
+        amtI.onblur=function(){amtI.value=fmt(dep.amount);sizeAmt();};
+        sizeAmt();
+        var rateI=card.querySelector('.deposit-rate-input');
+        if(rateI){
+          var sizeRate=function(){rateI.style.width=(Math.max(1,String(rateI.value||'').length))+'ch';};
+          sizeRate();
+          rateI.oninput=function(){rateI.value=rateI.value.replace(/[^0-9.,]/g,'').replace(',', '.');dep.rate=rateI.value;sizeRate();persistFinance();};
+          rateI.onblur=function(){if(rateI.value==='.'){rateI.value='';dep.rate='';persistFinance();}sizeRate();};
+        }
+      });
+      var add=block.querySelector('#addDeposit');
+      if(add)add.onclick=openAdd;
+    }
+    function openAdd(){
+      if(typeof openUtility!=='function'){finance.deposits.push({id:Date.now(),name:'Вклад',amount:0});persistFinance();build();return;}
+      openUtility('Новый вклад','<div class="loan-form"><label>Название<input autocomplete="off" id="newDepName" placeholder="Например, Вклад в Т-Банке"></label><label>Сумма<input autocomplete="off" id="newDepAmount" inputmode="numeric" placeholder="0"></label><label>Ставка, % годовых<input autocomplete="off" id="newDepRate" inputmode="decimal" placeholder="Например, 16"></label><div class="utility-actions"><button class="utility-primary" id="createDeposit">Добавить вклад</button></div></div>');
+      var amt=document.getElementById('newDepAmount');
+      if(amt)amt.oninput=function(e){e.target.value=e.target.value.replace(/\D/g,'');};
+      var rt=document.getElementById('newDepRate');
+      if(rt)rt.oninput=function(e){e.target.value=e.target.value.replace(/[^0-9.,]/g,'');};
+      var go=document.getElementById('createDeposit');
+      if(go)go.onclick=function(){
+        var name=((document.getElementById('newDepName')||{}).value||'').trim()||'Вклад';
+        var amount=Number(((document.getElementById('newDepAmount')||{}).value||'').replace(/\D/g,''))||0;
+        var rate=((document.getElementById('newDepRate')||{}).value||'').replace(/[^0-9.,]/g,'').replace(',', '.');
+        finance.deposits.push({id:Date.now(),name:name,amount:amount,rate:rate});
+        persistFinance();
+        if(typeof closeUtility==='function')closeUtility();
+        build();
+        if(typeof toast==='function')toast('Вклад добавлен');
+      };
+    }
+    var OPENW=92;
+    function innerOf(card){return card&&card.querySelector('.deposit-card-inner');}
+    function closeDep(card,anim){if(!card)return;var inner=innerOf(card);if(inner){card.classList.toggle('swiping',anim===false);inner.style.transform='';}card.removeAttribute('data-open');if(__depOpenCard===card)__depOpenCard=null;}
+    function openDep(card){if(__depOpenCard&&__depOpenCard!==card)closeDep(__depOpenCard,true);var inner=innerOf(card);if(!inner)return;card.classList.remove('swiping');inner.style.transform='translateX(-'+OPENW+'px)';card.setAttribute('data-open','1');__depOpenCard=card;try{navigator.vibrate&&navigator.vibrate(12);}catch(e){}}
+    function doDeleteDep(card){if(!card)return;var id=card.getAttribute('data-dep');var dep=(finance.deposits||[]).find(function(d){return String(d.id)===String(id);});if(!dep)return;(async function(){var msg='«'+(dep.name||'Вклад')+'» на сумму '+money(dep.amount)+' будет удалён.';var ok=(typeof askConfirm==='function')?await askConfirm('Удалить вклад?',msg):window.confirm('Удалить вклад?');if(!ok){closeDep(card,true);return;}finance.deposits=finance.deposits.filter(function(d){return String(d.id)!==String(id);});__depOpenCard=null;persistFinance();build();if(typeof toast==='function')toast('Вклад удалён');})();}
+    if(!window.__depSwipeInit){
+      window.__depSwipeInit=true;
+      var sw=null;
+      document.addEventListener('pointerdown',function(e){
+        if(e.pointerType!=='touch')return;
+        var inner=e.target.closest&&e.target.closest('.deposit-card-inner');if(!inner)return;
+        var card=inner.closest('.deposit-card');
+        sw={card:card,inner:inner,x0:e.clientX,y0:e.clientY,base:card.hasAttribute('data-open')?-OPENW:0,locked:'',pid:e.pointerId,x:card.hasAttribute('data-open')?-OPENW:0};
+      },true);
+      document.addEventListener('pointermove',function(e){
+        if(!sw||e.pointerId!==sw.pid)return;
+        var dx=e.clientX-sw.x0,dy=e.clientY-sw.y0;
+        if(!sw.locked){
+          if(Math.abs(dx)>8&&Math.abs(dx)>Math.abs(dy)*1.2){sw.locked='h';sw.card.classList.add('swiping');try{if(document.activeElement&&document.activeElement.blur)document.activeElement.blur();}catch(_){}try{sw.inner.setPointerCapture(sw.pid);}catch(_){}}
+          else if(Math.abs(dy)>8){sw.locked='v';}
+        }
+        if(sw.locked==='h'){e.preventDefault();var x=sw.base+dx;if(x>0)x*=0.3;else if(x<-OPENW)x=-OPENW+(x+OPENW)*0.3;sw.x=x;sw.inner.style.transform='translateX('+x+'px)';}
+      },true);
+      function endSw(e){
+        if(!sw||(e&&e.pointerId!==sw.pid))return;var st=sw;sw=null;
+        if(st.locked!=='h'){return;}
+        st.card.classList.remove('swiping');
+        var openIt=st.base===0?(st.x<-OPENW*0.4):!(st.x>-OPENW*0.6);
+        if(openIt)openDep(st.card);else closeDep(st.card,true);
+      }
+      document.addEventListener('pointerup',endSw,true);
+      document.addEventListener('pointercancel',function(e){if(!sw||e.pointerId!==sw.pid)return;var st=sw;sw=null;if(st.locked==='h'){if(st.base===-OPENW)openDep(st.card);else closeDep(st.card,true);}},true);
+      document.addEventListener('click',function(e){
+        var tile=e.target.closest&&e.target.closest('.deposit-swipe-del');
+        if(tile){e.preventDefault();e.stopPropagation();doDeleteDep(tile.closest('.deposit-card'));return;}
+        if(__depOpenCard){var inr=e.target.closest&&e.target.closest('.deposit-card-inner');if(inr&&inr.closest('.deposit-card')===__depOpenCard){e.preventDefault();e.stopPropagation();closeDep(__depOpenCard,true);}}
+      },true);
+      document.addEventListener('pointerdown',function(e){if(__depOpenCard){var c=e.target.closest&&e.target.closest('.deposit-card');if(c!==__depOpenCard)closeDep(__depOpenCard,true);}},true);
+    }
+    if(typeof renderInfo==='function'){
+      var base=renderInfo;
+      renderInfo=function(){var r=base.apply(this,arguments);try{build();}catch(e){console.warn('deposits build',e);}return r;};
+    }
+    window.__buildDeposits=build;
+    try{if(!document.getElementById('infoView').hidden)build();}catch(e){}
+  }catch(error){console.warn('deposits module skipped',error);}
+})();
+</script>
+
+<style>
+/* v141 — единый стиль карточек Финансов (Сейф = Вклады) */
+/* ставка — чуть крупнее поле ввода */
+#infoView .deposit-card .deposit-rate{font-size:13px!important;margin-top:11px!important}
+#infoView .deposit-card .deposit-rate-input{font-size:14px!important;font-weight:760!important;min-width:1.4ch!important}
+#infoView .deposit-card .deposit-rate-label,#infoView .deposit-card .deposit-rate-suffix{font-size:13px!important}
+</style>
+<style>
+/* v142 — ₽ и иконки по правой колонке (единая сетка карточек) */
+#infoView .loan-safe .safe-edit{position:relative!important;display:block!important;width:100%!important}
+#infoView .loan-safe .safe-metric-input{max-width:calc(100% - 46px)!important}
+#infoView .loan-safe .safe-ruble{position:absolute!important;right:15px!important;bottom:3px!important;left:auto!important;top:auto!important}
+</style>
 </body>
 </html>
